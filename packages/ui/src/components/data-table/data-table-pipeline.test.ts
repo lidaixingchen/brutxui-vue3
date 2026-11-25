@@ -301,14 +301,16 @@ describe('useDataTablePipeline', () => {
         pipeline.sort.toggleSort('score') // asc
         expect(pipeline.sort.sortState.value.direction).toBe('asc')
         expect(pipeline.activeColumnId.value).toBe('score')
+        expect(pipeline.displayData.value.map((item) => item.id)).toEqual([1, 5])
 
         // Disable sortable
         sortable.value = false
         // toggleSort is blocked
         pipeline.sort.toggleSort('score')
         expect(pipeline.sort.sortState.value.direction).toBe('asc')
-        // But existing sort still participates in data ordering
-        expect(pipeline.sortedData.value[0]!.score).toBe(10)
+        expect(pipeline.activeColumnId.value).toBeNull()
+        expect(pipeline.sortedData.value).toEqual(testData)
+        expect(pipeline.displayData.value.map((item) => item.id)).toEqual([1, 2])
 
         // Re-enable sortable
         sortable.value = true

@@ -1,4 +1,4 @@
-import { ref, readonly, computed, toValue, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, toValue, watch, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
 import { getCellValue } from '@/lib/data-table-utils'
 import { parseFormattedDate } from '@/lib/date'
@@ -59,12 +59,26 @@ export function useDataTableFilter<T extends object>(
     options: UseDataTableFilterOptions<T>,
 ): UseDataTableFilterReturn<T> {
     const filterState = ref<DataTableFilterState>({ global: '', columns: {} })
+    const visibleColumns = computed(() =>
+        toValue(options.columns).filter((col) => !col.hidden),
+    )
+    const visibleColumnIds = computed(() => new Set(visibleColumns.value.map((column) => column.id)))
+    const isFilterable = computed(() => toValue(options.filterable) === true)
+
+    watch(visibleColumnIds, (ids) => {
+        const entries = Object.entries(filterState.value.columns)
+        const retained = entries.filter(([columnId]) => ids.has(columnId))
+        if (retained.length !== entries.length) {
+            filterState.value = { ...filterState.value, columns: Object.fromEntries(retained) }
+        }
+    })
 
     function setGlobalFilter(value: string): void {
         filterState.value = { ...filterState.value, global: value }
     }
 
     function setColumnFilter(columnId: string, value: DataTableFilterValue): void {
+        if (!visibleColumnIds.value.has(columnId)) return
         filterState.value = {
             ...filterState.value,
             columns: { ...filterState.value.columns, [columnId]: value },
@@ -72,19 +86,16 @@ export function useDataTableFilter<T extends object>(
     }
 
     function setFilterState(state: DataTableFilterState): void {
-        // 浅拷贝隔离：避免直接持有调用方传入的对象引用，
-        // 否则内部对 columns 的原地清理（隐藏列）会反向污染调用方持有的同一对象
-        filterState.value = { global: state.global ?? '', columns: { ...(state.columns ?? {}) } }
+        const entries = Object.entries(state.columns ?? {})
+        filterState.value = {
+            global: state.global ?? '',
+            columns: Object.fromEntries(entries.filter(([columnId]) => visibleColumnIds.value.has(columnId))),
+        }
     }
 
     function clearFilters(): void {
         filterState.value = { global: '', columns: {} }
     }
-
-    const visibleColumns = computed(() =>
-        toValue(options.columns).filter((col) => !col.hidden),
-    )
-    const isFilterable = computed(() => toValue(options.filterable) === true)
 
     /**
      * 对数据应用全局与列级过滤。
@@ -112,11 +123,7 @@ export function useDataTableFilter<T extends object>(
             if (Array.isArray(filterValue) && filterValue.length === 0) return
 
             const col = visibleColumns.value.find((c) => c.id === columnId)
-            if (!col) {
-                // 列已隐藏/移除：清理残留过滤状态，避免界面过滤指示与实际数据不一致
-                delete filterState.value.columns[columnId]
-                return
-            }
+            if (!col) return
 
             if (col.filterType === 'select') {
                 result = result.filter((row) => {

@@ -335,12 +335,24 @@ const {
     pageSize: () => props.pageSize,
 })
 
+function getSortDirection(columnId: string) {
+    const activeSort = sort.activeSort.value
+    return activeSort?.column.id === columnId ? activeSort.direction : null
+}
+
+function getAriaSort(columnId: string) {
+    const direction = getSortDirection(columnId)
+    if (direction === 'asc') return 'ascending'
+    if (direction === 'desc') return 'descending'
+    return 'none'
+}
+
 function getHeaderLabel(column: DataTableColumn<T>): string {
     if (typeof column.header === 'function') {
         return column.header({
             id: column.id,
-            sortable: column.sortable,
-            direction: sort.sortState.value.column === column.id ? sort.sortState.value.direction : null,
+            sortable: sort.canSortColumn(column.id),
+            direction: getSortDirection(column.id),
             accessorKey: column.accessorKey,
             align: column.align,
         })
@@ -349,9 +361,7 @@ function getHeaderLabel(column: DataTableColumn<T>): string {
 }
 
 function handleSort(columnId: string) {
-    if (!props.sortable) return
-    const col = visibleColumns.value.find((c) => c.id === columnId)
-    if (!col || col.sortable === false) return
+    if (!sort.canSortColumn(columnId)) return
     sort.toggleSort(columnId)
     emit('sort', sort.sortState.value.column, sort.sortState.value.direction)
 }
@@ -516,7 +526,7 @@ function getHeadClasses(column: DataTableColumn<T>): string {
     const active = activeColumnId.value === column.id
     return cn(
         dataTableHeadVariants({
-            sortable: props.sortable && column.sortable !== false,
+            sortable: sort.canSortColumn(column.id),
             align: column.align,
             fixed: Boolean(column.fixed),
             active,
@@ -643,11 +653,11 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                 role="columnheader"
                                 :data-table-width-key="`column:${column.id}`"
                                 :data-table-fixed-column="column.fixed ? column.id : undefined"
-                                :tabindex="sortable && column.sortable !== false ? 0 : undefined"
-                                :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-                                @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
-                                @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                                :tabindex="sort.canSortColumn(column.id) ? 0 : undefined"
+                                :aria-sort="getAriaSort(column.id)"
+                                @click="sort.canSortColumn(column.id) ? handleSort(column.id) : undefined"
+                                @keydown.enter="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
+                                @keydown.space="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
                             >
                                 <div class="flex items-center gap-2 w-full" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                     <span>{{ getHeaderLabel(column) }}</span>
@@ -661,9 +671,9 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                         @update:filter-state="applyColumnFilterPatch"
                                     />
                                     
-                                    <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
-                                        <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
-                                        <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                    <span v-if="sort.canSortColumn(column.id)" class="inline-flex text-inherit">
+                                        <ArrowUp v-if="getSortDirection(column.id) === 'asc'" class="w-4 h-4" />
+                                        <ArrowDown v-else-if="getSortDirection(column.id) === 'desc'" class="w-4 h-4" />
                                         <ArrowUpDown v-else class="w-4 h-4" />
                                     </span>
                                 </div>
@@ -832,11 +842,11 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                             zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                         }"
                                         :data-table-fixed-column="column.fixed ? column.id : undefined"
-                                        :tabindex="sortable && column.sortable !== false ? 0 : undefined"
-                                        :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-                                        @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                        @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
-                                        @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                                        :tabindex="sort.canSortColumn(column.id) ? 0 : undefined"
+                                        :aria-sort="getAriaSort(column.id)"
+                                        @click="sort.canSortColumn(column.id) ? handleSort(column.id) : undefined"
+                                        @keydown.enter="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
+                                        @keydown.space="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
                                     >
                                         <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                             <span>{{ getHeaderLabel(column) }}</span>
@@ -847,9 +857,9 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                                 :header-label="getHeaderLabel(column)"
                                                 @update:filter-state="applyColumnFilterPatch"
                                             />
-                                            <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
-                                                <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
-                                                <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                            <span v-if="sort.canSortColumn(column.id)" class="inline-flex text-inherit">
+                                                <ArrowUp v-if="getSortDirection(column.id) === 'asc'" class="w-4 h-4" />
+                                                <ArrowDown v-else-if="getSortDirection(column.id) === 'desc'" class="w-4 h-4" />
                                                 <ArrowUpDown v-else class="w-4 h-4" />
                                             </span>
                                         </div>
@@ -897,11 +907,11 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                             role="columnheader"
                             :data-table-width-key="`column:${column.id}`"
                             :data-table-fixed-column="column.fixed ? column.id : undefined"
-                            :tabindex="sortable && column.sortable !== false ? 0 : undefined"
-                            :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-                            @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                            @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
-                            @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                            :tabindex="sort.canSortColumn(column.id) ? 0 : undefined"
+                            :aria-sort="getAriaSort(column.id)"
+                            @click="sort.canSortColumn(column.id) ? handleSort(column.id) : undefined"
+                            @keydown.enter="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
+                            @keydown.space="sort.canSortColumn(column.id) ? handleHeaderKeydown(column.id, $event) : undefined"
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>
@@ -915,9 +925,9 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                     @update:filter-state="applyColumnFilterPatch"
                                 />
 
-                                <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
-                                    <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
-                                    <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                <span v-if="sort.canSortColumn(column.id)" class="inline-flex text-inherit">
+                                    <ArrowUp v-if="getSortDirection(column.id) === 'asc'" class="w-4 h-4" />
+                                    <ArrowDown v-else-if="getSortDirection(column.id) === 'desc'" class="w-4 h-4" />
                                     <ArrowUpDown v-else class="w-4 h-4" />
                                 </span>
                             </div>

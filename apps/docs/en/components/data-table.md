@@ -99,6 +99,8 @@ Use `title` and `description` to label the table. Long Chinese text wraps at nat
 
 Enable sorting via the `sortable` prop. Set `sortable: false` in column definitions to disable sorting for specific columns. Clicking the header toggles between ascending / descending / default.
 
+Hiding the sorted column or disabling its sorting restores the filtered input order for pagination. Showing and enabling the column again restores the previous sort direction.
+
 ### Enabling Filtering
 
 ```vue
@@ -153,6 +155,8 @@ The paginator includes first page, previous page, next page, last page buttons, 
 ### Column Filters
 
 Supports adding a Popover filter in the header of each column. Supports text search, single selection (Select), multi-selection (Multi-Select), and date range (Date Range) filtering.
+
+Hiding or removing a column clears its filter. Filters on other visible columns stay active.
 
 `date-range` filters parse `YYYY-MM-DD` cell strings as local calendar dates and include the end date through `23:59:59.999` for that local day. Full datetime strings still use native `Date` / ISO datetime semantics; if your data must compare consistently across time zones, store values as `Date`, timestamps, or full ISO strings with explicit offsets.
 

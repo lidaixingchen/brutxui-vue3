@@ -1,7 +1,7 @@
 import { computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
 import { useDataTableFilter, type UseDataTableFilterReturn } from '@/composables/useDataTableFilter'
-import { useDataTableSort, type UseDataTableSortReturn } from '@/composables/useDataTableSort'
+import { useDataTableSortModel } from '@/composables/useDataTableSort'
 import { useDataTablePagination, type UseDataTablePaginationReturn } from '@/composables/useDataTablePagination'
 import { useDataTableSelection, type UseDataTableSelectionReturn } from '@/composables/useDataTableSelection'
 
@@ -23,7 +23,7 @@ export interface UseDataTablePipelineReturn<T extends object> {
     totalFilteredItems: ComputedRef<number>
     activeColumnId: ComputedRef<string | null>
     filter: UseDataTableFilterReturn<T>
-    sort: UseDataTableSortReturn<T>
+    sort: ReturnType<typeof useDataTableSortModel<T>>
     pagination: UseDataTablePaginationReturn
     selection: UseDataTableSelectionReturn<T>
     applyColumnFilterPatch: (patch: DataTableFilterState) => void
@@ -57,7 +57,7 @@ export function useDataTablePipeline<T extends object>(
     const filteredData = computed(() => filter.filteredData(rawData.value))
     const totalFilteredItems = computed(() => filteredData.value.length)
 
-    const sort = useDataTableSort<T>({
+    const sort = useDataTableSortModel<T>({
         columns: () => toValue(options.columns),
         sortable: () => toValue(options.sortable),
     })
@@ -79,10 +79,7 @@ export function useDataTablePipeline<T extends object>(
         data: () => rawData.value,
     })
 
-    const activeColumnId = computed(() => {
-        const { column, direction } = sort.sortState.value
-        return column && direction ? column : null
-    })
+    const activeColumnId = computed(() => sort.activeSort.value?.column.id ?? null)
 
     function applyColumnFilterPatch(patch: DataTableFilterState) {
         const currentGlobal = patch.global !== undefined ? patch.global : filter.filterState.value.global

@@ -1,3 +1,4 @@
+import { nextTick, ref } from 'vue'
 import { useDataTableFilter } from './useDataTableFilter'
 import type { DataTableColumn } from '@/components/data-table/types'
 
@@ -75,6 +76,28 @@ describe('useDataTableFilter', () => {
         })
         setColumnFilter('age', '30')
         expect(filteredData(data).map((r) => r.id)).toEqual([2])
+    })
+
+    it('projects visible filters without modifying state during a read', async () => {
+        const columnDefs = ref(columns.map((column) => ({ ...column })))
+        const { setColumnFilter, filterState, filteredData } = useDataTableFilter({
+            columns: columnDefs,
+            filterable: true,
+        })
+        setColumnFilter('age', '30')
+        expect(filteredData(data).map((row) => row.id)).toEqual([2])
+
+        const ageColumn = columnDefs.value.find((column) => column.id === 'age')!
+        ageColumn.hidden = true
+        const stateBeforeRead = filterState.value
+        expect(filteredData(data)).toEqual(data)
+        expect(filterState.value).toBe(stateBeforeRead)
+        expect(filterState.value.columns).toEqual({ age: '30' })
+
+        await nextTick()
+        expect(filterState.value.columns).toEqual({})
+        ageColumn.hidden = false
+        expect(filteredData(data)).toEqual(data)
     })
 
     it('empty column filter value is skipped', () => {

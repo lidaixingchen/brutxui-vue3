@@ -4,7 +4,7 @@ import { vi, beforeEach, afterEach } from 'vitest'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DataTable from './DataTable.vue'
-import type { DataTableColumn, DataTableProps } from './types'
+import type { DataTableColumn, DataTableFilterState, DataTableProps } from './types'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 
@@ -345,6 +345,52 @@ describe('DataTable visual compliance', () => {
         expect(nameHeader.classes()).toContain('bg-brutal-accent')
     })
 
+    it.each([false, true])('keeps headings and paginated rows in sync with sortable (stickyHeader: %s)', async (stickyHeader) => {
+        const nameColumn: DataTableColumn<TestRow> = {
+            id: 'name',
+            accessorKey: 'name',
+            fixed: stickyHeader ? 'left' : undefined,
+            header: ({ sortable, direction }) => `Name ${sortable ? 'sortable' : 'static'} ${direction ?? 'none'}`,
+        }
+        const wrapper = mountDataTable({
+            data: [...testData].reverse(),
+            columns: [nameColumn],
+            rowKey: 'id',
+            sortable: true,
+            stickyHeader,
+            paginated: true,
+            pageSize: 1,
+        })
+        function expectView(name: string, sortable: boolean, ascending: boolean) {
+            const cell = wrapper.get('tbody td')
+            expect(cell.text()).toBe(name)
+            expect(cell.classes().includes('bg-brutal-accent-subtle')).toBe(ascending)
+            for (const header of wrapper.findAll('th')) {
+                expect(header.attributes('aria-sort')).toBe(ascending ? 'ascending' : 'none')
+                expect(header.attributes('tabindex')).toBe(sortable ? '0' : undefined)
+                expect(header.text()).toBe(`Name ${sortable ? 'sortable' : 'static'} ${ascending ? 'asc' : 'none'}`)
+                expect(header.classes().includes('bg-brutal-accent')).toBe(ascending)
+            }
+        }
+
+        expectView('Charlie', true, false)
+        await wrapper.get('th').trigger('click')
+        expectView('Alice', true, true)
+
+        await wrapper.setProps({ sortable: false })
+        expectView('Charlie', false, false)
+        await wrapper.get('th').trigger('click')
+
+        await wrapper.setProps({ sortable: true, columns: [{ ...nameColumn, sortable: false }] })
+        expectView('Charlie', false, false)
+        await wrapper.get('th').trigger('click')
+
+        await wrapper.setProps({ columns: [nameColumn] })
+        expectView('Alice', true, true)
+        expect(wrapper.emitted('sort')).toEqual([['name', 'asc']])
+        wrapper.unmount()
+    })
+
     it('highlights active sort column cells with the subtle accent surface', async () => {
         const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
@@ -594,7 +640,11 @@ describe('DataTable style guard', () => {
 describe('DataTable programmatic control (defineExpose)', () => {
     type DataTableExposed = {
         sort: { toggleSort: (columnId: string) => void; sortState: { value: { column: string; direction: 'asc' | 'desc' | null } } }
-        filter: { filterState: { value: { global: string } }; setGlobalFilter: (value: string) => void }
+        filter: {
+            filterState: { value: DataTableFilterState }
+            setGlobalFilter: (value: string) => void
+            setFilterState: (state: DataTableFilterState) => void
+        }
         selection: {
             toggleRow: (row: TestRow) => void
             toggleAllRows: () => void
@@ -666,6 +716,33 @@ describe('DataTable programmatic control (defineExpose)', () => {
         vm.filter.setGlobalFilter('alice')
         await nextTick()
         expect(vm.filter.filterState.value.global).toBe('alice')
+    })
+
+    it.each(['hide', 'remove'] as const)('cleans up column filters on %s while filtering is disabled', async (change) => {
+        const [name, email] = testColumns
+        const columns = [name!, { ...email!, filterType: 'text' }] satisfies DataTableColumn<TestRow>[]
+        const changedColumns = change === 'hide' ? [columns[0], { ...columns[1], hidden: true }] : [columns[0]]
+        const wrapper = mountDataTable({ data: testData, columns, rowKey: 'id', filterable: true })
+        const { filter } = getExposed(wrapper)
+        const names = () => wrapper.findAll('tbody td:first-child').map((cell) => cell.text())
+        const criteria = { global: '', columns: { name: 'a', email: 'alice' } }
+
+        filter.setFilterState(criteria)
+        await nextTick()
+        expect(names()).toEqual(['Alice'])
+
+        await wrapper.setProps({ filterable: false, columns: changedColumns })
+        expect(names()).toEqual(['Alice', 'Bob', 'Charlie'])
+        expect(filter.filterState.value).toEqual({ global: '', columns: { name: 'a' } })
+        expect(criteria.columns).toEqual({ name: 'a', email: 'alice' })
+
+        await wrapper.setProps({ filterable: true, columns })
+        expect(names()).toEqual(['Alice', 'Charlie'])
+        expect(wrapper.emitted('filter')).toEqual([
+            [{ global: '', columns: { name: 'a', email: 'alice' } }],
+            [{ global: '', columns: { name: 'a' } }],
+        ])
+        wrapper.unmount()
     })
 
     it('exposes selection namespace with methods and refs', () => {

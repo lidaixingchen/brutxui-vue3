@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { userEvent } from 'vitest/browser'
 import { mount } from '@/test/browser-mount'
 import DataTable from './DataTable.vue'
@@ -82,5 +82,45 @@ describe.each(layouts)('DataTable $name keyboard interactions', (layout) => {
 
         expect(sortEvents).toEqual([['name', 'asc']])
         expect(header!.getAttribute('aria-sort')).toBe('ascending')
+    })
+
+    it('updates keyboard availability, heading direction and visible row order when sorting is switched', async () => {
+        const sortable = ref(true)
+        const sortEvents: Array<[string, 'asc' | 'desc' | null]> = []
+        const wrapper = mount(defineComponent({
+            setup: () => () => h(DataTable<Row>, {
+                data: rows,
+                columns: columns.map((column) => ({ ...column, width: 120 })),
+                rowKey: 'id',
+                sortable: sortable.value,
+                virtualScroll: layout.virtualScroll,
+                onSort: (column, direction) => sortEvents.push([column, direction]),
+            }),
+        }))
+        unmount = wrapper.unmount
+        const header = wrapper.element.querySelector<HTMLElement>('[data-table-width-key="column:name"][aria-sort]')!
+        const visibleRows = () => Array.from(
+            wrapper.element.querySelectorAll('tbody td, [role="rowgroup"] [role="gridcell"]'),
+            (cell) => cell.textContent?.trim(),
+        )
+
+        await expect.poll(visibleRows).toEqual(['Bob', 'Alice'])
+        header.focus()
+        await userEvent.keyboard('{Enter}')
+        await expect.poll(visibleRows).toEqual(['Alice', 'Bob'])
+        expect(header.getAttribute('aria-sort')).toBe('ascending')
+
+        sortable.value = false
+        await nextTick()
+        await expect.poll(visibleRows).toEqual(['Bob', 'Alice'])
+        expect(header.getAttribute('aria-sort')).toBe('none')
+        expect(header.hasAttribute('tabindex')).toBe(false)
+
+        sortable.value = true
+        await nextTick()
+        await expect.poll(visibleRows).toEqual(['Alice', 'Bob'])
+        expect(header.getAttribute('aria-sort')).toBe('ascending')
+        expect(header.getAttribute('tabindex')).toBe('0')
+        expect(sortEvents).toEqual([['name', 'asc']])
     })
 })

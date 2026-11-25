@@ -238,21 +238,23 @@ describe('useDataTableSort', () => {
         expect(result.map((r) => r.id)).toEqual([1, 3, 2])
     })
 
-    it('returns original data when sort column is not found in visibleColumns', () => {
+    it('resumes the remembered sort when the hidden column is shown again', () => {
         const columnsRef = ref([...columns])
         const { sortState, toggleSort, sortedData } = useDataTableSort({
             columns: columnsRef,
             sortable: () => true,
         })
 
-        // 先排序列，随后隐藏该列，使 sortState 指向不再可见的列
         toggleSort('name')
+        expect(sortedData(data).map((row) => row.name)).toEqual(['Alice', 'Bob', 'Charlie'])
         columnsRef.value = columnsRef.value.map((c) =>
             c.id === 'name' ? { ...c, hidden: true } : c
         )
-        const result = sortedData(data)
-        expect(sortState.value.column).toBe('name')
-        expect(result).toEqual(data)
+        expect(sortState.value).toEqual({ column: 'name', direction: 'asc' })
+        expect(sortedData(data)).toBe(data)
+
+        columnsRef.value = [...columns]
+        expect(sortedData(data).map((row) => row.name)).toEqual(['Alice', 'Bob', 'Charlie'])
     })
 
     it('pushes undefined valueB to the end', () => {

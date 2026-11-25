@@ -17,17 +17,35 @@ export interface UseDataTableSortReturn<T> {
 export function useDataTableSort<T extends object>(
     options: UseDataTableSortOptions<T>,
 ): UseDataTableSortReturn<T> {
-    const sortState = ref<DataTableSortState>({ column: '', direction: null })
+    const { sortState, toggleSort, sortedData } = useDataTableSortModel(options)
+    return { sortState, toggleSort, sortedData }
+}
 
-    const visibleColumns = computed(() =>
-        toValue(options.columns).filter((col) => !col.hidden),
-    )
-    const isSortable = computed(() => toValue(options.sortable) === true)
+export function useDataTableSortModel<T extends object>(options: UseDataTableSortOptions<T>) {
+    const sortState = ref<DataTableSortState>({ column: '', direction: null })
+    const sortableColumns = computed(() => {
+        const columns = new Map<string, DataTableColumn<T>>()
+        if (toValue(options.sortable) === true) {
+            for (const column of toValue(options.columns)) {
+                if (!column.hidden && column.sortable !== false) columns.set(column.id, column)
+            }
+        }
+        return columns
+    })
+
+    function canSortColumn(columnId: string): boolean {
+        return sortableColumns.value.has(columnId)
+    }
+
+    const activeSort = computed(() => {
+        const { column, direction } = sortState.value
+        if (!column || !direction) return null
+        const definition = sortableColumns.value.get(column)
+        return definition ? { column: definition, direction } : null
+    })
 
     function toggleSort(columnId: string) {
-        if (!isSortable.value) return
-        const col = visibleColumns.value.find((c) => c.id === columnId)
-        if (!col || col.sortable === false) return
+        if (!canSortColumn(columnId)) return
 
         if (sortState.value.column === columnId) {
             if (sortState.value.direction === 'asc') {
@@ -64,18 +82,15 @@ export function useDataTableSort<T extends object>(
         return Number.isNaN(time) ? null : time
     }
 
-    // 升降序统一翻转比较结果，避免在 Date/数值/字符串分支重复书写
-    const applyDirection = (comparison: number): number =>
-        sortState.value.direction === 'asc' ? comparison : -comparison
-
     function sortedData(data: T[]): T[] {
-        if (!sortState.value.column || !sortState.value.direction) return data
-        const col = visibleColumns.value.find((c) => c.id === sortState.value.column)
-        if (!col) return data
+        if (!activeSort.value) return data
+        const { column, direction } = activeSort.value
+        const applyDirection = (comparison: number): number =>
+            direction === 'asc' ? comparison : -comparison
 
         return [...data].sort((a, b) => {
-            const valueA = getCellValue(a, col)
-            const valueB = getCellValue(b, col)
+            const valueA = getCellValue(a, column)
+            const valueB = getCellValue(b, column)
 
             // 空值（null/undefined/NaN）统一视为缺失值：无论升序还是降序都排在最后
             // （NaN !== NaN，需先归一化，否则 sort 回调返回 NaN 会导致顺序不可预测）
@@ -118,5 +133,5 @@ export function useDataTableSort<T extends object>(
         })
     }
 
-    return { sortState: readonly(sortState), toggleSort, sortedData }
+    return { sortState: readonly(sortState), toggleSort, sortedData, canSortColumn, activeSort: readonly(activeSort) }
 }
