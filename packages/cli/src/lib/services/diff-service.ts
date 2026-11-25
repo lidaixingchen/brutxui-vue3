@@ -13,30 +13,19 @@ import type {
 import { resolveRegistrySources } from '../registry-source.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
 import { ProjectContext } from '../project-context.js';
+import { projectRegistryFiles, resolveInstalledFile } from '../component-files.js';
 
 function normalizeLineEndings(content: string): string {
     return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 }
 
-function matchFileByPath(registryPath: string, localRelativePath: string, componentName: string): boolean {
+function legacyComponentFilePath(registryPath: string, componentName: string, managed: boolean): string | undefined {
     const normalizedRegistry = registryPath.replace(/\\/g, '/');
-    const normalizedLocal = localRelativePath.replace(/\\/g, '/');
-
-    // 标准布局：components/ui/<componentName>/<rest>，local 侧相对组件目录的路径与 <rest> 对齐
-    const dirPrefix = `${REGISTRY_PATH_PREFIXES.components}ui/${componentName}/`;
-    if (normalizedRegistry.startsWith(dirPrefix)) {
-        return normalizedRegistry.slice(dirPrefix.length) === normalizedLocal;
-    }
-
-    // 单文件组件：components/ui/<componentName>.<ext>（如 components/ui/button.ts），
-    // local 组件目录下对应同名文件；按文件名比较，避免单文件被误判为 added/removed
-    const filePrefix = `${REGISTRY_PATH_PREFIXES.components}ui/${componentName}.`;
-    if (normalizedRegistry.startsWith(filePrefix)) {
-        return path.basename(normalizedRegistry) === normalizedLocal;
-    }
-
-    // 兜底：registry 侧直接以文件名注册（无 components/ui/ 前缀）时与 local 相对路径逐字比较
-    return normalizedRegistry === normalizedLocal;
+    const prefix = `${REGISTRY_PATH_PREFIXES.components}ui/${componentName}`;
+    if (normalizedRegistry.startsWith(`${prefix}/`)) return normalizedRegistry.slice(prefix.length + 1);
+    if (normalizedRegistry.startsWith(`${prefix}.`)) return path.posix.basename(normalizedRegistry);
+    if (!managed) return normalizedRegistry;
+    return undefined;
 }
 
 function generateUnifiedDiff(
@@ -76,24 +65,10 @@ export async function getInstalledComponents(
 
 async function getLocalComponentFiles(
     context: ProjectContext,
-    componentName: string,
-    registryFiles: RegistryItem['files'] = [],
-): Promise<Array<{ relativePath: string; absolutePath: string }>> {
-    const componentPath = await context.resolveComponentDir(componentName);
-    const files: Array<{ relativePath: string; absolutePath: string }> = [];
-
-    for (const registryFile of registryFiles) {
-        const normalizedRegistryPath = registryFile.path.replace(/\\/g, '/');
-        const singleFilePrefix = `${REGISTRY_PATH_PREFIXES.components}ui/${componentName}.`;
-        if (!normalizedRegistryPath.startsWith(singleFilePrefix)) {
-            continue;
-        }
-
-        const absolutePath = await context.resolveTargetPath(registryFile.path);
-        if (await context.fs.pathExists(absolutePath)) {
-            files.push({ relativePath: path.posix.basename(normalizedRegistryPath), absolutePath });
-        }
-    }
+    componentPath: string,
+    manifestEntry?: InstalledComponentManifest,
+): Promise<Map<string, string>> {
+    const files = new Map<string, string>();
 
     async function walkDir(dir: string, relativeBase: string): Promise<void> {
         const entries = await context.fs.readdir(dir, { withFileTypes: true });
@@ -104,13 +79,19 @@ async function getLocalComponentFiles(
             if (entry.isDirectory()) {
                 await walkDir(fullPath, relativePath);
             } else {
-                files.push({ relativePath, absolutePath: fullPath });
+                files.set(fullPath, relativePath.split(path.sep).join('/'));
             }
         }
     }
 
     if (await context.fs.pathExists(componentPath)) {
         await walkDir(componentPath, '');
+    }
+    for (const recordedPath of manifestEntry?.files ?? []) {
+        const absolutePath = resolveInstalledFile(context, recordedPath);
+        if (await context.isSafePath(absolutePath) && await context.fs.pathExists(absolutePath)) {
+            files.set(absolutePath, context.toRelativePosixPath(absolutePath));
+        }
     }
     return files;
 }
@@ -165,13 +146,14 @@ export async function diffComponent(
 
     if (snapshot) onRegistryItem?.(snapshot);
 
-    const localFiles = await getLocalComponentFiles(context, componentName, registryItem?.files);
+    const componentPath = await context.resolveComponentDir(componentName);
+    const localFiles = await getLocalComponentFiles(context, componentPath, manifestEntry);
 
     if (!registryItem) {
         let status: DiffComponentStatus;
         if (registryError) {
             status = 'registry-unreachable';
-        } else if (localFiles.length > 0) {
+        } else if (localFiles.size > 0) {
             status = 'local-only';
         } else {
             status = 'not-installed';
@@ -187,56 +169,59 @@ export async function diffComponent(
 
     const fileDiffs: FileDiff[] = [];
 
-    for (const registryFile of registryItem.files) {
-        const localFile = localFiles.find((f) => matchFileByPath(registryFile.path, f.relativePath, componentName));
-
-        if (!localFile) {
-            fileDiffs.push({
-                path: registryFile.path,
-                status: 'added',
-            });
-            continue;
+    const matchedPaths = new Set<string>();
+    const recordedPaths = manifestEntry && new Set(manifestEntry.files.map(file => resolveInstalledFile(context, file)));
+    for (const { registryPath, absolutePath, relativePath, content } of await projectRegistryFiles(context, registryItem.files)) {
+        const addedPath = recordedPaths ? relativePath : registryPath;
+        let localPath = absolutePath;
+        if (!await context.fs.pathExists(absolutePath)) {
+            const legacyPath = legacyComponentFilePath(registryPath, componentName, recordedPaths !== undefined);
+            const legacyAbsolutePath = legacyPath && path.resolve(componentPath, legacyPath);
+            if (legacyAbsolutePath && localFiles.has(legacyAbsolutePath)
+                && (!recordedPaths || recordedPaths.has(legacyAbsolutePath))) {
+                localPath = legacyAbsolutePath;
+            } else {
+                fileDiffs.push({ path: addedPath, status: 'added' });
+                continue;
+            }
         }
+        matchedPaths.add(localPath);
 
         let localContent: string;
         try {
-            localContent = await context.fs.readFile(localFile.absolutePath, 'utf-8');
+            localContent = await context.fs.readFile(localPath, 'utf-8');
         } catch (error) {
             if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') {
                 fileDiffs.push({
-                    path: registryFile.path,
+                    path: addedPath,
                     status: 'added',
                 });
                 continue;
             }
             throw error;
         }
-        const normalizedRegistryContent = context.resolveImportAlias(registryFile.content);
-
-        if (normalizeLineEndings(localContent) === normalizeLineEndings(normalizedRegistryContent)) {
+        if (normalizeLineEndings(localContent) === normalizeLineEndings(content)) {
             fileDiffs.push({
-                path: registryFile.path,
+                path: registryPath,
                 status: 'unchanged',
             });
         } else {
             fileDiffs.push({
-                path: registryFile.path,
+                path: registryPath,
                 status: 'modified',
                 patch: generateUnifiedDiff(
-                    registryFile.path,
-                    normalizedRegistryContent,
+                    registryPath,
+                    content,
                     localContent
                 ),
             });
         }
     }
 
-    for (const localFile of localFiles) {
-        const isInRegistry = registryItem.files.some((f) => matchFileByPath(f.path, localFile.relativePath, componentName));
-
-        if (!isInRegistry) {
+    for (const [absolutePath, relativePath] of localFiles) {
+        if (!matchedPaths.has(absolutePath)) {
             fileDiffs.push({
-                path: localFile.relativePath,
+                path: relativePath,
                 status: 'removed',
             });
         }

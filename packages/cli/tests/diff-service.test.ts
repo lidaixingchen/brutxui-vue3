@@ -183,6 +183,34 @@ describe('diff service', () => {
         ]);
     });
 
+    it('reports the old and new project paths when a managed file moves to the root', async () => {
+        const content = 'export const button = {};\n';
+        const oldPath = 'src/components/ui/button/index.ts';
+        await fs.outputFile(path.join(tmpDir, oldPath), content);
+        await fs.outputFile(path.join(tmpDir, 'src/components/ui/button/custom.ts'), content);
+        const manifestEntry: InstalledComponentManifest = {
+            name: 'button',
+            registrySource: 'https://registry.example.test',
+            integrity: 'sha256-button',
+            installedAt: '2026-07-07T00:00:00.000Z',
+            files: [oldPath],
+            dependencies: [],
+            registryDependencies: [],
+            examples: [],
+        };
+        stubRegistryItem(makeRegistryItem('button', [{ path: 'index.ts', content, type: 'registry:ui' }]));
+
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'button', undefined, manifestEntry);
+
+        expect(result.status).toBe('modified');
+        expect(result.files).toEqual(expect.arrayContaining([
+            { path: 'index.ts', status: 'added' },
+            { path: oldPath, status: 'removed' },
+            { path: 'custom.ts', status: 'removed' },
+        ]));
+    });
+
     it('rejects component names that traverse outside the components directory', async () => {
         stubRegistryItem(makeRegistryItem('button', [
             {

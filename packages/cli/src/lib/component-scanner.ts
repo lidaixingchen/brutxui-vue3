@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { FileSystemAdapter } from './fs/index.js';
 import { SfcAstEngine } from 'brutx-shared-vue/ast';
+import { collectInstalledFilePaths } from './component-files.js';
 import type { BrutxManifest, InstalledComponentInfo, InstalledComponentManifest } from './types.js';
 import { readManifest } from './manifest.js';
 import { logger } from './logger.js';
@@ -173,11 +174,29 @@ export class ComponentScanner {
         const manifest = cachedManifest !== undefined
             ? cachedManifest
             : await readManifest(this.ctx.cwd, this.ctx.fs).catch(() => null);
-        const manifestNames = Object.keys(manifest?.components ?? {});
+        const manifestNames = new Set(Object.keys(manifest?.components ?? {}));
         const componentsPath = cachedComponentsPath ?? await this.ctx.resolveComponentsDir();
         const scannedNames = await getScannedComponentNames(componentsPath, this.ctx.fs);
+        const managedPaths = collectInstalledFilePaths(this.ctx, manifest, new Set());
+        const managedDirectories = new Set<string>();
+        for (const file of managedPaths) {
+            const relative = path.relative(componentsPath, file);
+            const [directory] = relative.split(path.sep);
+            if (directory && directory !== '..' && !path.isAbsolute(relative)) {
+                managedDirectories.add(directory);
+            }
+        }
+        const manualNames = await mapWithConcurrency(scannedNames, this.concurrency, async (name) => {
+            if (manifestNames.has(name)) return null;
+            if (!managedDirectories.has(name)) return name;
 
-        return [...new Set([...manifestNames, ...scannedNames])].sort();
+            const directory = path.join(componentsPath, name);
+            if (managedPaths.has(directory)) return null;
+            const files = await scanComponentFiles(directory, this.ctx.fs);
+            return files.some(file => !managedPaths.has(path.join(directory, file))) ? name : null;
+        });
+
+        return [...manifestNames, ...manualNames.filter(name => name !== null)].sort();
     }
 
     async getInstalledInfos(): Promise<InstalledComponentInfo[]> {

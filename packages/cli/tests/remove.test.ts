@@ -9,6 +9,8 @@ import { CliError } from '../src/lib/error.js';
 import { logger } from '../src/lib/logger.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
+import { updateInstalledComponents } from '../src/lib/manifest.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
     const original = await importOriginal<typeof project>();
@@ -188,6 +190,42 @@ describe('remove command', () => {
             expect(buttonLine).toMatch(/2 file/);
         });
 
+        it.each(['button', 'ui/button'])('previews the same removal count as execution for a shared file under %s', async (directory) => {
+            const buttonDir = await createComponent(directory, {
+                'Button.vue': '<template>btn</template>',
+                'button-variants.ts': 'export const variants = {};',
+                'shared.ts': 'export const shared = true;',
+            });
+            const cardDir = await createComponent('card', { 'Card.vue': '<template>card</template>' });
+            await createComponent('manual', { 'Manual.vue': '<template>manual</template>' });
+            const shared = path.join(buttonDir, 'shared.ts');
+            const registrySource = 'https://example.test/registry';
+            const client = new RegistryClient();
+            await updateInstalledComponents(tmpDir, [
+                {
+                    item: { ...await client.fetchItem('button'), integrity: 'sha256-button' },
+                    registrySource,
+                    files: [path.join(buttonDir, 'Button.vue'), path.join(buttonDir, 'button-variants.ts'), shared],
+                },
+                {
+                    item: { ...await client.fetchItem('card'), integrity: 'sha256-card' },
+                    registrySource,
+                    files: [path.join(cardDir, 'Card.vue'), shared],
+                },
+            ]);
+
+            await remove(['button'], { cwd: tmpDir, silent: true, dryRun: true, yes: true });
+            expect(getLoggedMessages(logSpy)).toContainEqual(expect.stringMatching(/button \(2 files\)/));
+            expect(getLoggedMessages(logSpy)).not.toContainEqual(expect.stringContaining('Orphaned files:'));
+            expect(await fs.pathExists(path.join(buttonDir, 'Button.vue'))).toBe(true);
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+            expect(getLoggedMessages(successSpy)).toContainEqual(expect.stringContaining('Removed 2 file(s)'));
+            expect(await fs.readdir(buttonDir)).toEqual(['shared.ts']);
+            const context = await ProjectContext.load(tmpDir);
+            expect(await context.getInstalledComponentNames()).toEqual(['card', 'manual']);
+        });
+
         it('should list orphaned files in dry-run output', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             await createComponent('button', {
@@ -355,6 +393,30 @@ describe('remove command', () => {
 
             const infoMessages = getLoggedMessages(infoSpy);
             expect(infoMessages.some(m => m.includes('Removal cancelled'))).toBe(true);
+        });
+
+        it('asks the user to rerun removal after a component is reinstalled while confirmation is pending', async () => {
+            const buttonDir = await createComponent('button', { 'Button.vue': '<template>original</template>' });
+            const file = path.join(buttonDir, 'Button.vue');
+            const client = new RegistryClient();
+            const entry = {
+                item: { ...await client.fetchItem('button'), integrity: 'sha256-button' },
+                registrySource: 'https://example.test/registry',
+                files: [file],
+            };
+            await updateInstalledComponents(tmpDir, [entry]);
+            mockedConfirm.mockImplementationOnce(async () => {
+                await fs.writeFile(file, '<template>reinstalled</template>');
+                await updateInstalledComponents(tmpDir, [entry]);
+                return true;
+            });
+
+            await expect(remove(['button'], { cwd: tmpDir, silent: true })).rejects.toMatchObject({
+                code: 'ACTION_CONFLICT',
+                message: 'Component "button" changed while removal was pending. Run remove again.',
+            });
+
+            expect(await fs.readFile(file, 'utf-8')).toBe('<template>reinstalled</template>');
         });
 
         it('should prompt for confirmation when --yes is not set', async () => {

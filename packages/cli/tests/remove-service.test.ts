@@ -6,6 +6,7 @@ import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
 import { readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
 import {
+    findFilesReferencedByInstalledComponents,
     prepareRemoveComponents,
     removeComponents,
 } from '../src/lib/services/remove-service.js';
@@ -285,6 +286,116 @@ describe('remove service', () => {
         expect(removal.remaining).toEqual(['card']);
         expect(removal.dependents.get('button')).toEqual(['card']);
         expect(removal.orphanedFiles).toEqual([orphanFile]);
+    });
+
+    it('resolves references from planned file contents and unchanged installed files', async () => {
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), {
+            compilerOptions: { paths: { '@/*': ['./src/*'], '@shared/*': ['./src/shared/*'] } },
+        });
+        const [oldImporter] = await writeComponent(tmpDir, 'card', {
+            'index.ts': "import '@/shared/retired';",
+        });
+        const [unchangedImporter] = await writeComponent(tmpDir, 'button', {
+            'keep.ts': "export * from '../../shared/unchanged';",
+        });
+        const newImporter = path.join(path.dirname(oldImporter), 'projected.ts');
+        const candidates = ['retired', 'relative', 'alias', 'unchanged'].map(file => path.join(tmpDir, 'src/shared', `${file}.ts`));
+        await Promise.all(candidates.map(file => fs.outputFile(file, 'export {};')));
+        const registrySource = 'https://example.test/registry';
+        await updateInstalledComponents(tmpDir, [
+            { item: makeRegistryItem('card'), registrySource, files: [oldImporter] },
+            { item: makeRegistryItem('button'), registrySource, files: [unchangedImporter] },
+        ]);
+        const manifest = (await readManifest(tmpDir))!;
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+
+        const referenced = await findFilesReferencedByInstalledComponents(context, manifest, candidates, new Set(['card']), new Map([
+            [newImporter, { componentName: 'card', content: "export * from '../../shared/relative.js';\nimport '@shared/alias';" }],
+        ]));
+
+        expect(referenced).toEqual(new Set(candidates.slice(1)));
+    });
+
+    it('waits for the project write lock before checking new ownership and removing anything', async () => {
+        const fsAdapter = new MemoryFileSystemAdapter();
+        const { context, cwd, componentFiles, orphanFiles } = await createMemoryProject(fsAdapter, ['alpha', 'beta'], ['shared']);
+        const alpha = componentFiles.get('alpha')!;
+        const beta = componentFiles.get('beta')!;
+        const shared = orphanFiles.get('shared')!;
+        const existingWriter = context.createTransaction();
+        await existingWriter.lockProjectWrites();
+
+        const removal = removeComponents(context, ['alpha'], [shared]);
+        const registrySource = 'https://example.test/registry';
+        let presentWhileLocked: boolean;
+        try {
+            await waitForCurrentTurn();
+            presentWhileLocked = await fsAdapter.pathExists(alpha);
+            await updateInstalledComponents(cwd, [{
+                item: makeRegistryItem('beta'), registrySource, files: [beta, alpha, shared],
+            }], { transaction: existingWriter }, fsAdapter);
+        } finally {
+            await existingWriter.commit();
+        }
+
+        expect(await removal).toEqual({ totalRemoved: 0, orphanedRemoved: 0 });
+        expect(presentWhileLocked).toBe(true);
+        expect(await fsAdapter.pathExists(alpha)).toBe(true);
+        expect(await fsAdapter.pathExists(shared)).toBe(true);
+        expect(Object.keys((await readManifest(cwd, fsAdapter))!.components)).toEqual(['beta']);
+    });
+
+    it.each(['card', 'manual'])('keeps a previewed orphan when %s adds an AST reference', async (component) => {
+        const { orphanFile } = await seedProject(tmpDir);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        expect(preview.orphanedFiles).toEqual([orphanFile]);
+        await writeComponent(tmpDir, component, { 'keep.ts': "export * from '../../composables/useButton.js';" });
+        const unconfirmed = path.join(path.dirname(orphanFile), 'unconfirmed.ts');
+        await fs.writeFile(unconfirmed, 'export {};');
+
+        const result = await removeComponents(context, preview.toRemove, [...preview.orphanedFiles, unconfirmed], {
+            removeOrphaned: true,
+            confirmation: preview.confirmation,
+        });
+
+        expect(result).toEqual({ totalRemoved: 2, orphanedRemoved: 0 });
+        expect(await fs.pathExists(orphanFile)).toBe(true);
+        expect(await fs.pathExists(unconfirmed)).toBe(true);
+    });
+
+    it('keeps files excluded from the preview after a remaining component releases their ownership', async () => {
+        const { cardFiles } = await seedProject(tmpDir);
+        const [sharedFile] = await writeComponent(tmpDir, 'button', { 'shared.ts': 'export {};' });
+        const registrySource = 'https://example.test/registry';
+        const item = makeRegistryItem('card', ['button']);
+        await updateInstalledComponents(tmpDir, [{ item, registrySource, files: [...cardFiles, sharedFile] }]);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        await updateInstalledComponents(tmpDir, [{ item, registrySource, files: cardFiles }]);
+
+        const result = await removeComponents(context, preview.toRemove, [], {
+            removeOrphaned: false,
+            confirmation: preview.confirmation,
+        });
+
+        expect(result).toEqual({ totalRemoved: 2, orphanedRemoved: 0 });
+        expect(await fs.pathExists(sharedFile)).toBe(true);
+    });
+
+    it('honors the existing files in a legacy component directory when another file appears after preview', async () => {
+        const [installedFile] = await writeComponent(tmpDir, 'button', { 'Button.vue': '<template>btn</template>' });
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        const [newFile] = await writeComponent(tmpDir, 'button', { 'local.ts': 'export {};' });
+
+        await expect(removeComponents(context, preview.toRemove, preview.orphanedFiles, {
+            removeOrphaned: true,
+            confirmation: preview.confirmation,
+        })).rejects.toMatchObject({ code: 'ACTION_CONFLICT' });
+
+        expect(await fs.pathExists(installedFile)).toBe(true);
+        expect(await fs.pathExists(newFile)).toBe(true);
     });
 
     it('waits for concurrent component removals to settle before rolling back', async () => {

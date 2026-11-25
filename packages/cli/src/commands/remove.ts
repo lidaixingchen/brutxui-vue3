@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { RemoveOptions } from '../lib/types.js';
-import { CliError, readManifest, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
+import { CliError, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
 import {
     countComponentFiles,
     prepareRemoveComponents,
@@ -57,9 +57,8 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         });
     }
 
-    const manifest = await readManifest(cwd).catch(() => null);
     const useCache = options.cache !== false;
-    const removal = await prepareRemoveComponents(context, components, manifest, useCache);
+    const removal = await prepareRemoveComponents(context, components, null, useCache);
 
     if (removal.notFound.length > 0) {
         logger.warn(`Component(s) not installed: ${removal.notFound.join(', ')}`);
@@ -90,10 +89,11 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
 
         // 各组件文件计数相互独立，并行执行避免组件较多时逐个串行等待；
         // 单个组件计数失败（权限不足等真实错误）降级为 null 提示，不中断其余组件的 dry-run 展示
+        const retainedPaths = removal.confirmation.retainedPaths;
         const fileCounts = await Promise.all(
             removal.toRemove.map(async (comp) => ({
                 comp,
-                fileCount: await countComponentFiles(context, comp).catch(() => null),
+                fileCount: await countComponentFiles(context, comp, retainedPaths).then(count => count ?? 0).catch(() => null),
             })),
         );
 
@@ -148,6 +148,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
             removal.orphanedFiles,
             {
                 removeOrphaned,
+                confirmation: removal.confirmation,
                 onRemoveComponent: (componentName, fileCount) => {
                     logger.info(`Removing ${componentName} (${fileCount} files)...`);
                 },
@@ -156,6 +157,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         totalRemoved = result.totalRemoved;
         orphanedRemoved = result.orphanedRemoved;
     } catch (error) {
+        if (error instanceof CliError && error.code === 'ACTION_CONFLICT') throw error;
         const rollbackFailures = getRollbackFailures(error);
         if (rollbackFailures.length > 0) {
             logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
