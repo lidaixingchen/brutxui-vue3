@@ -87,7 +87,7 @@ The sketchiness prop controls the hand-drawn jitter amplitude. Higher values pro
 - **Invalid values**: Any `NaN`, infinity, or negative pie value invalidates the entire graphic. The table identifies invalid cells while preserving every label.
 - **Empty and zero data**: Empty arrays show an empty state. All-zero lines and bars still render zero values. All-zero pies show a zero-total state with unavailable percentages.
 - **Complete categories**: Datasets above 30 items retain all data and endpoints; only visible category ticks are thinned. Use the complete table for dense data.
-- **Formatting**: `valueFormatter` consistently formats ticks, legends, and table values, receives only valid finite numbers, and should be deterministic and side-effect-free. Percentages use locale formatting independently; rounded values may not total 100%.
+- **Formatting** uses `valueFormatter` for full readings. It receives only valid finite numbers and should be deterministic and side-effect-free. Narrow charts shorten category labels and can switch vertical ticks to localized numbers or scientific notation. Tooltips and the data table retain full readings. Percentages use separate locale formatting and may round to a total other than 100%.
 
 ## Data Semantics Migration
 
@@ -137,7 +137,7 @@ In your application, update the reactive input directly; the delay is for demons
 
 ## Consistent Formatting Example
 
-Amounts use `Intl.NumberFormat` to display Chinese yuan. Compare the axis ticks, tooltip, legend, and table: they share the same `valueFormatter`. Pie shares are still calculated from the original amounts and formatted separately.
+Amounts use `Intl.NumberFormat` to display Chinese yuan. The tooltip, legend, and table show the full amount. Axis ticks use the same format when space permits. Pie shares are calculated from the original amounts and formatted separately.
 
 <ComponentPreview align="start">
   <SketchyChartFormattingDemo />

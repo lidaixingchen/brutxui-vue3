@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useId, watch, type ComputedRef, type Ref, type CSSProperties, type VNode } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch, type ComputedRef, type Ref, type CSSProperties, type VNode } from 'vue'
 import { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent, TooltipRoot, TooltipProvider, TooltipTrigger } from 'reka-ui'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
-import { cancelAnimationFrame, getDocument, getResizeObserverCtor, requestAnimationFrame } from '@/lib/env'
+import { cancelAnimationFrame, getResizeObserverCtor, requestAnimationFrame } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Slider from '../slider/Slider.vue'
@@ -19,8 +19,9 @@ import { sketchyChartVariants } from './sketchy-chart-variants'
 import { SKETCHY_CHART_DEFAULT_WIDTH_PX, SKETCHY_CHART_DEFAULT_HEIGHT_PX } from '@/lib/defaults'
 import {
     createChartModel, createChartTicks, chartYPosition, createPieGeometry,
+    cartesianLabelFontSize, cartesianX, createCartesianLayout, hitCartesianChart, measureCartesianLayout,
     CHART_PADDING, PIE_RADIUS_RATIO, PERCENTAGE_DECIMAL_PLACES, PERCENTAGE_MULTIPLIER,
-    type ChartDataItem, type ChartDatum, type ChartModel, type ChartTick, type ChartType, type PieGeometry,
+    type CartesianLayout, type CartesianLayoutInput, type ChartDataItem, type ChartDatum, type ChartModel, type ChartType, type PieGeometry,
 } from './sketchy-chart-data'
 
 interface SketchyChartProps {
@@ -41,7 +42,6 @@ interface ChartReading extends ChartDatum {
     formattedPercentage: string
     color: string
 }
-interface PositionedTick extends ChartTick { y: number }
 interface TooltipReading {
     index: number
     label: string
@@ -51,7 +51,6 @@ interface TooltipReading {
     formattedPercentage: string | undefined
 }
 interface ChartPoint { x: number; y: number }
-interface ChartLabelMetrics { yAxisWidth: number; categoryWidths: number[] }
 defineSlots<{ tooltip?: (reading: TooltipReading) => VNode[] }>()
 
 const DEFAULT_SKETCHINESS: number = 2
@@ -61,16 +60,9 @@ const POINT_RADIUS: number = 6
 const DASH_PATTERN: string = '4 4'
 const LABEL_OFFSET: number = 4
 const BAR_GAP_RATIO: number = 0.25
-const MINIMUM_PLOT_SIZE: number = 1
-const CATEGORY_LABEL_GAP_PX: number = 8
-const AXIS_LABEL_FONT_SIZE_PX: number = 12
-const AXIS_LABEL_GAP_PX: number = 12
-const AXIS_LABEL_DESCENT_RATIO: number = 0.25
-const X_AXIS_LABEL_OFFSET_PX: number = 8
-const Y_AXIS_LABEL_OFFSET_PX: number = 2
-const PLOT_EDGE_GUTTER_PX: number = 4
 const EMPTY_STATE_FONT_SIZE_PX: number = 14
 const NUMBER_SIGNIFICANT_DIGITS: number = 12
+const AXIS_SCIENTIFIC_PRECISIONS: readonly number[] = [3, 2, 1]
 const HATCH_TILE_SIZE: number = 10
 const PIE_COLORS: readonly string[] = [
     'var(--brutal-primary, #FF6B6B)', 'var(--brutal-secondary, #4ECDC4)',
@@ -110,6 +102,8 @@ const chartDescription: ComputedRef<string> = computed((): string =>
     [props.description, chartAriaLabel.value, stateText.value].filter(Boolean).join(' · '))
 const numberFormat: ComputedRef<Intl.NumberFormat> = computed((): Intl.NumberFormat =>
     new Intl.NumberFormat(locale.value.code ?? 'zh-CN', { maximumSignificantDigits: NUMBER_SIGNIFICANT_DIGITS }))
+const scientificNumberFormats = computed(() => AXIS_SCIENTIFIC_PRECISIONS.map((maximumSignificantDigits) =>
+    new Intl.NumberFormat(locale.value.code ?? 'zh-CN', { notation: 'scientific', maximumSignificantDigits }).format))
 const percentageFormat: ComputedRef<Intl.NumberFormat> = computed((): Intl.NumberFormat =>
     new Intl.NumberFormat(locale.value.code ?? 'zh-CN', { style: 'percent', maximumFractionDigits: PERCENTAGE_DECIMAL_PLACES }))
 function formatValue(value: number): string {
@@ -134,81 +128,44 @@ function safeDimension(value: number, fallback: number, padding: number): number
     return Number.isFinite(value) && value > padding ? value : fallback
 }
 const graph: Ref<SVGSVGElement | null> = ref(null)
+const labelProbe: Ref<SVGGElement | null> = ref(null)
 const chartWidth: ComputedRef<number> = computed((): number => safeDimension(props.width, SKETCHY_CHART_DEFAULT_WIDTH_PX, CHART_PADDING.left + CHART_PADDING.right))
 const chartHeight: ComputedRef<number> = computed((): number => safeDimension(props.height, SKETCHY_CHART_DEFAULT_HEIGHT_PX, CHART_PADDING.top + CHART_PADDING.bottom))
 const renderedGraphWidth: Ref<number> = ref(0)
 const graphScale: ComputedRef<number> = computed((): number => renderedGraphWidth.value > 0 ? renderedGraphWidth.value / chartWidth.value : 1)
-const axisLabelFontSize: ComputedRef<number> = computed((): number => AXIS_LABEL_FONT_SIZE_PX / graphScale.value)
+const axisLabelFontSize: ComputedRef<number> = computed((): number => cartesianLabelFontSize(chartHeight.value, graphScale.value))
 const emptyStateFontSize: ComputedRef<number> = computed((): number => EMPTY_STATE_FONT_SIZE_PX / graphScale.value)
-const labelMetrics: Ref<ChartLabelMetrics> = ref({ yAxisWidth: 0, categoryWidths: [] })
-const chartLeftPadding: ComputedRef<number> = computed((): number => Math.max(
-    CHART_PADDING.left,
-    labelMetrics.value.yAxisWidth + (AXIS_LABEL_GAP_PX + PLOT_EDGE_GUTTER_PX) / graphScale.value,
-))
-const chartTopPadding: ComputedRef<number> = computed((): number => Math.max(
-    CHART_PADDING.top,
-    (AXIS_LABEL_FONT_SIZE_PX - Y_AXIS_LABEL_OFFSET_PX + PLOT_EDGE_GUTTER_PX) / graphScale.value,
-))
-const chartBottomPadding: ComputedRef<number> = computed((): number => Math.max(
-    CHART_PADDING.bottom,
-    (X_AXIS_LABEL_OFFSET_PX + AXIS_LABEL_FONT_SIZE_PX * AXIS_LABEL_DESCENT_RATIO + PLOT_EDGE_GUTTER_PX) / graphScale.value,
-))
-const categoryLabelGap: ComputedRef<number> = computed((): number => CATEGORY_LABEL_GAP_PX / graphScale.value)
-const plotWidth: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartWidth.value - chartLeftPadding.value - CHART_PADDING.right))
-const plotHeight: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartHeight.value - chartTopPadding.value - chartBottomPadding.value))
+const layoutInput: ComputedRef<CartesianLayoutInput> = computed((): CartesianLayoutInput => ({
+    type: props.type === 'bar' ? 'bar' : 'line',
+    width: chartWidth.value,
+    height: chartHeight.value,
+    scale: graphScale.value,
+    items: props.type === 'pie' ? [] : processedData.value,
+    ticks: props.type === 'pie' || model.value.state !== 'ready' ? [] : createChartTicks(model.value, formatValue),
+    formatNumber: numberFormat.value.format,
+    scientificNumberFormats: scientificNumberFormats.value,
+}))
+const measuredLayout = shallowRef<{ input: CartesianLayoutInput; result: CartesianLayout }>()
+const layout: ComputedRef<CartesianLayout> = computed((): CartesianLayout => measuredLayout.value?.input === layoutInput.value
+    ? measuredLayout.value.result : createCartesianLayout(layoutInput.value))
 function dataToSvgX(index: number): number {
-    const count: number = processedData.value.length
-    const position: number = props.type === 'bar' ? (index + 0.5) / count : count <= 1 ? 0.5 : index / (count - 1)
-    return chartLeftPadding.value + position * plotWidth.value
+    return cartesianX(layout.value.plot, layoutInput.value.type, index, processedData.value.length)
 }
 function dataToSvgY(value: number): number {
-    return chartTopPadding.value + chartYPosition(value, model.value) * plotHeight.value
+    const { top, height } = layout.value.plot
+    return top + chartYPosition(value, model.value) * height
 }
 const zeroY: ComputedRef<number> = computed((): number => dataToSvgY(0))
 const linePath: ComputedRef<string> = computed((): string => processedData.value
     .map((item: ChartDatum, index: number): string => `${index === 0 ? 'M' : 'L'} ${dataToSvgX(index)} ${dataToSvgY(item.value)}`).join(' '))
 const lineAreaPath: ComputedRef<string> = computed((): string => processedData.value.length === 0 ? '' :
     `${linePath.value} L ${dataToSvgX(processedData.value.length - 1)} ${zeroY.value} L ${dataToSvgX(0)} ${zeroY.value} Z`)
-const barWidth: ComputedRef<number> = computed((): number => processedData.value.length === 0 ? 0 : plotWidth.value / processedData.value.length * (1 - BAR_GAP_RATIO))
+const barWidth: ComputedRef<number> = computed((): number => processedData.value.length === 0 ? 0 : layout.value.plot.width / processedData.value.length * (1 - BAR_GAP_RATIO))
 function getBarX(index: number): number {
     return dataToSvgX(index) - barWidth.value / 2
 }
-function categoryLabelX(item: ChartDatum): number {
-    const dataPosition: number = dataToSvgX(item.index)
-    const width: number = labelMetrics.value.categoryWidths[item.index] ?? 0
-    const anchorOffset: number = item.index === 0 ? 0 : item.index === processedData.value.length - 1 ? width : width / 2
-    const gutter: number = PLOT_EDGE_GUTTER_PX / graphScale.value
-    return Math.min(chartWidth.value - gutter - width + anchorOffset, Math.max(gutter + anchorOffset, dataPosition))
-}
 const pieSlices: ComputedRef<Array<PieGeometry & { color: string }>> = computed((): Array<PieGeometry & { color: string }> =>
     createPieGeometry(model.value, chartWidth.value, chartHeight.value).map((slice: PieGeometry): PieGeometry & { color: string } => ({ ...slice, color: PIE_COLORS[slice.index % PIE_COLORS.length]! })))
-const yTicks: ComputedRef<PositionedTick[]> = computed((): PositionedTick[] => model.value.state === 'invalid' || model.value.state === 'empty' ? [] :
-    createChartTicks(model.value, formatValue).map((tick: ChartTick): PositionedTick => ({ ...tick, y: chartTopPadding.value + tick.position * plotHeight.value })))
-const visibleCategories: ComputedRef<Set<number>> = computed((): Set<number> => {
-    const items: ChartDatum[] = processedData.value
-    const selected: Set<number> = new Set(items.slice(0, 1).map(item => item.index))
-    if (items.length <= 1) return selected
-    const widths: number[] = labelMetrics.value.categoryWidths
-    if (widths.length !== items.length) return selected
-    const first: ChartDatum = items[0]!
-    const last: ChartDatum = items[items.length - 1]!
-    let occupiedRight: number = categoryLabelX(first) + (widths[first.index] ?? 0)
-    const lastLeft: number = categoryLabelX(last) - (widths[last.index] ?? 0)
-    if (lastLeft < occupiedRight + categoryLabelGap.value) return selected
-
-    for (const item of items.slice(1, -1)) {
-        const center: number = categoryLabelX(item)
-        const halfWidth: number = (widths[item.index] ?? 0) / 2
-        const left: number = center - halfWidth
-        const right: number = center + halfWidth
-        if (left >= occupiedRight + categoryLabelGap.value && right <= lastLeft - categoryLabelGap.value) {
-            selected.add(item.index)
-            occupiedRight = right
-        }
-    }
-    selected.add(last.index)
-    return selected
-})
 const isEmpty: ComputedRef<boolean> = computed((): boolean => model.value.state !== 'ready')
 const containerClasses: ComputedRef<string> = computed((): string => cn(sketchyChartVariants(), props.class))
 const statusClasses: ComputedRef<string> = computed((): string => cn('rounded-brutal border-2 border-brutal p-3', FOCUS_RING_CLASSES))
@@ -244,9 +201,7 @@ function hit(event: PointerEvent): number | null {
         }
         return null
     }
-    if (point.x < chartLeftPadding.value || point.x > chartWidth.value - CHART_PADDING.right || point.y < chartTopPadding.value || point.y > chartHeight.value - chartBottomPadding.value) return null
-    const position: number = (point.x - chartLeftPadding.value) / plotWidth.value
-    return props.type === 'line' ? Math.round(position * (readings.value.length - 1)) : Math.min(readings.value.length - 1, Math.floor(position * readings.value.length))
+    return hitCartesianChart(layout.value.plot, props.type, processedData.value.length, point.x, point.y, graphScale.value)
 }
 const interaction: ReturnType<typeof useChartInteraction> = useChartInteraction({
     data: (): ChartDataItem[] => props.data, type: (): ChartType => props.type,
@@ -279,43 +234,42 @@ function readingText(index: number): string {
     return [item.label, item.formattedValue, props.type === 'pie' ? item.formattedPercentage : undefined,
         t('sketchyChart.positionText', { position: index + INDEX_STEP, count: readings.value.length })].filter(Boolean).join(' · ')
 }
-function updateLabelMetrics(): void {
-    const svg: SVGSVGElement | null = graph.value
-    if (!svg) return
-    const yAxisWidth: number = Math.max(0, ...Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-y-tick]'), (label: SVGTextElement): number => label.getComputedTextLength()))
-    const categoryWidths: number[] = Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-category]'), (label: SVGTextElement): number => label.getComputedTextLength())
-    labelMetrics.value = { yAxisWidth, categoryWidths }
-}
 let labelMeasureFrame: number | null = null
-function scheduleLabelMetrics(): void {
-    if (!graph.value || labelMeasureFrame !== null) return
+function scheduleLayoutMeasurement(): void {
+    if (!labelProbe.value || labelMeasureFrame !== null) return
     labelMeasureFrame = requestAnimationFrame((): void => {
         labelMeasureFrame = null
-        updateLabelMetrics()
+        const probe: SVGGElement | null = labelProbe.value
+        if (!probe || !graph.value?.getBoundingClientRect().width) return
+        const input: CartesianLayoutInput = layoutInput.value
+        measuredLayout.value = { input, result: measureCartesianLayout(input, probe) }
     })
 }
-watch([yTicks, processedData, axisLabelFontSize], scheduleLabelMetrics, { flush: 'post' })
+watch(layoutInput, scheduleLayoutMeasurement, { flush: 'post' })
 let graphResizeObserver: ResizeObserver | null = null
 let chartFonts: FontFaceSet | null = null
 onMounted((): void => {
     portalTarget.value = root.value?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]') ?? root.value?.ownerDocument.body
     const graphElement: SVGSVGElement | null = graph.value
     if (!graphElement) return
-    const updateWidth = (): void => { renderedGraphWidth.value = graphElement.getBoundingClientRect().width }
+    const updateWidth = (): void => {
+        renderedGraphWidth.value = graphElement.getBoundingClientRect().width
+        scheduleLayoutMeasurement()
+    }
     updateWidth()
     const ResizeObserverCtor = getResizeObserverCtor()
     if (ResizeObserverCtor) {
         graphResizeObserver = new ResizeObserverCtor(updateWidth)
         graphResizeObserver.observe(graphElement)
     }
-    chartFonts = getDocument()?.fonts ?? null
-    chartFonts?.addEventListener('loadingdone', scheduleLabelMetrics)
-    void chartFonts?.ready.then(scheduleLabelMetrics)
+    chartFonts = graphElement.ownerDocument.fonts ?? null
+    chartFonts?.addEventListener('loadingdone', scheduleLayoutMeasurement)
+    void chartFonts?.ready.then(scheduleLayoutMeasurement)
 })
 onBeforeUnmount((): void => {
     graphResizeObserver?.disconnect()
     graphResizeObserver = null
-    chartFonts?.removeEventListener('loadingdone', scheduleLabelMetrics)
+    chartFonts?.removeEventListener('loadingdone', scheduleLayoutMeasurement)
     chartFonts = null
     if (labelMeasureFrame !== null) cancelAnimationFrame(labelMeasureFrame)
     labelMeasureFrame = null
@@ -386,11 +340,11 @@ onBeforeUnmount((): void => {
             <!-- 背景网格线 -->
             <g v-if="grid && type !== 'pie'" class="chart-grid">
                 <line
-                    v-for="tick in yTicks"
+                    v-for="tick in layout.ticks"
                     :key="'grid-' + tick.index"
-                    :x1="chartLeftPadding"
+                    :x1="layout.plot.left"
                     :y1="tick.y"
-                    :x2="chartWidth - CHART_PADDING.right"
+                    :x2="layout.plot.right"
                     :y2="tick.y"
                     stroke="var(--brutal-muted, #f3f4f6)"
                     stroke-width="1.5"
@@ -402,18 +356,18 @@ onBeforeUnmount((): void => {
             <g v-if="type !== 'pie'" :filter="`url(#${filterId})`" class="chart-axes">
                 <!-- Y 轴 -->
                 <line
-                    :x1="chartLeftPadding"
-                    :y1="chartTopPadding"
-                    :x2="chartLeftPadding"
-                    :y2="chartHeight - chartBottomPadding"
+                    :x1="layout.plot.left"
+                    :y1="layout.plot.top"
+                    :x2="layout.plot.left"
+                    :y2="layout.plot.bottom"
                     stroke="var(--brutal-border-color, #000000)"
                     :stroke-width="CHART_STROKE_WIDTH"
                 />
                 <!-- X 轴 -->
                 <line
-                    :x1="chartLeftPadding"
+                    :x1="layout.plot.left"
                     :y1="zeroY"
-                    :x2="chartWidth - CHART_PADDING.right"
+                    :x2="layout.plot.right"
                     :y2="zeroY"
                     stroke="var(--brutal-border-color, #000000)"
                     :stroke-width="CHART_STROKE_WIDTH"
@@ -488,31 +442,35 @@ onBeforeUnmount((): void => {
             </g>
 
             <!-- 坐标轴文本与刻度标签 -->
-            <g v-if="type !== 'pie'" class="chart-labels" fill="var(--brutal-fg, #000000)" :font-size="axisLabelFontSize" font-weight="bold">
-                <!-- Y 轴刻度标签 -->
-                <text
-                    v-for="tick in yTicks"
-                    :key="'lbl-y-' + tick.index"
-                    data-chart-y-tick
-                    :x="chartLeftPadding - AXIS_LABEL_GAP_PX / graphScale"
-                    :y="tick.y + Y_AXIS_LABEL_OFFSET_PX / graphScale"
-                    text-anchor="end"
-                >
-                    {{ tick.text }}
-                </text>
+            <g v-if="type !== 'pie'" fill="var(--brutal-fg, #000000)" :font-size="axisLabelFontSize" font-weight="bold">
+                <g class="chart-labels">
+                    <!-- Y 轴刻度标签 -->
+                    <text
+                        v-for="tick in layout.ticks"
+                        :key="'lbl-y-' + tick.index"
+                        data-chart-y-tick
+                        :x="layout.axisLabelX"
+                        :y="tick.y + layout.tickLabelOffset"
+                        :visibility="tick.text ? undefined : 'hidden'"
+                        text-anchor="end"
+                    >
+                        {{ tick.text }}
+                    </text>
 
-                <!-- X 轴刻度标签 -->
-                <text
-                    v-for="d in processedData"
-                    :key="'lbl-x-' + d.index"
-                    :x="categoryLabelX(d)"
-                    :y="chartHeight - chartBottomPadding + X_AXIS_LABEL_OFFSET_PX / graphScale"
-                    :data-chart-category="d.index"
-                    :visibility="visibleCategories.has(d.index) ? undefined : 'hidden'"
-                    :text-anchor="d.index === 0 ? 'start' : d.index === processedData.length - 1 ? 'end' : 'middle'"
-                >
-                    {{ d.label }}
-                </text>
+                    <!-- X 轴刻度标签 -->
+                    <text
+                        v-for="label in layout.categories"
+                        :key="'lbl-x-' + label.index"
+                        :x="label.x"
+                        :y="layout.categoryLabelY"
+                        :data-chart-category="label.index"
+                        :visibility="label.visible ? undefined : 'hidden'"
+                        :text-anchor="label.anchor"
+                    >
+                        {{ label.visible ? label.text : '' }}
+                    </text>
+                </g>
+                <g ref="labelProbe" visibility="hidden" aria-hidden="true" />
             </g>
 
             <!-- 暂无数据提示 (Empty State) -->
