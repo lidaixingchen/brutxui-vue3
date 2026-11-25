@@ -7,7 +7,13 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { SfcAstEngine } from './ast/index.js';
+import {
+    createModuleResolver,
+    type ModuleAlias,
+    type ModuleResolver,
+    type ModuleResolverOptions,
+} from './module-resolver.js';
+import { isInsideDir, toPosixPath } from './path.js';
 import type { ComponentFileManifest } from './registry-manifest.types.js';
 import {
     DEFAULT_LIB_EXCLUDE,
@@ -17,11 +23,16 @@ import {
 
 export type { ComponentFileManifest } from './registry-manifest.types.js';
 
-export interface ScanOptions {
+export interface ComponentSourceDirectories {
     componentsDir: string;
     composablesDir: string;
     libDir: string;
     directivesDir: string;
+    localesDir?: string;
+    typesDir?: string;
+}
+
+export interface ScanOptions extends ComponentSourceDirectories {
     /** 排除的 lib 文件集合，未指定时默认使用 DEFAULT_LIB_EXCLUDE */
     libExclude?: ReadonlySet<string>;
     /**
@@ -33,24 +44,47 @@ export interface ScanOptions {
     manifestOverrides?: Record<string, Partial<Pick<ComponentFileManifest, 'directives'>>> | false;
 }
 
-const ALIAS_PREFIXES = {
-    composables: '@/composables/',
-    lib: '@/lib/',
-    directives: '@/directives/',
-} as const;
-
-/** 统一为 POSIX 分隔符，避免 Windows 反斜杠干扰路径前缀比较 */
-const toPosix = (p: string): string => p.replace(/\\/g, '/');
-
-function resolveExtension(rawFileName: string, baseDir: string): string | null {
-    if (path.extname(rawFileName)) return rawFileName;
-    if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
-    // 校验存在性后再返回 .ts，避免干净检出下解析到不存在的文件导致 readFileSync 崩溃
-    if (fs.existsSync(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
-    return null;
+export function createComponentModuleResolver(
+    directories: ComponentSourceDirectories,
+    fileExists?: ModuleResolverOptions['fileExists'],
+): ModuleResolver {
+    const sourceRoot = path.resolve(directories.componentsDir, '..');
+    const sourceDirectories = {
+        components: directories.componentsDir,
+        composables: directories.composablesDir,
+        directives: directories.directivesDir,
+        lib: directories.libDir,
+        locales: directories.localesDir,
+        types: directories.typesDir,
+    };
+    const aliases: ModuleAlias[] = [
+        { find: '@', replacement: sourceRoot },
+        { find: '@/components/ui', replacement: path.resolve(directories.componentsDir) },
+    ];
+    let rootDir = sourceRoot;
+    for (const [name, directory] of Object.entries(sourceDirectories)) {
+        if (!directory) continue;
+        const absoluteDir = path.resolve(directory);
+        if (absoluteDir !== path.join(sourceRoot, name)) {
+            aliases.push({ find: `@/${name}`, replacement: absoluteDir });
+        }
+        while (!isInsideDir(rootDir, absoluteDir)) rootDir = path.dirname(rootDir);
+    }
+    const tsconfigPath = path.resolve(sourceRoot, '../tsconfig.json');
+    return createModuleResolver({
+        rootDir,
+        tsconfigPath: !fileExists && fs.existsSync(tsconfigPath) ? tsconfigPath : undefined,
+        viteAliases: aliases,
+        fileExists,
+    });
 }
 
-const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/;
+export function relativeModulePath(directory: string, filename: string): string | undefined {
+    const relativePath = path.relative(directory, filename);
+    return relativePath && isInsideDir(directory, filename) ? toPosixPath(relativePath) : undefined;
+}
+
+const TEST_FILE_PATTERN = /\.(?:test|spec)\.[cm]?[jt]sx?$/u;
 
 /**
  * `index.ts` barrel files are auto-generated derived artifacts (produced by
@@ -61,6 +95,11 @@ const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/;
  * The registry build generates index.ts content inline instead.
  */
 const DERIVED_BARREL_FILE = 'index.ts';
+
+export function isComponentSourceFile(name: string): boolean {
+    return name !== DERIVED_BARREL_FILE && !TEST_FILE_PATTERN.test(name)
+        && /\.(?:vue|[cm]?tsx?|[cm]?jsx?|css)$/u.test(name);
+}
 
 function listComponentFiles(componentDir: string): string[] {
     const results: string[] = [];
@@ -77,121 +116,19 @@ function listComponentFiles(componentDir: string): string[] {
         for (const entry of entries) {
             const entryRel = rel === '.' ? entry.name : path.join(rel, entry.name);
             if (entry.isDirectory()) {
-                stack.push(entryRel);
-            } else if (entry.isFile()) {
-                if (TEST_FILE_PATTERN.test(entry.name)) continue;
-                if (entry.name === DERIVED_BARREL_FILE) continue;
-                const ext = path.extname(entry.name);
-                if (ext === '.vue' || ext === '.ts' || ext === '.css') {
-                    results.push(entryRel.replace(/\\/g, '/'));
-                }
+                if (isComponentSourceDirectory(entry.name)) stack.push(entryRel);
+            } else if (entry.isFile() && isComponentSourceFile(entryRel)) {
+                results.push(toPosixPath(entryRel));
             }
         }
     }
     return results.sort();
 }
 
-interface ClassifiedSpecifier {
-    kind: 'composable' | 'lib' | 'directive' | 'internal' | 'cross-component' | 'other';
-    name: string;
-}
-
-function classifySpecifier(
-    specifier: string,
-    componentName: string,
-    options: ScanOptions,
-    importingFile: string,
-): ClassifiedSpecifier {
-    // @/ alias patterns
-    if (specifier.startsWith(ALIAS_PREFIXES.composables)) {
-        const name = specifier.slice(ALIAS_PREFIXES.composables.length).split(/[?#]/)[0];
-        return { kind: 'composable', name };
-    }
-    if (specifier.startsWith(ALIAS_PREFIXES.lib)) {
-        const name = specifier.slice(ALIAS_PREFIXES.lib.length).split(/[?#]/)[0];
-        return { kind: 'lib', name };
-    }
-    if (specifier.startsWith(ALIAS_PREFIXES.directives)) {
-        const name = specifier.slice(ALIAS_PREFIXES.directives.length).split(/[?#]/)[0];
-        return { kind: 'directive', name };
-    }
-    const compAliasPrefix = `@/components/ui/${componentName}/`;
-    if (specifier.startsWith(compAliasPrefix)) {
-        const name = specifier.slice(compAliasPrefix.length).split(/[?#]/)[0];
-        return { kind: 'internal', name };
-    }
-    const crossCompPrefix = '@/components/ui/';
-    if (specifier.startsWith(crossCompPrefix)) {
-        const rest = specifier.slice(crossCompPrefix.length);
-        const depName = rest.split('/')[0];
-        if (depName !== componentName) {
-            return { kind: 'cross-component', name: depName };
-        }
-        const filePart = rest.slice(`${depName}/`.length).split(/[?#]/)[0];
-        return { kind: 'internal', name: filePart };
-    }
-
-    // Relative import patterns (source code uses ../ and ./)
-    if (specifier.startsWith('./') || specifier.startsWith('../')) {
-        return classifyRelativeSpecifier(specifier, componentName, options, importingFile);
-    }
-
-    return { kind: 'other', name: specifier };
-}
-
-/**
- * 相对导入分类：基于导入文件所在目录规范化路径，解析内部组件依赖与跨目录引用
- */
-function classifyRelativeSpecifier(
-    specifier: string,
-    componentName: string,
-    options: ScanOptions,
-    importingFile: string,
-): ClassifiedSpecifier {
-    // 统一用 path.resolve 归一化：传入相对 componentsDir 时基于同一 cwd 转绝对，
-    // 避免 path.join（保持相对）与 path.resolve（转绝对）混用导致前缀判断整体失配
-    const componentsDir = toPosix(path.resolve(options.componentsDir));
-    const composablesDir = toPosix(path.resolve(options.composablesDir));
-    const libDir = toPosix(path.resolve(options.libDir));
-    const directivesDir = toPosix(path.resolve(options.directivesDir));
-    const componentRoot = toPosix(path.resolve(options.componentsDir, componentName));
-    const importingDir = toPosix(path.dirname(path.resolve(options.componentsDir, componentName, importingFile)));
-    const resolved = toPosix(path.resolve(importingDir, specifier)).split(/[?#]/)[0];
-
-    if (resolved === componentRoot || resolved.startsWith(`${componentRoot}/`)) {
-        const name = resolved === componentRoot ? '' : resolved.slice(componentRoot.length + 1);
-        return { kind: 'internal', name };
-    }
-
-    // 先匹配更具体的公共目录（composables/lib/directives），再匹配兄弟组件目录——
-    // 若未来公共目录被置于 componentsDir 内部，避免被 componentsDir 分支误标为 cross-component
-    if (resolved.startsWith(`${composablesDir}/`)) {
-        return { kind: 'composable', name: relativeTo(resolved, composablesDir) };
-    }
-    if (resolved.startsWith(`${libDir}/`)) {
-        return { kind: 'lib', name: relativeTo(resolved, libDir) };
-    }
-    if (resolved.startsWith(`${directivesDir}/`)) {
-        return { kind: 'directive', name: relativeTo(resolved, directivesDir) };
-    }
-
-    // 兄弟组件：componentsDir 下的其它组件目录（当前组件已由上面的 componentRoot 分支接管）
-    if (resolved.startsWith(`${componentsDir}/`)) {
-        const rest = resolved.slice(componentsDir.length + 1);
-        return { kind: 'cross-component', name: rest.split('/')[0] ?? '' };
-    }
-
-    return { kind: 'other', name: specifier };
-}
-
-/** 返回 resolved 相对 dir（去前导分隔符）的路径，供 resolveExtension 复用 */
-function relativeTo(resolved: string, dir: string): string {
-    return resolved.slice(toPosix(dir).length).replace(/^\/+/, '');
-}
-
 function scanComponent(
     componentName: string,
     options: ScanOptions,
+    moduleResolver: ModuleResolver,
 ): ComponentFileManifest {
     const componentDir = path.join(options.componentsDir, componentName);
     const diskFiles = listComponentFiles(componentDir);
@@ -200,78 +137,35 @@ function scanComponent(
     const lib = new Set<string>();
     const directives = new Set<string>();
 
-    const queue = [...diskFiles];
-    const visited = new Set<string>();
     const libExclude = options.libExclude ?? DEFAULT_LIB_EXCLUDE;
-
-    // 使用游标遍历待处理队列
-    let cursor = 0;
-    while (cursor < queue.length) {
-        const file = queue[cursor];
-        cursor += 1;
-        if (visited.has(file)) continue;
-        visited.add(file);
-
-        const ext = path.extname(file);
-        if (ext !== '.vue' && ext !== '.ts') continue;
-
-        const filePath = path.join(componentDir, file);
-        // 干净检出下派生文件（如 index.ts）可能不存在，跳过而非崩溃
-        if (!fs.existsSync(filePath)) continue;
-        const content = fs.readFileSync(filePath, 'utf-8');
-
-        const analysis = SfcAstEngine.analyzeModules(content, file);
+    for (const file of internalFiles) {
+        if (file.endsWith('.css') || !isComponentSourceFile(file)) continue;
+        const filename = path.resolve(componentDir, file);
+        const content = fs.readFileSync(filename, 'utf-8');
+        const { analysis } = moduleResolver.analyze(content, filename);
         if (analysis.completeness === 'invalid') {
             const errMsgs = analysis.diagnostics.map(d => d.message).join('; ');
             throw new Error(`Failed to parse file "${file}" in component "${componentName}": ${errMsgs}`);
         }
 
-        for (const dep of analysis.dependencies) {
-            const specifier = dep.specifier;
-            const classified = classifySpecifier(specifier, componentName, options, file);
-            switch (classified.kind) {
-                case 'composable': {
-                    const resolved = resolveExtension(classified.name, options.composablesDir);
-                    if (resolved !== null) composables.add(resolved);
-                    break;
+        for (const { specifier } of analysis.dependencies) {
+            const resolved = moduleResolver.resolve(filename, specifier);
+            if (resolved.kind !== 'internal' || !resolved.resolvedPath) continue;
+            const target = resolved.resolvedPath;
+            const localFile = relativeModulePath(componentDir, target);
+            if (localFile) {
+                if (localFile !== DERIVED_BARREL_FILE && !TEST_FILE_PATTERN.test(localFile)) {
+                    internalFiles.add(localFile);
                 }
-                case 'lib': {
-                    const resolved = resolveExtension(classified.name, options.libDir);
-                    if (resolved !== null && !libExclude.has(resolved)) {
-                        lib.add(resolved);
-                    }
-                    break;
-                }
-                case 'directive': {
-                    const resolved = resolveExtension(classified.name, options.directivesDir);
-                    if (resolved !== null) directives.add(resolved);
-                    break;
-                }
-                case 'internal': {
-                    const resolved = resolveExtension(classified.name, componentDir);
-                    if (resolved === null) {
-                        // 排除已知良性场景后告警，避免误报：
-                        // - name 为空：@/components/ui/{componentName} 自引用，目标正是派生 barrel index.ts（干净检出下刻意不存在）
-                        // - basename 为 index：同样指向派生 barrel
-                        const baseName = path.basename(classified.name, path.extname(classified.name));
-                        if (classified.name !== '' && baseName !== 'index') {
-                            console.warn(`[scan-component-files] Failed to resolve internal import "${classified.name}" in component "${componentName}"`);
-                        }
-                        break;
-                    }
-                    // 派生 barrel（index.ts）已由 listComponentFiles 递归跳过（任意层级），
-                    // 这里用 basename 同样过滤，避免 sub/index 这类内部导入绕过过滤被重新加入扫描队列
-                    // （干净检出下不存在、readFileSync 崩溃）
-                    if (path.basename(resolved) !== DERIVED_BARREL_FILE && !internalFiles.has(resolved)) {
-                        internalFiles.add(resolved);
-                        queue.push(resolved);
-                    }
-                    break;
-                }
-                case 'cross-component':
-                case 'other':
-                    break;
+                continue;
             }
+
+            const composable = relativeModulePath(options.composablesDir, target);
+            if (composable) composables.add(composable);
+            const libFile = relativeModulePath(options.libDir, target);
+            if (libFile && !libExclude.has(libFile)) lib.add(libFile);
+            const directive = relativeModulePath(options.directivesDir, target);
+            if (directive) directives.add(directive);
         }
     }
 
@@ -285,6 +179,10 @@ function scanComponent(
 
 /** componentsDir 下不应被当作组件扫描的已知非组件目录（测试/依赖/元数据） */
 const IGNORED_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__']);
+
+export function isComponentSourceDirectory(name: string): boolean {
+    return !name.startsWith('.') && !IGNORED_DIR_NAMES.has(name);
+}
 
 export function scanComponentFiles(options: ScanOptions): Record<string, ComponentFileManifest> {
     // 显式校验路径存在且为目录：existsSync 对普通文件也返回 true，但 readdirSync 会抛 ENOTDIR，
@@ -305,11 +203,12 @@ export function scanComponentFiles(options: ScanOptions): Record<string, Compone
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
         // 过滤隐藏目录（.DS_Store 等）与已知非组件目录，避免污染 manifest 或读取到非源码文件抛异常
-        .filter((name) => !name.startsWith('.') && !IGNORED_DIR_NAMES.has(name))
+        .filter(isComponentSourceDirectory)
         .sort();
 
+    const moduleResolver = createComponentModuleResolver(options);
     for (const dir of componentDirs) {
-        manifest[dir] = scanComponent(dir, options);
+        manifest[dir] = scanComponent(dir, options, moduleResolver);
     }
 
     if (options.manifestOverrides !== false) {

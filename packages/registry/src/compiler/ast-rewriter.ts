@@ -93,9 +93,10 @@ export function rewriteAnalyzedImports(
     componentName: string,
     context: RewriteContext = 'component',
     knownComponents?: Set<string>,
+    resolvedSpecifiers?: ReadonlyMap<string, string>,
 ): RewrittenModuleSource {
     const known: Set<string> = knownComponents ?? new Set(AVAILABLE_COMPONENTS);
-    const rewriteSpecifier: (specifier: string) => string = (specifier: string): string => resolveRewrittenSpecifier(
+    const rewriteSpecifier: (specifier: string) => string = (specifier: string): string => resolvedSpecifiers?.get(specifier) ?? resolveRewrittenSpecifier(
         specifier,
         componentName,
         context,
@@ -268,9 +269,7 @@ export function extractDeps(input: ModuleSpecifierSource, dirPrefix: string, fil
         if (spec.startsWith(prefix)) {
             const remainder = spec.slice(prefix.length).split(/[?#]/)[0];
             if (remainder) {
-                const normalized = remainder.endsWith('.ts') || remainder.endsWith('.vue') || remainder.endsWith('.css')
-                    ? remainder
-                    : `${remainder}.ts`;
+                const normalized = withDefaultExtension(remainder);
                 deps.add(normalized);
             }
         }
@@ -295,7 +294,7 @@ export function extractRegistryDeps(
         if (item.isTypeOnly) continue;
         const spec = normalizeDirectComponentAlias(item.specifier, knownComponents) ?? item.specifier;
         if (spec.startsWith(prefix)) {
-            const remainder = spec.slice(prefix.length);
+            const remainder = spec.slice(prefix.length).split(/[?#]/u)[0];
             const comp = remainder.split('/')[0];
             if (comp && comp !== componentName) {
                 const isKnown = knownComponents ? knownComponents.has(comp) : Boolean(COMPONENT_METADATA[comp]);
@@ -319,17 +318,20 @@ export function extractComponentFileDeps(input: ModuleSpecifierSource, component
 
     for (const spec of specifiers) {
         if (spec.startsWith(prefix)) {
-            const file = spec.slice(prefix.length);
+            const file = spec.slice(prefix.length).split(/[?#]/u)[0];
             if (file && file !== 'index.ts' && file !== 'index') {
-                const normalized = file.endsWith('.vue') || file.endsWith('.ts') || file.endsWith('.css')
-                    ? file
-                    : `${file}.ts`;
+                const normalized = withDefaultExtension(file);
                 files.add(normalized);
             }
         }
     }
 
     return Array.from(files);
+}
+
+function withDefaultExtension(filename: string): string {
+    const name = filename.split('/').pop() ?? '';
+    return /\.[a-zA-Z0-9]+$/u.test(name) ? filename : `${filename}.ts`;
 }
 
 /**
@@ -342,7 +344,7 @@ export function extractUnknownRegistryDeps(input: ModuleSpecifierSource): string
 
     for (const spec of specifiers) {
         if (spec.startsWith(prefix)) {
-            const remainder = spec.slice(prefix.length);
+            const remainder = spec.slice(prefix.length).split(/[?#]/u)[0];
             const comp = remainder.split('/')[0];
             if (comp && !COMPONENT_METADATA[comp]) {
                 unknowns.add(comp);
@@ -356,8 +358,13 @@ export function extractUnknownRegistryDeps(input: ModuleSpecifierSource): string
 /**
  * 断言代码中所有组件导入均属于合法已注册组件，否则抛出附带源上下文的错误。
  */
-export function assertKnownRegistryDeps(input: ModuleSpecifierSource, ownerName: string, sourceLabel: string): string[] {
-    const unknowns = extractUnknownRegistryDeps(input);
+export function assertKnownRegistryDeps(
+    input: ModuleSpecifierSource,
+    ownerName: string,
+    sourceLabel: string,
+    knownComponents?: ReadonlySet<string>,
+): string[] {
+    const unknowns = extractUnknownRegistryDeps(input).filter(name => name !== ownerName && !knownComponents?.has(name));
     if (unknowns.length > 0) {
         throw new Error(
             `Unknown registry component import(s) in "${ownerName}" (${sourceLabel}): ${unknowns.join(', ')}`

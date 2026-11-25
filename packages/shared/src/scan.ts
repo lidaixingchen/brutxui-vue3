@@ -5,5 +5,11 @@ export {
     applyManifestOverrides,
 } from './scan-manifest.js';
 export type { ScanOptions } from './scan-component-files.js';
-export { scanComponentFiles } from './scan-component-files.js';
+export {
+    createComponentModuleResolver,
+    isComponentSourceDirectory,
+    isComponentSourceFile,
+    relativeModulePath,
+    scanComponentFiles,
+} from './scan-component-files.js';
 export { buildComponentIndexContent } from './component-index.js';

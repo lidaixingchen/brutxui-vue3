@@ -1,11 +1,25 @@
+import { isUtf8 } from 'node:buffer';
 import path from 'node:path';
 import {
+    COMPONENT_METADATA,
     DEFAULT_LIB_EXCLUDE,
     type MergedRegistryEntry,
     type RegistryFile,
 } from 'brutx-shared-vue';
+import {
+    createComponentModuleResolver,
+    isComponentSourceDirectory,
+    relativeModulePath,
+} from 'brutx-shared-vue/scan';
+import { toPosixPath } from 'brutx-shared-vue/path';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
-import type { ModuleResolver } from 'brutx-shared-vue/module-resolver';
+import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
+import {
+    getModuleSpecifierPath,
+    isModuleExtensionSubstitution,
+    type ModuleResolution,
+    type ModuleResolver,
+} from 'brutx-shared-vue/module-resolver';
 import type { AnalyzedModuleSource, RewrittenModuleSource } from './ast-rewriter.js';
 import {
     analyzeModuleSource,
@@ -15,7 +29,6 @@ import {
     extractRegistryDeps,
     getFileType,
     rewriteAnalyzedImports,
-    rewriteImports,
     resolveRewrittenSpecifier,
 } from './ast-rewriter.js';
 import { buildRegistryComponentIndex } from './public-index.js';
@@ -23,6 +36,7 @@ import type {
     ComponentIndexBuilder,
     CompilerPaths,
     PublicComponentProjection,
+    RewriteContext,
 } from './types.js';
 
 export interface ResolvedComponentClosure {
@@ -30,15 +44,49 @@ export interface ResolvedComponentClosure {
     registryDependencies: string[];
 }
 
-function supportsModuleResolution(importer: string): boolean {
-    return /\.(?:vue|[cm]?tsx?|jsx?)$/u.test(importer);
+const MODULE_SOURCE_PATTERN = /\.(?:vue|[cm]?[jt]sx?)$/u;
+
+export async function readRegistryText(fs: FileSystemAdapter, filename: string, owner: string): Promise<string> {
+    const source = await fs.readFile(filename, 'utf-8');
+    let isRepresentable = Buffer.from(source, 'utf-8').toString('utf-8') === source;
+    if (isRepresentable && source.includes('\uFFFD')) {
+        const encoded = await fs.readFile(filename, 'base64');
+        // 内存文件系统对字符串直接返回原文，对字节文件应用指定编码。
+        isRepresentable = encoded === source || isUtf8(Buffer.from(encoded, 'base64'));
+    }
+    if (!isRepresentable) {
+        throw new Error(`Registry item "${owner}" cannot deliver "${filename}" as lossless UTF-8 text`);
+    }
+    return source;
+}
+
+interface SourceGroup {
+    context: RewriteContext;
+    directory: string;
+    deliveryPath: string;
+    files: RegistryFile[];
+}
+
+interface DeliveryTarget {
+    path: string;
+    group?: SourceGroup;
+    componentIndex?: boolean;
 }
 
 export class DependencyAnalysisSession {
-    private readonly analyses: Map<string, Map<string, AnalyzedModuleSource>> = new Map();
-    private readonly validatedSources: Map<string, Set<string>> = new Map();
+    private readonly analyses = new Map<string, Map<string, AnalyzedModuleSource>>();
+    private resolverPromise?: Promise<ModuleResolver>;
 
-    constructor(private readonly moduleResolver?: ModuleResolver) {}
+    constructor(
+        private readonly moduleResolver?: ModuleResolver,
+        private readonly createResolver?: () => Promise<ModuleResolver>,
+    ) {}
+
+    public async getModuleResolver(): Promise<ModuleResolver | undefined> {
+        if (this.moduleResolver) return this.moduleResolver;
+        this.resolverPromise ??= this.createResolver?.();
+        return this.resolverPromise;
+    }
 
     public analyze(source: string, filename: string): AnalyzedModuleSource {
         let bySource: Map<string, AnalyzedModuleSource> | undefined = this.analyses.get(filename);
@@ -50,7 +98,7 @@ export class DependencyAnalysisSession {
         const cached: AnalyzedModuleSource | undefined = bySource.get(source);
         if (cached) return cached;
 
-        const analyzed: AnalyzedModuleSource = this.moduleResolver && supportsModuleResolution(filename)
+        const analyzed: AnalyzedModuleSource = this.moduleResolver
             ? {
                 source,
                 filename,
@@ -59,19 +107,6 @@ export class DependencyAnalysisSession {
             : analyzeModuleSource(source, filename);
         bySource.set(source, analyzed);
         return analyzed;
-    }
-
-    public hasValidatedSource(filename: string, source: string): boolean {
-        return this.validatedSources.get(filename)?.has(source) ?? false;
-    }
-
-    public markSourceValidated(filename: string, source: string): void {
-        let sources: Set<string> | undefined = this.validatedSources.get(filename);
-        if (!sources) {
-            sources = new Set<string>();
-            this.validatedSources.set(filename, sources);
-        }
-        sources.add(source);
     }
 }
 
@@ -82,27 +117,46 @@ export class DependencyResolver {
         private libExclude: ReadonlySet<string> = DEFAULT_LIB_EXCLUDE,
         private componentIndexBuilder?: ComponentIndexBuilder,
         private moduleResolver?: ModuleResolver,
+        private getPublicProjection?: (name: string) => PublicComponentProjection | undefined,
     ) {}
 
     public createAnalysisSession(): DependencyAnalysisSession {
-        return new DependencyAnalysisSession(this.moduleResolver);
+        return new DependencyAnalysisSession(this.moduleResolver, async () => {
+            if (this.fs instanceof DiskFileSystemAdapter) return createComponentModuleResolver(this.paths);
+
+            const files = new Set<string>();
+            const scan = async (directory: string): Promise<void> => {
+                if (!(await this.fs.pathExists(directory))) return;
+                for (const entry of await this.fs.readdir(directory, { withFileTypes: true })) {
+                    const filename = path.resolve(directory, entry.name);
+                    if (entry.isDirectory() && isComponentSourceDirectory(entry.name)) {
+                        await scan(filename);
+                    } else if (entry.isFile()) {
+                        files.add(toPosixPath(filename));
+                    }
+                }
+            };
+            const { componentsDir, composablesDir, directivesDir, libDir, localesDir, typesDir } = this.paths;
+            await Promise.all([componentsDir, composablesDir, directivesDir, libDir, localesDir, typesDir]
+                .filter((directory): directory is string => Boolean(directory))
+                .map(scan));
+            return createComponentModuleResolver(this.paths, filename => files.has(filename));
+        });
     }
 
-    private async readSource(filePath: string): Promise<string> {
-        const raw = await this.fs.readFile(filePath, 'utf-8');
-        return raw.replace(/\r\n/g, '\n');
-    }
-
-    private async resolveExtension(rawFileName: string, baseDir: string): Promise<string> {
-        if (path.extname(rawFileName)) return rawFileName;
-        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
-        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
-        return rawFileName;
+    private resolveSourcePath(
+        directory: string,
+        name: string,
+        moduleResolver?: ModuleResolver,
+    ): string {
+        return moduleResolver?.resolve(path.resolve(directory, 'index.ts'), `./${name}`).resolvedPath
+            ?? path.resolve(directory, name);
     }
 
     private async assertPublicProjectionSources(
         componentName: string,
         projection: PublicComponentProjection,
+        moduleResolver: ModuleResolver | undefined,
     ): Promise<void> {
         const componentDir = path.join(this.paths.componentsDir, componentName);
         for (const item of projection.exports) {
@@ -136,10 +190,8 @@ export class DependencyResolver {
                 );
             }
 
-            const resolvedName = await this.resolveExtension(relativeSource, baseDir);
-            const resolvedPath = path.resolve(baseDir, resolvedName);
-            const relative = path.relative(path.resolve(baseDir), resolvedPath);
-            if (relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+            const resolvedPath = this.resolveSourcePath(baseDir, relativeSource, moduleResolver);
+            if (!relativeModulePath(baseDir, resolvedPath)) {
                 throw new Error(
                     `Public projection source escapes its source directory: "${item.source}" for Registry component "${componentName}"`,
                 );
@@ -158,135 +210,129 @@ export class DependencyResolver {
         }
     }
 
-    private assertResolvableModules(
-        analyzed: AnalyzedModuleSource,
-        session: DependencyAnalysisSession,
-    ): void {
-        if (!this.moduleResolver || !supportsModuleResolution(analyzed.filename)) return;
-        if (session.hasValidatedSource(analyzed.filename, analyzed.source)) return;
-        const analysis: AnalyzedModuleSource['analysis'] = analyzed.analysis;
-        if (analysis.completeness === 'invalid') {
-            const details = analysis.diagnostics.map(diagnostic => diagnostic.message).join('; ');
-            throw new Error(`Failed to parse module references in "${analyzed.filename}": ${details}`);
+    private getGroups(componentName: string): SourceGroup[] {
+        const paths = this.paths;
+        const groups: SourceGroup[] = [
+            { context: 'component', directory: path.join(paths.componentsDir, componentName), deliveryPath: `components/ui/${componentName}`, files: [] },
+            { context: 'composable', directory: paths.composablesDir, deliveryPath: 'composables', files: [] },
+        ];
+        if (paths.typesDir) {
+            groups.push({ context: 'types', directory: paths.typesDir, deliveryPath: 'types', files: [] });
+        }
+        groups.push(
+            { context: 'directive', directory: paths.directivesDir, deliveryPath: 'directives', files: [] },
+            { context: 'locale', directory: paths.localesDir, deliveryPath: 'locales', files: [] },
+            { context: 'lib', directory: paths.libDir, deliveryPath: 'lib', files: [] },
+        );
+        return groups;
+    }
+
+    private toDeliverySpecifier(
+        specifier: string,
+        target: DeliveryTarget,
+    ): string {
+        const sourcePath = getModuleSpecifierPath(specifier);
+        const suffix = specifier.slice(sourcePath.length);
+        const sourceExtension = path.extname(sourcePath);
+        const resolvedExtension = path.posix.extname(target.path);
+        if (target.componentIndex && path.basename(sourcePath, sourceExtension) !== 'index') {
+            return `@/${path.posix.dirname(target.path)}${suffix}`;
         }
 
-        for (const reference of analysis.references) {
-            if (!/^(?:\.|\/|@\/)/u.test(reference.specifier)) continue;
-            const resolution = this.moduleResolver.resolve(analyzed.filename, reference.specifier);
-            if (resolution.kind !== 'unresolved' && resolution.kind !== 'ambiguous') continue;
-            const details = resolution.diagnostics.map(diagnostic => diagnostic.message).join('; ');
-            throw new Error(
-                `Unable to resolve module "${reference.specifier}" from "${analyzed.filename}": ${details}`,
-            );
+        const stem = resolvedExtension ? target.path.slice(0, -resolvedExtension.length) : target.path;
+        const omitTypeScriptExtension = /^\.tsx?$/u.test(resolvedExtension)
+            && (path.basename(sourcePath) === path.posix.basename(stem) || (!sourceExtension && !path.posix.extname(stem)));
+        if (omitTypeScriptExtension) return `@/${stem}${suffix}`;
+        if (isModuleExtensionSubstitution(sourceExtension, resolvedExtension)) {
+            return `@/${stem}${sourceExtension}${suffix}`;
         }
-        session.markSourceValidated(analyzed.filename, analyzed.source);
+        return `@/${target.path}${suffix}`;
+    }
+
+    private getDeliveryTarget(
+        resolvedPath: string,
+        groups: readonly SourceGroup[],
+        knownComponents?: ReadonlySet<string>,
+    ): DeliveryTarget | undefined {
+        const group = groups.find(candidate => relativeModulePath(candidate.directory, resolvedPath));
+        const componentPath = relativeModulePath(this.paths.componentsDir, resolvedPath);
+        const componentName = componentPath?.split('/')[0];
+        const isKnown = componentName && (knownComponents?.has(componentName) ?? Boolean(COMPONENT_METADATA[componentName]));
+        if (componentPath?.includes('/') && (!group || group.context === 'component' || isKnown)) {
+            return {
+                path: `components/ui/${componentPath}`,
+                group: group?.context === 'component' ? group : undefined,
+                componentIndex: /^[^/]+\/index\.ts$/u.test(componentPath),
+            };
+        }
+        if (!group) return undefined;
+        return { path: `${group.deliveryPath}/${relativeModulePath(group.directory, resolvedPath)}`, group };
+    }
+
+    private getGeneratedIndexPath(
+        resolution: ModuleResolution | undefined,
+        owner: string,
+        knownComponents?: ReadonlySet<string>,
+    ): string | undefined {
+        if (resolution?.kind !== 'unresolved') return undefined;
+        const missing = resolution.diagnostics.find(diagnostic => diagnostic.code === 'MODULE_NOT_FOUND');
+        return missing?.candidates?.find(filename => {
+            const target = relativeModulePath(this.paths.componentsDir, filename);
+            const componentName = target && /^([^/]+)\/index\.ts$/u.exec(target)?.[1];
+            if (!componentName) return false;
+            return componentName === owner || (
+                (knownComponents?.has(componentName) ?? true) && Boolean(this.getPublicProjection?.(componentName))
+            );
+        });
     }
 
     private async rewriteSource(
-        filePath: string,
+        source: string,
+        filename: string,
+        group: SourceGroup,
         componentName: string,
-        context: 'component' | 'composable' | 'directive' | 'locale' | 'lib' | 'types',
+        groups: readonly SourceGroup[],
         knownComponents: Set<string> | undefined,
         session: DependencyAnalysisSession,
     ): Promise<RewrittenModuleSource> {
-        const source: string = await this.readSource(filePath);
-        const analyzed: AnalyzedModuleSource = session.analyze(source, filePath);
-        this.assertResolvableModules(analyzed, session);
-        const rewritten = rewriteAnalyzedImports(analyzed, componentName, context, knownComponents);
-        const moduleResolver = this.moduleResolver;
-        if (!moduleResolver) return rewritten;
+        if (!MODULE_SOURCE_PATTERN.test(filename)) {
+            return { code: source, filename, dependencies: [] };
+        }
+        const analyzed = session.analyze(source, filename);
+        const moduleResolver = await session.getModuleResolver();
+        const strictResolution = Boolean(this.moduleResolver) || this.fs instanceof DiskFileSystemAdapter;
+        if (strictResolution && analyzed.analysis.completeness === 'invalid') {
+            const details = analyzed.analysis.diagnostics.map(diagnostic => diagnostic.message).join('; ');
+            throw new Error(`Failed to parse module references in "${filename}": ${details}`);
+        }
 
-        const emittedSpecifiers = new Set(rewritten.dependencies.map(dependency => dependency.specifier));
-        const resolvedReferences = analyzed.analysis.dependencies.map(({ specifier }) => {
-            const rewrittenSpecifier = resolveRewrittenSpecifier(
-                specifier,
-                componentName,
-                context,
-                knownComponents,
-            );
-            const emittedSpecifier = emittedSpecifiers.has(rewrittenSpecifier)
-                ? rewrittenSpecifier
-                : specifier;
-            const resolution = moduleResolver.resolve(filePath, specifier);
-            return resolution.kind === 'internal' && resolution.resolvedPath
-                ? { specifier: emittedSpecifier, resolvedPath: resolution.resolvedPath }
-                : { specifier: emittedSpecifier };
-        });
-
-        return { ...rewritten, resolvedReferences };
-    }
-
-    private resolveDependenciesFromSourceRoot(
-        rewritten: RewrittenModuleSource,
-        directory: string,
-        specifierPrefix: string,
-        fallback: (source: RewrittenModuleSource) => string[],
-        skipGeneratedIndex = false,
-    ): string[] {
-        const resolvedReferences = rewritten.resolvedReferences;
-        if (!resolvedReferences) return fallback(rewritten);
-
-        const resolvedRoot = path.resolve(directory);
-        const dependencies = new Set<string>();
-        const unresolvedSpecifiers = new Set<string>();
-
-        for (const reference of resolvedReferences) {
-            if (reference.resolvedPath) {
-                const relativePath = path.relative(resolvedRoot, path.resolve(reference.resolvedPath));
-                if (
-                    relativePath.length === 0 ||
-                    relativePath === '..' ||
-                    relativePath.startsWith(`..${path.sep}`) ||
-                    path.isAbsolute(relativePath)
-                ) {
-                    if (reference.specifier.startsWith(specifierPrefix)) unresolvedSpecifiers.add(reference.specifier);
-                    continue;
-                }
-
-                const normalizedPath = relativePath.split(path.sep).join('/');
-                if (skipGeneratedIndex && (normalizedPath === 'index' || normalizedPath === 'index.ts')) continue;
-                dependencies.add(normalizedPath);
-            } else if (reference.specifier.startsWith(specifierPrefix)) {
-                unresolvedSpecifiers.add(reference.specifier);
+        const rewrittenSpecifiers = new Map<string, string>();
+        const resolvedReferences: NonNullable<RewrittenModuleSource['resolvedReferences']>[number][] = [];
+        for (const { specifier } of analyzed.analysis.dependencies) {
+            const resolution = moduleResolver?.resolve(filename, specifier);
+            const resolvedPath = resolution?.kind === 'internal'
+                ? resolution.resolvedPath
+                : this.getGeneratedIndexPath(resolution, componentName, knownComponents);
+            if (resolvedPath) {
+                const target = this.getDeliveryTarget(resolvedPath, groups, knownComponents);
+                const rewrittenSpecifier = target ? this.toDeliverySpecifier(specifier, target) : specifier;
+                rewrittenSpecifiers.set(specifier, rewrittenSpecifier);
+                resolvedReferences.push({ specifier: rewrittenSpecifier, resolvedPath });
+                continue;
             }
+            if (strictResolution && resolution && resolution.kind !== 'external' && /^(?:\.|\/|@\/)/u.test(specifier)) {
+                const details = resolution.diagnostics.map(diagnostic => diagnostic.message).join('; ');
+                throw new Error(`Unable to resolve module "${specifier}" from "${filename}": ${details}`);
+            }
+            const rewrittenSpecifier = resolveRewrittenSpecifier(specifier, componentName, group.context, knownComponents);
+            rewrittenSpecifiers.set(specifier, rewrittenSpecifier);
+            resolvedReferences.push({ specifier: rewrittenSpecifier });
         }
 
-        if (unresolvedSpecifiers.size > 0) {
-            const unresolvedSource: RewrittenModuleSource = {
-                ...rewritten,
-                dependencies: rewritten.dependencies.filter(dependency => unresolvedSpecifiers.has(dependency.specifier)),
-            };
-            for (const dependency of fallback(unresolvedSource)) dependencies.add(dependency);
-        }
-
-        return Array.from(dependencies);
-    }
-
-    private getDependencyPaths(
-        rewritten: RewrittenModuleSource,
-        directoryName: string,
-        directory: string,
-    ): string[] {
-        return this.resolveDependenciesFromSourceRoot(
-            rewritten,
-            directory,
-            `@/${directoryName}/`,
-            source => extractDeps(source, directoryName),
-        );
-    }
-
-    private getComponentFilePaths(
-        rewritten: RewrittenModuleSource,
-        componentName: string,
-        componentDir: string,
-    ): string[] {
-        return this.resolveDependenciesFromSourceRoot(
-            rewritten,
-            componentDir,
-            `@/components/ui/${componentName}/`,
-            source => extractComponentFileDeps(source, componentName),
-            true,
-        );
+        return {
+            ...rewriteAnalyzedImports(analyzed, componentName, group.context, knownComponents, rewrittenSpecifiers),
+            resolvedReferences,
+        };
     }
 
     public async resolveComponentClosure(
@@ -299,420 +345,114 @@ export class DependencyResolver {
         if (!publicProjection) {
             throw new Error(`Public component projection is required for Registry component "${name}"`);
         }
-        await this.assertPublicProjectionSources(name, publicProjection);
-        const allRegistryDeps = new Set<string>();
-        const files: RegistryFile[] = [];
-        const componentFileDeps = new Set(componentInfo.files);
-        const composableDeps = new Set(componentInfo.composables ?? []);
-        const localeDeps = new Set<string>();
-        const libDeps = new Set<string>();
-        const typeDeps = new Set<string>();
 
-        const addedComponentFiles = new Set<string>();
-        while (addedComponentFiles.size < componentFileDeps.size) {
-            const pending = Array.from(componentFileDeps).filter(f => !addedComponentFiles.has(f));
-            for (const rawName of pending) {
-                const fileName = await this.resolveExtension(rawName, path.join(this.paths.componentsDir, name));
-                const filePath = path.join(this.paths.componentsDir, name, fileName);
-                if (!(await this.fs.pathExists(filePath))) {
-                    throw new Error(`Source file not found at ${filePath}`);
-                }
+        const moduleResolver = await session.getModuleResolver();
+        await this.assertPublicProjectionSources(name, publicProjection, moduleResolver);
+        const groups = this.getGroups(name);
+        const componentGroup = groups[0];
+        const registryDependencies = new Set<string>();
+        const queuedFiles = new Set<string>();
+        const pending: { group: SourceGroup; filename: string }[] = [];
 
-                const rewritten: RewrittenModuleSource = await this.rewriteSource(filePath, name, 'component', knownComponents, session);
-                const code: string = rewritten.code;
-
-                assertKnownRegistryDeps(rewritten, name, fileName);
-                extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
-
-                const componentDir = path.join(this.paths.componentsDir, name);
-                for (const d of this.getComponentFilePaths(rewritten, name, componentDir)) {
-                    const resolved = await this.resolveExtension(d, componentDir);
-                    componentFileDeps.add(resolved);
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
-                    const resolved = await this.resolveExtension(d, this.paths.composablesDir);
-                    composableDeps.add(resolved);
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
-                    const resolved = await this.resolveExtension(d, this.paths.localesDir);
-                    localeDeps.add(resolved);
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                    const resolved = await this.resolveExtension(d, this.paths.libDir);
-                    libDeps.add(resolved);
-                }
-                const typesDir = this.paths.typesDir;
-                if (typesDir) {
-                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                        typeDeps.add(await this.resolveExtension(d, typesDir));
-                    }
-                }
-
-                const relPath = `components/ui/${name}/${fileName}`;
-                files.push({
-                    path: relPath,
-                    content: code,
-                    type: getFileType(relPath),
-                });
-                addedComponentFiles.add(rawName);
-                addedComponentFiles.add(fileName);
-            }
-        }
-
-        // 内联生成 index.ts 派生 barrel
-        const indexFilePath = path.join(this.paths.componentsDir, name, 'index.ts');
-        const indexContent = rewriteImports(
-            buildRegistryComponentIndex(
-                publicProjection,
-                this.componentIndexBuilder,
-            ),
-            name,
-            'component',
-            knownComponents,
-            indexFilePath,
-        );
-
-        if (publicProjection) {
-            for (const item of publicProjection.exports) {
-                const match = /^(?:\.\.\/)+types\/(.+)$/.exec(item.source);
-                const aliasMatch = /^@\/types\/(.+)$/.exec(item.source);
-                const source = match?.[1] ?? aliasMatch?.[1];
-                if (source && this.paths.typesDir) {
-                    typeDeps.add(await this.resolveExtension(source, this.paths.typesDir));
-                }
-            }
-        }
-        const indexRelPath = `components/ui/${name}/index.ts`;
-        files.push({
-            path: indexRelPath,
-            content: indexContent,
-            type: getFileType(indexRelPath),
-        });
-
-        const addedComposables = new Set<string>();
-        const addedTypes = new Set<string>();
-        await this.processComposables(
-            composableDeps,
-            addedComposables,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            libDeps,
-            typeDeps,
-            knownComponents,
-            session,
-        );
-
-        await this.processTypes(
-            typeDeps,
-            addedTypes,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            composableDeps,
-            libDeps,
-            knownComponents,
-            session,
-        );
-
-        const addedDirectives = new Set<string>();
-        const directiveDeps = new Set<string>(componentInfo.directives ?? []);
-        while (addedDirectives.size < directiveDeps.size) {
-            const pending = Array.from(directiveDeps).filter(d => !addedDirectives.has(d));
-            for (const rawName of pending) {
-                const directiveName = await this.resolveExtension(rawName, this.paths.directivesDir);
-                const directivePath = path.join(this.paths.directivesDir, directiveName);
-                if (!(await this.fs.pathExists(directivePath))) {
-                    throw new Error(`Directive file not found at ${directivePath}`);
-                }
-
-                const rewritten: RewrittenModuleSource = await this.rewriteSource(directivePath, name, 'directive', knownComponents, session);
-                const code: string = rewritten.code;
-                assertKnownRegistryDeps(rewritten, name, directiveName);
-                extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
-
-                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
-                    composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
-                    localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                    libDeps.add(await this.resolveExtension(d, this.paths.libDir));
-                }
-                const typesDir = this.paths.typesDir;
-                if (typesDir) {
-                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                        typeDeps.add(await this.resolveExtension(d, typesDir));
-                    }
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'directives', this.paths.directivesDir)) {
-                    directiveDeps.add(await this.resolveExtension(d, this.paths.directivesDir));
-                }
-
-                const relPath = `directives/${directiveName}`;
-                files.push({
-                    path: relPath,
-                    content: code,
-                    type: getFileType(relPath),
-                });
-                addedDirectives.add(rawName);
-                addedDirectives.add(directiveName);
-            }
-        }
-
-        await this.processComposables(
-            composableDeps,
-            addedComposables,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            libDeps,
-            typeDeps,
-            knownComponents,
-            session,
-        );
-        await this.processTypes(
-            typeDeps,
-            addedTypes,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            composableDeps,
-            libDeps,
-            knownComponents,
-            session,
-        );
-
-        const addedLocaleDeps = new Set<string>();
-        while (addedLocaleDeps.size < localeDeps.size || addedComposables.size < composableDeps.size) {
-            const pendingLocales = Array.from(localeDeps).filter(l => !addedLocaleDeps.has(l));
-            for (const rawLocaleName of pendingLocales) {
-                const localeName = await this.resolveExtension(rawLocaleName, this.paths.localesDir);
-                const localePath = path.join(this.paths.localesDir, localeName);
-                if (await this.fs.pathExists(localePath)) {
-                    const rewritten: RewrittenModuleSource = await this.rewriteSource(localePath, name, 'locale', knownComponents, session);
-                    for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
-                        localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
-                    }
-                    for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
-                        composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
-                    }
-                    for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                        libDeps.add(await this.resolveExtension(d, this.paths.libDir));
-                    }
-                    const typesDir = this.paths.typesDir;
-                    if (typesDir) {
-                        for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                            typeDeps.add(await this.resolveExtension(d, typesDir));
-                        }
-                    }
-                }
-                addedLocaleDeps.add(rawLocaleName);
-                addedLocaleDeps.add(localeName);
-            }
-            await this.processComposables(
-                composableDeps,
-                addedComposables,
-                name,
-                files,
-                allRegistryDeps,
-                localeDeps,
-                libDeps,
-                typeDeps,
-                knownComponents,
-                session,
-            );
-            await this.processTypes(
-                typeDeps,
-                addedTypes,
-                name,
-                files,
-                allRegistryDeps,
-                localeDeps,
-                composableDeps,
-                libDeps,
-                knownComponents,
-                session,
-            );
-        }
-
-        if (localeDeps.size > 0) {
-            allRegistryDeps.add('locale-zh-cn');
-        }
-
-        for (const rawLibName of libDeps) {
-            const libName = await this.resolveExtension(rawLibName, this.paths.libDir);
-            const libPath = path.join(this.paths.libDir, libName);
-            if (!(await this.fs.pathExists(libPath))) {
-                throw new Error(`Lib file not found at ${libPath}`);
-            }
-
-            const rewritten: RewrittenModuleSource = await this.rewriteSource(libPath, name, 'lib', knownComponents, session);
-            const code: string = rewritten.code;
-            assertKnownRegistryDeps(rewritten, name, libName);
-            extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
-            for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                libDeps.add(await this.resolveExtension(d, this.paths.libDir));
-            }
-            const typesDir = this.paths.typesDir;
-            if (typesDir) {
-                for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                    typeDeps.add(await this.resolveExtension(d, typesDir));
-                }
-            }
-
-            if (this.libExclude.has(libName)) continue;
-
-            const relPath = `lib/${libName}`;
-            files.push({
-                path: relPath,
-                content: code,
-                type: getFileType(relPath),
-            });
-        }
-
-        await this.processTypes(
-            typeDeps,
-            addedTypes,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            composableDeps,
-            libDeps,
-            knownComponents,
-            session,
-        );
-        await this.processComposables(
-            composableDeps,
-            addedComposables,
-            name,
-            files,
-            allRegistryDeps,
-            localeDeps,
-            libDeps,
-            typeDeps,
-            knownComponents,
-            session,
-        );
-
-        return {
-            files,
-            registryDependencies: Array.from(allRegistryDeps).sort(),
+        const enqueue = (group: SourceGroup, filename: string): void => {
+            if (queuedFiles.has(filename)) return;
+            queuedFiles.add(filename);
+            pending.push({ group, filename });
         };
-    }
 
-    private async processComposables(
-        composableDeps: Set<string>,
-        addedComposables: Set<string>,
-        componentName: string,
-        files: RegistryFile[],
-        allRegistryDeps: Set<string>,
-        localeDeps: Set<string>,
-        libDeps: Set<string>,
-        typeDeps: Set<string>,
-        knownComponents: Set<string> | undefined,
-        session: DependencyAnalysisSession,
-    ): Promise<void> {
-        while (addedComposables.size < composableDeps.size) {
-            const pending = Array.from(composableDeps).filter(c => !addedComposables.has(c));
-            for (const rawName of pending) {
-                const composableName = await this.resolveExtension(rawName, this.paths.composablesDir);
-                const composablePath = path.join(this.paths.composablesDir, composableName);
-                if (!(await this.fs.pathExists(composablePath))) {
-                    throw new Error(`Composable file not found at ${composablePath}`);
-                }
+        const addDependencies = (rewritten: RewrittenModuleSource): void => {
+            assertKnownRegistryDeps(rewritten, name, path.basename(rewritten.filename), knownComponents);
+            for (const dependency of extractRegistryDeps(rewritten, name, knownComponents)) {
+                registryDependencies.add(dependency);
+            }
 
-                const rewritten: RewrittenModuleSource = await this.rewriteSource(composablePath, componentName, 'composable', knownComponents, session);
-                const code: string = rewritten.code;
-                assertKnownRegistryDeps(rewritten, componentName, composableName);
-                extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
-                    composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
-                    localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                    libDeps.add(await this.resolveExtension(d, this.paths.libDir));
-                }
-                const typesDir = this.paths.typesDir;
-                if (typesDir) {
-                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                        typeDeps.add(await this.resolveExtension(d, typesDir));
-                    }
-                }
+            for (const reference of rewritten.resolvedReferences ?? []) {
+                const filename = reference.resolvedPath;
+                if (!filename) continue;
+                const sourceGroup = this.getDeliveryTarget(filename, groups, knownComponents)?.group;
+                if (sourceGroup) enqueue(sourceGroup, filename);
+            }
 
-                const relPath = `composables/${composableName}`;
-                files.push({
-                    path: relPath,
-                    content: code,
-                    type: getFileType(relPath),
-                });
-                addedComposables.add(rawName);
-                addedComposables.add(composableName);
+            const unresolved = {
+                ...rewritten,
+                dependencies: rewritten.dependencies.filter(dependency =>
+                    rewritten.resolvedReferences?.some(reference =>
+                        reference.specifier === dependency.specifier && !reference.resolvedPath,
+                    ),
+                ),
+            };
+            for (const group of groups) {
+                const names = group.context === 'component'
+                    ? extractComponentFileDeps(unresolved, name)
+                    : extractDeps(unresolved, group.deliveryPath);
+                for (const filename of names) {
+                    enqueue(group, this.resolveSourcePath(group.directory, filename, moduleResolver));
+                }
+            }
+        };
+
+        const seededFiles = {
+            component: componentInfo.files,
+            composable: componentInfo.composables,
+            directive: componentInfo.directives,
+            lib: componentInfo.lib?.filter(filename => !this.libExclude.has(filename)),
+            locale: [],
+            types: [],
+        };
+        const indexFilename = path.resolve(componentGroup.directory, 'index.ts');
+        queuedFiles.add(toPosixPath(indexFilename));
+        for (const group of groups) {
+            for (const file of seededFiles[group.context] ?? []) {
+                const filename = this.resolveSourcePath(group.directory, file, moduleResolver);
+                const target = this.getDeliveryTarget(filename, groups, knownComponents);
+                if (target?.group || !target) enqueue(target?.group ?? group, filename);
             }
         }
-    }
 
-    private async processTypes(
-        typeDeps: Set<string>,
-        addedTypes: Set<string>,
-        componentName: string,
-        files: RegistryFile[],
-        allRegistryDeps: Set<string>,
-        localeDeps: Set<string>,
-        composableDeps: Set<string>,
-        libDeps: Set<string>,
-        knownComponents: Set<string> | undefined,
-        session: DependencyAnalysisSession,
-    ): Promise<void> {
-        const typesDir = this.paths.typesDir;
-        if (!typesDir && typeDeps.size > 0) {
-            throw new Error(`Types directory is required to resolve type dependencies for "${componentName}"`);
-        }
-        if (!typesDir) return;
+        const index = await this.rewriteSource(
+            buildRegistryComponentIndex(publicProjection, this.componentIndexBuilder),
+            indexFilename,
+            componentGroup,
+            name,
+            groups,
+            knownComponents,
+            session,
+        );
+        addDependencies(index);
 
-        while (addedTypes.size < typeDeps.size) {
-            const pending = Array.from(typeDeps).filter(type => !addedTypes.has(type));
-            for (const rawName of pending) {
-                const typeName = await this.resolveExtension(rawName, typesDir);
-                const typePath = path.join(typesDir, typeName);
-                if (!(await this.fs.pathExists(typePath))) {
-                    throw new Error(`Type file not found at ${typePath}`);
-                }
+        for (const { group, filename } of pending) {
+            const relativePath = relativeModulePath(group.directory, filename);
+            if (!relativePath) throw new Error(`Source file is outside of its directory: ${filename}`);
+            if (group.context === 'locale') registryDependencies.add('locale-zh-cn');
 
-                const rewritten: RewrittenModuleSource = await this.rewriteSource(typePath, componentName, 'types', knownComponents, session);
-                const code: string = rewritten.code;
-                assertKnownRegistryDeps(rewritten, componentName, typeName);
-                extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
-                    typeDeps.add(await this.resolveExtension(d, typesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
-                    composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
-                    localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
-                }
-                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
-                    libDeps.add(await this.resolveExtension(d, this.paths.libDir));
-                }
-
-                const relPath = `types/${typeName}`;
-                files.push({
-                    path: relPath,
-                    content: code,
-                    type: getFileType(relPath),
-                });
-                addedTypes.add(rawName);
-                addedTypes.add(typeName);
+            const exists = await this.fs.pathExists(filename);
+            if (!exists) {
+                if (group.context === 'locale') continue;
+                const label = {
+                    component: 'Source',
+                    composable: 'Composable',
+                    directive: 'Directive',
+                    lib: 'Lib',
+                    types: 'Type',
+                }[group.context];
+                throw new Error(`${label} file not found at ${filename}`);
             }
+
+            const raw = await readRegistryText(this.fs, filename, name);
+            const source = MODULE_SOURCE_PATTERN.test(filename) ? raw.replace(/\r\n/g, '\n') : raw;
+            const rewritten = await this.rewriteSource(source, filename, group, name, groups, knownComponents, session);
+            addDependencies(rewritten);
+
+            if (group.context === 'locale' || (group.context === 'lib' && this.libExclude.has(relativePath))) continue;
+            const deliveryPath = `${group.deliveryPath}/${relativePath}`;
+            group.files.push({ path: deliveryPath, content: rewritten.code, type: getFileType(deliveryPath) });
         }
+
+        const indexPath = `${componentGroup.deliveryPath}/index.ts`;
+        componentGroup.files.push({ path: indexPath, content: index.code, type: getFileType(indexPath) });
+        return {
+            files: groups.flatMap(group => group.files),
+            registryDependencies: Array.from(registryDependencies).sort(),
+        };
     }
 }

@@ -1,4 +1,3 @@
-import nodeFs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
@@ -9,10 +8,6 @@ import { signManifestFromEnv } from '../emitters/manifest-signer.js';
 import { BenchmarkTracker } from './benchmark-tracker.js';
 import { RegistryWatcher } from './watcher.js';
 import type { ApiContract, ComponentExportProjection } from 'brutx-shared-vue/api-contract';
-import {
-    createModuleResolver,
-    type ModuleResolver,
-} from 'brutx-shared-vue/module-resolver';
 import type {
     CompiledRegistryResult,
     CompilerOptions,
@@ -46,21 +41,6 @@ export function getDefaultPaths(): CompilerPaths {
 interface UiApiContractModule {
     API_CONTRACT?: ApiContract;
     projectComponentExports?: (componentId: string) => ComponentExportProjection;
-}
-
-function createDefaultModuleResolver(
-    fs: CompilerOptions['fs'],
-    paths: CompilerPaths,
-): ModuleResolver | undefined {
-    if (fs && !(fs instanceof DiskFileSystemAdapter)) return undefined;
-    const sourceRoot = path.resolve(paths.componentsDir, '..');
-    const tsconfigPath = path.resolve(sourceRoot, '../tsconfig.json');
-    if (!nodeFs.existsSync(tsconfigPath)) return undefined;
-    return createModuleResolver({
-        rootDir: sourceRoot,
-        tsconfigPath,
-        viteAliases: [{ find: '@', replacement: sourceRoot }],
-    });
 }
 
 export async function loadPublicProjection(
@@ -120,15 +100,12 @@ export async function createRegistryCompiler(
         ?? (options.publicProjection === undefined && paths.apiContractPath
             ? computeInputDigest(await fs.readFile(paths.apiContractPath, 'utf-8'))
             : undefined);
-    const moduleResolver = options.moduleResolver
-        ?? createDefaultModuleResolver(options.fs, paths);
     const compiler = new RegistryCompiler({
         ...options,
         fs,
         paths,
         publicProjection,
         publicProjectionDigest,
-        moduleResolver,
     });
     return { fs, paths, compiler };
 }

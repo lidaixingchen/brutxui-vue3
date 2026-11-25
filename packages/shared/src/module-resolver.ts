@@ -22,10 +22,19 @@ export const DEFAULT_MODULE_EXTENSIONS = Object.freeze([
     '.vue',
 ] as const);
 
-const TS_EXTENSION_SUBSTITUTIONS = Object.freeze({
+const TS_EXTENSION_SUBSTITUTIONS: Readonly<Partial<Record<string, readonly string[]>>> = Object.freeze({
     '.js': ['.ts', '.tsx'],
     '.jsx': ['.tsx', '.ts'],
 } as const);
+
+export function getModuleSpecifierPath(specifier: string): string {
+    const suffixOffset = specifier.slice(1).search(/[?#]/u);
+    return suffixOffset < 0 ? specifier : specifier.slice(0, suffixOffset + 1);
+}
+
+export function isModuleExtensionSubstitution(requested: string, resolved: string): boolean {
+    return TS_EXTENSION_SUBSTITUTIONS[requested]?.includes(resolved) ?? false;
+}
 
 export interface ModuleAlias {
     readonly find: string;
@@ -40,6 +49,7 @@ export interface ModuleResolverOptions {
     readonly viteAliases?: readonly ModuleAlias[];
     readonly extensions?: readonly string[];
     readonly enforceCaseSensitive?: boolean;
+    readonly fileExists?: (absolutePath: string) => boolean;
 }
 
 export type ModuleResolutionKind = 'internal' | 'external' | 'unresolved' | 'ambiguous';
@@ -258,10 +268,11 @@ function collectCandidates(
     const extension = path.extname(basePath).toLowerCase();
     if (extension && isKnownExtension(extension, extensions)) {
         addCandidate(basePath);
-        const substitutions = TS_EXTENSION_SUBSTITUTIONS[extension as keyof typeof TS_EXTENSION_SUBSTITUTIONS];
+        const substitutions = TS_EXTENSION_SUBSTITUTIONS[extension];
         substitutions?.forEach((replacement) => addCandidate(basePath.slice(0, -extension.length) + replacement));
     } else if (extension) {
         addCandidate(basePath);
+        extensions.forEach((item) => addCandidate(`${basePath}${item}`));
     } else {
         extensions.forEach((item) => addCandidate(`${basePath}${item}`));
         addCandidate(basePath);
@@ -380,8 +391,7 @@ function resolveInternal(
     importer: string,
     specifier: string,
     candidates: readonly string[],
-    enforceCaseSensitive: boolean,
-    cache?: ResolverCache,
+    inspect: (candidate: string) => ExactPathResult,
 ): ModuleResolution {
     const diagnostics: ModuleResolutionDiagnostic[] = [];
     const caseMismatchCandidates: string[] = [];
@@ -389,7 +399,7 @@ function resolveInternal(
     const resolvedCandidates: string[] = [];
 
     for (const candidate of candidates) {
-        const exact = inspectExactPath(candidate, enforceCaseSensitive, rootDir, cache);
+        const exact = inspect(candidate);
         if (exact.status === 'file' && exact.actualPath) {
             if (!isPathInside(rootDir, exact.actualPath)) {
                 diagnostics.push(createDiagnostic(
@@ -473,6 +483,12 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
     const enforceCaseSensitive = options.enforceCaseSensitive ?? true;
     const aliases = Object.freeze(mergeAliases({ ...options, rootDir }));
     const cache = createResolverCache();
+    const fileExists = options.fileExists;
+    const inspect = fileExists
+        ? (candidate: string): ExactPathResult => fileExists(normalizeAbsolute(candidate))
+            ? { status: 'file', actualPath: candidate }
+            : { status: 'missing' }
+        : (candidate: string): ExactPathResult => inspectExactPath(candidate, enforceCaseSensitive, rootDir, cache);
 
     const resolver: ModuleResolver = {
         rootDir,
@@ -484,10 +500,11 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
             const cached: ModuleResolution | undefined = cache.resolutions.get(cacheKey);
             if (cached) return cached;
 
-            const isRelative: boolean = /^(?:\.{1,2})(?:[\\/]|$)/u.test(specifier);
-            const isWinDrive: boolean = /^[a-zA-Z]:[/\\]/.test(specifier);
-            const isPosixAbs: boolean = specifier.startsWith('/');
-            const isAbsolute: boolean = isWinDrive || isPosixAbs || path.isAbsolute(specifier);
+            const modulePath = getModuleSpecifierPath(specifier);
+            const isRelative: boolean = /^(?:\.{1,2})(?:[\\/]|$)/u.test(modulePath);
+            const isWinDrive: boolean = /^[a-zA-Z]:[/\\]/.test(modulePath);
+            const isPosixAbs: boolean = modulePath.startsWith('/');
+            const isAbsolute: boolean = isWinDrive || isPosixAbs || path.isAbsolute(modulePath);
 
             let result: ModuleResolution;
 
@@ -506,7 +523,7 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
                 };
             } else if (!isRelative && !isAbsolute) {
                 const matches = aliases
-                    .map((alias) => aliasMatches(specifier, alias))
+                    .map((alias) => aliasMatches(modulePath, alias))
                     .filter((match): match is AliasMatch => match !== undefined);
                 if (matches.length > 0) {
                     const bestScore = Math.max(...matches.map((match) => match.score));
@@ -529,7 +546,7 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
                             diagnostics,
                         };
                     } else {
-                        result = resolveInternal(rootDir, normalizedImporter, specifier, collectCandidates(uniqueAliasCandidates[0], extensions).map((item) => item.absolutePath), enforceCaseSensitive, cache);
+                        result = resolveInternal(rootDir, normalizedImporter, specifier, collectCandidates(uniqueAliasCandidates[0], extensions).map((item) => item.absolutePath), inspect);
                     }
                 } else {
                     const identity = packageIdentity(specifier);
@@ -545,10 +562,10 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
                     };
                 }
             } else {
-                const normalizedSpec: string = isRelative ? toPosixPath(specifier) : specifier;
+                const normalizedSpec: string = isRelative ? toPosixPath(modulePath) : modulePath;
                 const basePath: string = isAbsolute ? path.resolve(normalizedSpec) : path.resolve(path.dirname(normalizedImporter), normalizedSpec);
                 const candidatePaths: string[] = collectCandidates(basePath, extensions).map((item) => item.absolutePath);
-                result = resolveInternal(rootDir, normalizedImporter, specifier, candidatePaths, enforceCaseSensitive, cache);
+                result = resolveInternal(rootDir, normalizedImporter, specifier, candidatePaths, inspect);
             }
 
             cache.resolutions.set(cacheKey, result);

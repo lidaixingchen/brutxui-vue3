@@ -70,6 +70,33 @@ describe('module resolver', () => {
         expect(result.normalizedPath).toBe('src/lib/helper.ts');
     });
 
+    it('解析点分文件名和带查询后缀的模块并优先匹配真实 JavaScript 文件', () => {
+        const rootDir = createFixture();
+        const importer = writeFixture(rootDir, 'src/entry.ts');
+        writeFixture(rootDir, 'src/lib/helper.ts');
+        writeFixture(rootDir, 'src/lib/helper.variant.ts');
+        writeFixture(rootDir, 'src/lib/native.ts');
+        writeFixture(rootDir, 'src/lib/native.js');
+        const resolver = createModuleResolver({
+            rootDir,
+            aliases: [{ find: '#helper', replacement: 'src/lib/helper' }],
+        });
+
+        const cases = {
+            './lib/helper.js?raw': 'src/lib/helper.ts',
+            './lib/helper.variant?raw': 'src/lib/helper.variant.ts',
+            './lib/native.js': 'src/lib/native.js',
+            '#helper#fragment': 'src/lib/helper.ts',
+        };
+        for (const [specifier, normalizedPath] of Object.entries(cases)) {
+            expect(resolver.resolve(importer, specifier)).toMatchObject({
+                kind: 'internal',
+                normalizedPath,
+                specifier,
+            });
+        }
+    });
+
     it('在大小写不匹配时返回明确诊断', () => {
         const rootDir = createFixture();
         const importer = writeFixture(rootDir, 'src/entry.ts');

@@ -1,5 +1,8 @@
+import path from 'node:path'
 import { COMPONENT_METADATA, type ComponentMetadataEntry, type MergedRegistryEntry, type RegistryIndex, type RegistryIndexItem, type RegistryItem } from 'brutx-shared-vue'
 import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/ast'
+import { createModuleResolver, getModuleSpecifierPath } from 'brutx-shared-vue/module-resolver'
+import { toPosixPath } from 'brutx-shared-vue/path'
 import { projectPublicIndexExports } from '../../shared/src/ast/public-index-projection.js'
 
 export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
@@ -534,13 +537,25 @@ export function validateRegistryItemInternalImports(
     item: Pick<RegistryItem, 'name' | 'files' | 'registryDependencies'>
 ): string[] {
     const errors: string[] = []
-    const files = new Set(item.files.map(file => file.path))
     const registryDependencies = new Set(item.registryDependencies)
+    const rootDir = path.resolve('registry-item')
+    const files = new Set(
+        [...item.files.map(file => file.path), ...REGISTRY_ITEM_IGNORED_IMPORTS]
+            .map(file => toPosixPath(path.resolve(rootDir, file))),
+    )
+    const moduleResolver = createModuleResolver({
+        rootDir,
+        aliases: [{ find: '@', replacement: rootDir }],
+        fileExists: filename => files.has(filename),
+    })
 
     for (const file of item.files) {
-        for (const classified of extractClassifiedModuleSpecifiers(file.content)) {
+        const classifiedSpecifiers = extractClassifiedModuleSpecifiers(file.content, file.path)
+        const filename = path.resolve(rootDir, file.path)
+        for (const classified of classifiedSpecifiers) {
+            const modulePath = getModuleSpecifierPath(classified.specifier)
             const directComponentAlias = /^@\/components\/([a-zA-Z0-9-]+)(?:\/|$)/.exec(
-                classified.specifier.split(/[?#]/)[0] ?? '',
+                modulePath,
             )
             const directComponentName = directComponentAlias?.[1]
             if (directComponentName && COMPONENT_METADATA[directComponentName]) {
@@ -549,13 +564,13 @@ export function validateRegistryItemInternalImports(
                 )
             }
 
-            const expectedPath = resolveRegistryAliasImport(item.name, classified.specifier)
+            const expectedPath = /^(?:\.{1,2})(?:\/|$)/u.test(modulePath)
+                ? normalizeRegistryImportPath('', toPosixPath(path.relative(rootDir, path.resolve(path.dirname(filename), modulePath))))
+                : resolveRegistryAliasImport(item.name, modulePath)
 
-            if (!expectedPath || REGISTRY_ITEM_IGNORED_IMPORTS.has(expectedPath)) {
-                continue
-            }
+            if (!expectedPath) continue
 
-            if (!files.has(expectedPath)) {
+            if (moduleResolver.resolve(filename, classified.specifier).kind !== 'internal') {
                 if (expectedPath.startsWith('locales/') && registryDependencies.has('locale-zh-cn')) {
                     continue
                 }
@@ -564,7 +579,7 @@ export function validateRegistryItemInternalImports(
             }
         }
 
-        for (const depName of extractCrossComponentImports(item.name, file.content)) {
+        for (const depName of extractCrossComponentImports(item.name, classifiedSpecifiers)) {
             if (!registryDependencies.has(depName)) {
                 errors.push(`file "${file.path}" imports "@/components/ui/${depName}/...", but "${depName}" is not declared in registryDependencies`)
             }
@@ -667,10 +682,13 @@ function isStyleAssetSpecifier(specifier: string): boolean {
     return /\.(?:css|scss|sass|less|styl|pcss|postcss)$/.test(specifier)
 }
 
-function extractCrossComponentImports(itemName: string, code: string): string[] {
+function extractCrossComponentImports(
+    itemName: string,
+    specifiers: ReturnType<typeof extractClassifiedModuleSpecifiers>,
+): string[] {
     const deps = new Set<string>()
 
-    for (const classified of extractClassifiedModuleSpecifiers(code)) {
+    for (const classified of specifiers) {
         if (classified.isTypeOnly) continue
 
         const cleanSpecifier = classified.specifier.split(/[?#]/)[0]
@@ -685,9 +703,7 @@ function extractCrossComponentImports(itemName: string, code: string): string[] 
     return Array.from(deps)
 }
 
-function resolveRegistryAliasImport(itemName: string, specifier: string): string | null {
-    const cleanSpecifier = specifier.split(/[?#]/)[0]
-
+function resolveRegistryAliasImport(itemName: string, cleanSpecifier: string): string | null {
     if (cleanSpecifier.startsWith('@/types/')) {
         return normalizeRegistryImportPath('types/', cleanSpecifier.slice('@/types/'.length))
     }
@@ -709,6 +725,9 @@ function resolveRegistryAliasImport(itemName: string, specifier: string): string
     }
 
     const componentPrefix = `@/components/ui/${itemName}/`
+    if (cleanSpecifier === componentPrefix.slice(0, -1)) {
+        return `components/ui/${itemName}/index.ts`
+    }
     if (cleanSpecifier.startsWith(componentPrefix)) {
         return normalizeRegistryImportPath(`components/ui/${itemName}/`, cleanSpecifier.slice(componentPrefix.length))
     }

@@ -16,10 +16,11 @@ import {
     type RegistryItem,
     type RegistryManifest,
 } from 'brutx-shared-vue';
+import { isComponentSourceDirectory, isComponentSourceFile, relativeModulePath } from 'brutx-shared-vue/scan';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { rewriteImports } from './ast-rewriter.js';
-import { DependencyResolver, type DependencyAnalysisSession } from './dependency-resolver.js';
+import { DependencyResolver, readRegistryText, type DependencyAnalysisSession } from './dependency-resolver.js';
 import { CACHE_VERSION, CacheManager, computeInputDigest } from './cache-manager.js';
 import type {
     CompiledItemResult,
@@ -115,6 +116,7 @@ export class RegistryCompiler {
             this.libExclude,
             this.componentIndexBuilder,
             this.moduleResolver,
+            name => this.getComponentProjection(name),
         );
         const cacheFilePath = path.join(path.dirname(this.paths.outputDir), '.registry-cache.json');
         this.cacheManager = new CacheManager(this.fs, cacheFilePath);
@@ -133,14 +135,12 @@ export class RegistryCompiler {
             const relativePath = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
             const absolutePath = path.join(componentDir, entry.name);
             if (entry.isDirectory()) {
-                if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+                if (!isComponentSourceDirectory(entry.name)) continue;
                 files.push(...await this.listComponentSourceFiles(absolutePath, relativePath));
                 continue;
             }
 
-            if (!entry.isFile()) continue;
-            if (entry.name === 'index.ts' || /\.(test|spec)\.(ts|js|tsx|jsx)$/.test(entry.name)) continue;
-            if (/\.(vue|ts|css)$/.test(entry.name)) files.push(relativePath.replace(/\\/g, '/'));
+            if (entry.isFile() && isComponentSourceFile(relativePath)) files.push(relativePath);
         }
         return files.sort();
     }
@@ -153,7 +153,7 @@ export class RegistryCompiler {
 
         const entries = await this.fs.readdir(componentsDir, { withFileTypes: true });
         const sourceComponents = entries
-            .filter(entry => entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules')
+            .filter(entry => entry.isDirectory() && isComponentSourceDirectory(entry.name))
             .map(entry => entry.name)
             .sort();
         const problems: string[] = [];
@@ -165,7 +165,8 @@ export class RegistryCompiler {
                 continue;
             }
 
-            const sourceFiles = await this.listComponentSourceFiles(path.join(componentsDir, name));
+            const componentDir = path.join(componentsDir, name);
+            const sourceFiles = await this.listComponentSourceFiles(componentDir);
             const manifestFiles = [...manifestEntry.files].map(file => file.replace(/\\/g, '/')).sort();
             const sourceSet = new Set(sourceFiles);
             const manifestSet = new Set(manifestFiles);
@@ -173,7 +174,12 @@ export class RegistryCompiler {
                 if (!manifestSet.has(file)) problems.push(`component ${name} is missing file ${file}`);
             }
             for (const file of manifestFiles) {
-                if (!sourceSet.has(file)) problems.push(`component ${name} lists missing file ${file}`);
+                if (sourceSet.has(file)) continue;
+                const filename = path.resolve(componentDir, file);
+                const stat = relativeModulePath(componentDir, filename)
+                    ? await this.fs.stat(filename).catch(() => undefined)
+                    : undefined;
+                if (!stat?.isFile()) problems.push(`component ${name} lists missing file ${file}`);
             }
 
             const referencedFiles: ReadonlyArray<readonly [string, string, string]> = [
@@ -414,7 +420,7 @@ export class RegistryCompiler {
 
             const contents = await Promise.all(
                 tsFiles.map(localeFile =>
-                    this.fs.readFile(path.join(this.paths.localesDir, localeFile), 'utf-8')
+                    readRegistryText(this.fs, path.join(this.paths.localesDir, localeFile), 'locale-zh-cn')
                 )
             );
 
