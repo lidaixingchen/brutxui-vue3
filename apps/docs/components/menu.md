@@ -105,6 +105,7 @@ const active = ref('home')
 
 ## 可访问性
 
-- **键盘操作**：支持使用 `Enter` 或 `Space` 键激活 `MenuItem` 或展开/收起 `SubMenu`。
+- **键盘操作**使用方向键在可用菜单项之间移动焦点，使用 `Enter` 或 `Space` 激活菜单项或切换子菜单。横向菜单用 `ArrowDown` 进入子菜单，用 `Escape` 关闭焦点所在的子菜单并将焦点移回其触发器。纵向菜单用 `ArrowRight` 进入子菜单，用 `ArrowLeft` 收起并返回触发器。
+- 横向菜单可**悬停**展开子菜单，键盘焦点保持在原位。在菜单外按 `Escape` 可以关闭悬停展开的子菜单，并保留原有焦点。子菜单因指针离开而收起时，若焦点仍在其中，则返回触发器。
 - **ARIA 属性**：根组件自动设置 `role="menubar"`，各菜单项使用 `role="menuitem"`。子菜单触发器自动管理 `aria-haspopup="true"` 和 `aria-expanded` 属性。
 - **动效降级**：垂直模式下的折叠动画支持 `prefers-reduced-motion` 自动降级（如适用）。

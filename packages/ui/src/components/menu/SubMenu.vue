@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { ChevronDown } from '@lucide/vue'
-import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS, type MenuRuntimeContext } from './menu-types'
-import { hasDocument, getDocument, matchMedia } from '@/lib/env'
+import { MENU_KEY, SUB_MENU_KEY, SUB_MENU_HOVER_DELAY_MS, type MenuRuntimeContext } from './menu-types'
+import { matchMedia } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { subMenuLayoutVariants, subMenuTitleVariants, subMenuTriggerLayoutVariants } from './menu-variants'
 
@@ -49,13 +49,7 @@ const isOpened = computed(() => {
     return isHovered.value || isOpenClick.value
 })
 
-interface BrutxSubMenuContext {
-    registerChild: (index: string) => void
-    unregisterChild: (index: string) => void
-    notifyItemSelected: () => void
-    closeAndFocusTrigger?: () => void
-}
-const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
+const parentSubMenu = inject(SUB_MENU_KEY, null)
 const childIndices = ref<Set<string>>(new Set())
 
 function registerChild(idx: string) {
@@ -79,23 +73,15 @@ function unregisterChild(idx: string) {
 }
 
 function notifyItemSelected() {
-    if (!isVertical.value) {
-        resetHorizontalState()
-        context?.focusItem(props.index)
-    }
+    if (!isVertical.value) resetHorizontalState()
     parentSubMenu?.notifyItemSelected()
 }
 
 function closeAndFocusTrigger() {
-    if (isVertical.value) {
-        context?.closeSubMenu(props.index)
-    } else {
-        resetHorizontalState()
-        context?.focusItem(props.index)
-    }
+    context?.closeSubMenu(props.index)
 }
 
-provide('BrutxSubMenu', {
+provide(SUB_MENU_KEY, {
     registerChild,
     unregisterChild,
     notifyItemSelected,
@@ -109,6 +95,13 @@ function registerTrigger() {
             el: triggerRef.value,
             disabled: props.disabled,
             isSubMenuTrigger: true,
+        })
+    }
+    if (rootRef.value && context) {
+        context.registerSubMenuBranch(props.index, {
+            root: rootRef.value,
+            dismiss: resetHorizontalState,
+            cancelPendingOpen,
         })
     }
 }
@@ -126,6 +119,10 @@ function resetHorizontalState(): void {
     isOpenClick.value = false
 }
 
+function cancelPendingOpen(): void {
+    if (!isHovered.value) clearHoverTimer()
+}
+
 function scheduleHoverState(nextState: boolean): void {
     clearHoverTimer()
     hoverTimer.value = setTimeout(() => {
@@ -140,10 +137,6 @@ onMounted(() => {
     }
     context?.registerSubMenu(props.index, childIndices.value)
     registerTrigger()
-    if (hasDocument) {
-        getDocument()?.addEventListener('click', handleDocumentClick)
-        getDocument()?.addEventListener('keydown', handleDocumentKeydown)
-    }
 })
 
 watch(() => props.disabled, () => {
@@ -153,14 +146,11 @@ watch(() => props.disabled, () => {
     }
 })
 
+// Keep the focused child in the DOM until Menu can return focus.
 watch(isOpened, (val) => {
     if (isVertical.value) return
-    if (val) {
-        context?.openSubMenu(props.index)
-    } else {
-        context?.closeSubMenu(props.index)
-    }
-})
+    context?.setHorizontalSubMenuOpen(props.index, val)
+}, { flush: 'sync' })
 
 watch(
     () => props.index,
@@ -206,10 +196,6 @@ onUnmounted(() => {
     context?.unregisterSubMenu(props.index)
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
-    }
-    if (hasDocument) {
-        getDocument()?.removeEventListener('click', handleDocumentClick)
-        getDocument()?.removeEventListener('keydown', handleDocumentKeydown)
     }
 })
 
@@ -279,12 +265,12 @@ function handleMouseLeave() {
 
 function handleTriggerClick() {
     if (props.disabled) return
+    context?.focusItem(props.index)
     if (isVertical.value) {
         context?.toggleSubMenu(props.index)
     } else {
         isOpenClick.value = !isOpenClick.value
     }
-    context?.focusItem(props.index)
 }
 
 function handleTriggerFocus() {
@@ -339,28 +325,8 @@ function handleTriggerKeydown(e: KeyboardEvent) {
         case ' ':
             e.preventDefault()
             handleTriggerClick()
+            if (isHorizontal && isOpenClick.value) context?.openSubMenu(props.index)
             break
-    }
-}
-
-function handleDocumentClick(event: MouseEvent) {
-    if (isVertical.value) return
-    if (!isOpened.value && hoverTimer.value === null) return
-    const target = event.target
-    if (!(target instanceof Node)) return
-    if (rootRef.value && !rootRef.value.contains(target)) {
-        resetHorizontalState()
-    }
-}
-
-function handleDocumentKeydown(event: KeyboardEvent) {
-    if (isVertical.value) return
-    if (!isOpened.value && hoverTimer.value === null) return
-    if (event.key === 'Escape') {
-        if (rootRef.value?.querySelector('.absolute [aria-expanded="true"]')) return
-        event.stopPropagation()
-        resetHorizontalState()
-        context?.focusItem(props.index)
     }
 }
 

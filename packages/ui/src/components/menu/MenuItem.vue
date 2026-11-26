@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { MENU_KEY, type MenuRuntimeContext } from './menu-types'
+import { MENU_KEY, SUB_MENU_KEY, type MenuRuntimeContext } from './menu-types'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { menuItemLayoutVariants } from './menu-variants'
 
@@ -29,13 +29,7 @@ if (!context) {
     console.warn('[BrutxUI MenuItem] Must be used inside a Menu component.')
 }
 
-interface BrutxSubMenuContext {
-    registerChild: (index: string) => void
-    unregisterChild: (index: string) => void
-    notifyItemSelected: () => void
-    closeAndFocusTrigger?: () => void
-}
-const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
+const parentSubMenu = inject(SUB_MENU_KEY, null)
 const itemRef = ref<HTMLElement | null>(null)
 
 function registerSelf() {

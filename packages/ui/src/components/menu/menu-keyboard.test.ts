@@ -220,8 +220,8 @@ describe('Menu Keyboard Navigation & Roving Focus', () => {
 
         await nextTick()
 
-        const subTrigger = wrapper.find('#sub1 [role="menuitem"]')
-        expect(subTrigger.exists()).toBe(true)
+        const subTrigger = wrapper.get<HTMLElement>('#sub1 [role="menuitem"]')
+        subTrigger.element.focus()
 
         // ArrowRight 展开子菜单
         await subTrigger.trigger('keydown', { key: 'ArrowRight' })

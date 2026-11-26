@@ -103,6 +103,7 @@ Set `router` to `true` to auto-push routes on click. If `route` prop is not expl
 
 ## Accessibility
 
-- **Keyboard Interaction**: Supports using `Enter` or `Space` keys to select `MenuItem` or expand/collapse `SubMenu`.
+- **Keyboard interaction** uses the arrow keys to move focus between available items and `Enter` or `Space` to activate an item or toggle a submenu. In horizontal menus, `ArrowDown` enters a submenu and `Escape` closes the submenu containing focus and returns focus to its trigger. In vertical menus, `ArrowRight` enters a submenu and `ArrowLeft` closes it and returns focus to its trigger.
+- **Hovering** over a horizontal submenu trigger can open the submenu while keyboard focus stays in place. Pressing `Escape` from outside the menu can dismiss a hover-opened submenu and keep focus where it is. If the submenu collapses when the pointer leaves and still contains focus, focus returns to its trigger.
 - **ARIA Attributes**: The root component automatically sets `role="menubar"`, and each menu item sets `role="menuitem"`. The submenu trigger automatically manages `aria-haspopup="true"` and `aria-expanded` attributes.
 - **Reduced Motion**: Fold animation in vertical mode respects `prefers-reduced-motion` settings and automatically downgrades (if applicable).

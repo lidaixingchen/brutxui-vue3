@@ -55,6 +55,61 @@ describe('SubMenu hover lifecycle', () => {
         expect(trigger.attributes('aria-expanded')).toBe('false')
     })
 
+    it('cancels a pending sibling hover when Escape closes the focused branch', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <Menu mode="horizontal">
+                    <SubMenu index="first" title="First" id="first">
+                        <MenuItem index="first-child" id="first-child">First child</MenuItem>
+                    </SubMenu>
+                    <SubMenu index="second" title="Second" id="second">
+                        <MenuItem index="second-child">Second child</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        const first = wrapper.get<HTMLElement>('#first [aria-haspopup]')
+        const second = wrapper.get('#second')
+        await first.trigger('click')
+        const child = wrapper.get<HTMLElement>('#first-child')
+        child.element.focus()
+        await second.trigger('mouseenter')
+        await child.trigger('keydown', { key: 'Escape' })
+        await advanceHoverDelay()
+
+        expect(first.attributes('aria-expanded')).toBe('false')
+        expect(second.get('[aria-haspopup]').attributes('aria-expanded')).toBe('false')
+        expect(document.activeElement).toBe(first.element)
+    })
+
+    it('keeps focus outside if focus moves before keyboard-opened children mount', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <div>
+                    <input id="outside">
+                    <Menu mode="horizontal">
+                        <SubMenu index="products" title="Products">
+                            <MenuItem index="products-child">Product</MenuItem>
+                        </SubMenu>
+                    </Menu>
+                </div>
+            `,
+        }, { attachTo: document.body })
+
+        const outside = wrapper.get<HTMLInputElement>('#outside').element
+        const trigger = wrapper.get<HTMLElement>('[aria-haspopup]').element
+        trigger.focus()
+        trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+        outside.focus()
+        await nextTick()
+
+        expect(trigger.getAttribute('aria-expanded')).toBe('true')
+        expect(document.activeElement).toBe(outside)
+    })
+
     it('cancels pending hover when the submenu becomes disabled', async () => {
         wrapper = mount({
             components: { Menu, MenuItem, SubMenu },

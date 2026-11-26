@@ -34,6 +34,22 @@ export interface MenuContext {
 export interface MenuRuntimeContext extends MenuContext {
     tabStopIndex: ComputedRef<string | null>
     unregisterItem: (index: string, restoreFocus?: boolean) => void
+    registerSubMenuBranch: (index: string, branch: SubMenuBranch) => void
+    setHorizontalSubMenuOpen: (index: string, open: boolean) => void
+}
+
+export interface SubMenuBranch {
+    root: HTMLElement
+    dismiss: () => void
+    cancelPendingOpen: () => void
+}
+
+export interface SubMenuContext {
+    registerChild: (index: string) => void
+    unregisterChild: (index: string) => void
+    notifyItemSelected: () => void
+    closeAndFocusTrigger: () => void
 }
 
 export const MENU_KEY: InjectionKey<MenuContext> = Symbol.for('BrutxMenu')
+export const SUB_MENU_KEY: InjectionKey<SubMenuContext | null> = Symbol('BrutxSubMenu')

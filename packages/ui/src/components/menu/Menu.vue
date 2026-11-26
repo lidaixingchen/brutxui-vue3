@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch, getCurrentInstance, onMounted, nextTick } from 'vue'
-import { MENU_KEY, type MenuItemEntry } from './menu-types'
+import { computed, provide, ref, watch, getCurrentInstance, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { MENU_KEY, SUB_MENU_KEY, type MenuItemEntry, type MenuRuntimeContext, type SubMenuBranch } from './menu-types'
 import { cn } from '@/lib/utils'
 import { menuLayoutVariants } from './menu-variants'
 
@@ -30,10 +30,12 @@ const activeIndex = ref(props.defaultActive)
 const focusedIndex = ref<string | null>(null)
 const openedMenus = ref<Set<string>>(new Set())
 const instance = getCurrentInstance()
+const rootRef = ref<HTMLElement | null>(null)
 
 const registeredItems = ref<MenuItemEntry[]>([])
 const subMenuChildren = new Map<string, ReadonlySet<string>>()
 const childToParent = new Map<string, Set<string>>()
+const subMenuBranches = new Map<string, SubMenuBranch>()
 
 function registerItem(entry: MenuItemEntry) {
     const previous = registeredItems.value.find((item) => item.index === entry.index)
@@ -147,31 +149,103 @@ function focusLastItem() {
     }
 }
 
-function openSubMenu(index: string) {
+function setSubMenuOpen(index: string, open: boolean) {
+    if (openedMenus.value.has(index) === open) return
     const next = new Set(openedMenus.value)
-    next.add(index)
+    if (open) next.add(index)
+    else next.delete(index)
     openedMenus.value = next
+}
 
+function openSubMenu(index: string) {
+    setSubMenuOpen(index, true)
+    const trigger = registeredItems.value.find((item) => item.index === index)?.el
     nextTick(() => {
+        if (!trigger || !isElementFocused(trigger) || !openedMenus.value.has(index)) return
         const children = subMenuChildren.get(index)
-        if (children) {
-            const available = getAvailableItems()
-            const firstChild = available.find((i) => children.has(i.index))
-            if (firstChild) {
-                focusItem(firstChild.index)
-            }
-        }
+        const firstChild = getAvailableItems().find((item) => children?.has(item.index))
+        if (firstChild) focusItem(firstChild.index)
     })
 }
 
 function closeSubMenu(index: string) {
-    const next = new Set(openedMenus.value)
-    next.delete(index)
-    openedMenus.value = next
+    setSubMenuOpen(index, false)
     focusItem(index)
 }
 
+function registerSubMenuBranch(index: string, branch: SubMenuBranch) {
+    subMenuBranches.set(index, branch)
+}
+
+function setHorizontalSubMenuOpen(index: string, open: boolean) {
+    const wasOpen = openedMenus.value.has(index)
+    setSubMenuOpen(index, open)
+    if (open || !wasOpen) return
+
+    const branch = subMenuBranches.get(index)
+    const trigger = registeredItems.value.find((item) => item.index === index)
+    if (!branch || !trigger || !isElementFocused(branch.root) || isElementFocused(trigger.el)) return
+
+    const destination = trigger.disabled ? getNearestAvailableItem(trigger.el) : trigger
+    if (destination) focusItem(destination.index)
+}
+
+function getMenuOwner(target: EventTarget | null): Element | null {
+    return target instanceof Element ? target.closest('[role="menubar"]') : null
+}
+
+function handleEscape() {
+    const root = rootRef.value
+    if (!root || props.mode !== 'horizontal') return false
+
+    const activeElement = root.ownerDocument.activeElement
+    let focusedBranch: SubMenuBranch | undefined
+    if (getMenuOwner(activeElement) === root) {
+        for (const [index, branch] of subMenuBranches) {
+            if (
+                openedMenus.value.has(index) && branch.root.contains(activeElement) &&
+                (!focusedBranch || focusedBranch.root.contains(branch.root))
+            ) {
+                focusedBranch = branch
+            }
+        }
+    }
+
+    for (const branch of subMenuBranches.values()) {
+        if (!focusedBranch || focusedBranch.root.contains(branch.root)) branch.dismiss()
+        else branch.cancelPendingOpen()
+    }
+    return Boolean(focusedBranch)
+}
+
+function handleMenuKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || event.defaultPrevented || getMenuOwner(event.target) !== rootRef.value) return
+    if (handleEscape()) {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+}
+
+function handleDocumentKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || event.defaultPrevented || getMenuOwner(event.target)) return
+    const focusedMenu = getMenuOwner(rootRef.value?.ownerDocument.activeElement ?? null)
+    if (!focusedMenu || focusedMenu === rootRef.value) handleEscape()
+}
+
+function handleDocumentClick(event: MouseEvent) {
+    if (props.mode !== 'horizontal' || !(event.target instanceof Node)) return
+    for (const branch of subMenuBranches.values()) {
+        if (!branch.root.contains(event.target)) branch.dismiss()
+    }
+}
+
 function registerSubMenu(index: string, children: ReadonlySet<string>) {
+    const previousChildren = subMenuChildren.get(index)
+    if (previousChildren) {
+        for (const child of previousChildren) {
+            if (!children.has(child)) unregisterSubMenuChild(index, child)
+        }
+    }
     subMenuChildren.set(index, children)
     for (const child of children) {
         const parents = childToParent.get(child)
@@ -181,21 +255,24 @@ function registerSubMenu(index: string, children: ReadonlySet<string>) {
     if (activeIndex.value) expandActiveSubMenuChain(activeIndex.value)
 }
 
+function unregisterSubMenuChild(parent: string, child: string) {
+    const parents = childToParent.get(child)
+    if (!parents) return
+    parents.delete(parent)
+    if (parents.size === 0) childToParent.delete(child)
+}
+
 function unregisterSubMenu(index: string) {
     const children = subMenuChildren.get(index)
     if (children) {
-        for (const child of children) {
-            const parents = childToParent.get(child)
-            if (parents) {
-                parents.delete(index)
-                if (parents.size === 0) childToParent.delete(child)
-            }
-        }
+        for (const child of children) unregisterSubMenuChild(index, child)
     }
     subMenuChildren.delete(index)
+    subMenuBranches.delete(index)
 }
 
 function expandActiveSubMenuChain(target: string) {
+    if (props.mode !== 'vertical') return
     const toOpen = new Set(openedMenus.value)
     let changed = false
     const stack = [target]
@@ -245,16 +322,10 @@ function selectItem(index: string, route?: string | Record<string, unknown>) {
 }
 
 function toggleSubMenu(index: string) {
-    const next = new Set(openedMenus.value)
-    if (next.has(index)) {
-        next.delete(index)
-    } else {
-        next.add(index)
-    }
-    openedMenus.value = next
+    setSubMenuOpen(index, !openedMenus.value.has(index))
 }
 
-const menuContext = {
+const menuContext: MenuRuntimeContext = {
     activeIndex,
     focusedIndex,
     firstEnabledIndex,
@@ -275,12 +346,24 @@ const menuContext = {
     closeSubMenu,
     registerSubMenu,
     unregisterSubMenu,
+    registerSubMenuBranch,
+    setHorizontalSubMenuOpen,
 }
 
 provide(MENU_KEY, menuContext)
+provide(SUB_MENU_KEY, null)
 
 onMounted(() => {
     if (activeIndex.value) expandActiveSubMenuChain(activeIndex.value)
+    const ownerDocument = rootRef.value?.ownerDocument
+    ownerDocument?.addEventListener('click', handleDocumentClick)
+    ownerDocument?.addEventListener('keydown', handleDocumentKeydown)
+})
+
+onBeforeUnmount(() => {
+    const ownerDocument = rootRef.value?.ownerDocument
+    ownerDocument?.removeEventListener('click', handleDocumentClick)
+    ownerDocument?.removeEventListener('keydown', handleDocumentKeydown)
 })
 
 const menuClasses = computed(() => {
@@ -293,7 +376,7 @@ const menuClasses = computed(() => {
 </script>
 
 <template>
-    <ul :class="menuClasses" role="menubar" :aria-orientation="props.mode">
+    <ul ref="rootRef" :class="menuClasses" role="menubar" :aria-orientation="props.mode" @keydown="handleMenuKeydown">
         <slot />
     </ul>
 </template>
