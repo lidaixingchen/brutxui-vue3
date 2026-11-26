@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, useId, watch } from 'vue'
+import { computed, provide, ref, shallowRef, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
 import { getDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,7 @@ import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { treeSelectControlVariants, treeSelectControlTriggerVariants, treeSelectTriggerVariants } from './tree-select-variants'
+import { searchTreeSelectNodes, treeSelectVisibleChildrenKey } from './tree-select-search'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -190,58 +191,26 @@ const displayText = useSelectionDisplayText({
     formatCount: (count) => t('treeSelect.selectedCount', { count }),
 })
 
-// 优化的递归过滤节点 - 缓存小写查询字符串
-function filterTree(nodes: TreeNode[], query: string): TreeNode[] {
-    const result: TreeNode[] = []
-    const lowerQuery = query.toLowerCase()
+const searchResults = computed(() => searchQuery.value ? searchTreeSelectNodes(props.nodes, searchQuery.value) : undefined)
+const filteredNodes = computed(() => searchResults.value?.nodes ?? props.nodes)
 
-    for (const node of nodes) {
-        const selfMatches = node.label.toLowerCase().includes(lowerQuery)
-        let filteredChildren: TreeNode[] | undefined
-
-        if (node.children?.length) {
-            filteredChildren = filterTree(node.children, query)
-        }
-
-        if (selfMatches || (filteredChildren && filteredChildren.length > 0)) {
-            if (filteredChildren && filteredChildren !== node.children) {
-                result.push({ ...node, children: filteredChildren })
-            } else {
-                result.push(node)
-            }
-        }
-    }
-    return result
+function getVisibleChildren(node: TreeNode): TreeNode[] | undefined {
+    const results = searchResults.value
+    return results ? results.childrenByNode.get(node) : node.children
 }
 
-// 过滤后的节点
-const filteredNodes = computed(() => {
-    if (!searchQuery.value) return props.nodes
-    return filterTree(props.nodes, searchQuery.value)
+provide(treeSelectVisibleChildrenKey, getVisibleChildren)
+
+let preSearchExpanded: Set<string> | undefined
+watch(searchResults, (results) => {
+    if (results) {
+        preSearchExpanded ??= new Set(expandedIds.value)
+        expandedIds.value = new Set([...preSearchExpanded, ...results.expandedIds])
+    } else if (preSearchExpanded) {
+        expandedIds.value = preSearchExpanded
+        preSearchExpanded = undefined
+    }
 })
-
-// 保存搜索前的展开状态，搜索结束后恢复
-let preSearchExpanded: Set<string> | null = null
-
-// 收集所有命中节点的祖先 id，搜索时自动展开这些祖先，否则命中节点仍被折叠祖先遮住、UI 上不可见
-// 用共享可变数组 push/pop 复用祖先链，避免每次递归复制整条数组（O(n·depth) 分配）
-function collectMatchedAncestors(
-    nodes: TreeNode[],
-    lowerQuery: string,
-    idsToExpand: Set<string>,
-    ancestorIds: string[]
-): void {
-    for (const node of nodes) {
-        if (node.label.toLowerCase().includes(lowerQuery) && ancestorIds.length > 0) {
-            ancestorIds.forEach((id) => idsToExpand.add(id))
-        }
-        if (node.children?.length) {
-            ancestorIds.push(node.id)
-            collectMatchedAncestors(node.children, lowerQuery, idsToExpand, ancestorIds)
-            ancestorIds.pop()
-        }
-    }
-}
 
 function getVisibleFocusableNodes(nodes: TreeNode[]): TreeNode[] {
     const visibleNodes: TreeNode[] = []
@@ -251,10 +220,11 @@ function getVisibleFocusableNodes(nodes: TreeNode[]): TreeNode[] {
         const node = stack.pop()!
         if (!node.disabled) visibleNodes.push(node)
 
-        if (node.children?.length && expandedIds.value.has(node.id)) {
-            for (let index = node.children.length - 1; index >= 0; index--) {
-                stack.push(node.children[index])
-            }
+        if (!expandedIds.value.has(node.id)) continue
+        const children = getVisibleChildren(node)
+        if (!children) continue
+        for (let index = children.length - 1; index >= 0; index--) {
+            stack.push(children[index])
         }
     }
 
@@ -277,20 +247,6 @@ watch([open, visibleFocusableNodes], ([isOpen, nodes]) => {
         : triggerRef.value
     focusTarget?.focus()
 }, { flush: 'pre' })
-
-watch(searchQuery, (query) => {
-    if (query) {
-        if (preSearchExpanded === null) {
-            preSearchExpanded = new Set(expandedIds.value)
-        }
-        const next = new Set(expandedIds.value)
-        collectMatchedAncestors(props.nodes, query.toLowerCase(), next, [])
-        expandedIds.value = next
-    } else if (preSearchExpanded !== null) {
-        expandedIds.value = new Set(preSearchExpanded)
-        preSearchExpanded = null
-    }
-})
 
 // 保持焦点落在当前实际展示的可用节点中，避免搜索或折叠后焦点留在已隐藏项上。
 watch([open, visibleFocusableNodes], ([isOpen, nodes]) => {

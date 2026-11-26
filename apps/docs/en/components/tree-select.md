@@ -94,7 +94,9 @@ const selected = ref([])
 
 ### Search Filtering
 
-When `searchable` is enabled, user input recursively filters tree nodes. When a match is found, the ancestor path is preserved to maintain visibility.
+With `searchable` enabled, the search field matches a case-insensitive substring of each node's `label`. Ancestors of matching nodes expand automatically, including when `nodes` changes during a search. Clearing the query or closing the panel restores the expansion state from before the search.
+
+A folder stays collapsed when only its own label matches. Users can select enabled leaf nodes, and the `select` event returns the original node data.
 
 ### Disabling Nodes
 
@@ -200,7 +202,7 @@ interface TreeSelectLocale {
 
 **Q: Why can't some nodes be found during search filtering?**
 
-A: Search filtering recursively matches nodes at all levels. When a child node matches, its ancestor path is automatically preserved to ensure visibility. If a node cannot be found, check that its `label` matches the search keyword. Search is case-insensitive fuzzy matching by default.
+A: Search checks every level. Make sure the node's `label` contains the query.
 
 **Q: The `modelValue` type differs between single-select and multi-select modes. How do I handle this uniformly?**
 

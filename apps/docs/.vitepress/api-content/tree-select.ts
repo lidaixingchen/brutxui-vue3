@@ -34,7 +34,7 @@ const content = {
                 'update:modelValue': ['选择变化时发出新的节点 ID；清除或无有效选择时可发出 undefined。', 'Emits the updated node ID or IDs when the selection changes; clearing or having no valid selection may emit undefined.'],
                 'update:open': ['下拉展开状态变化时发出新布尔值，可用于 v-model:open。', 'Emits the new boolean when the dropdown open state changes and can be used with v-model:open.'],
                 'open-change': ['下拉面板打开或关闭后发出当前展开状态。', 'Emits the current open state when the dropdown panel opens or closes.'],
-                select: ['用户选择或清除节点时发出节点对象；多选模式返回节点数组。', 'Emits the selected node when the user selects or clears a node; multiple mode returns an array of nodes.'],
+                select: ['选择时发出原始节点对象，多选时发出节点数组。清除时，单选发出 undefined，多选发出空数组。', 'Selection emits the original node object, or an array of nodes in multiple mode. Clearing emits undefined in single mode or an empty array in multiple mode.'],
             }),
             exposes: describe({
                 searchQuery: ['当前搜索关键词的响应式状态。', 'The reactive state containing the current search query.'],

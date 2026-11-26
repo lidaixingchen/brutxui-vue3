@@ -224,6 +224,60 @@ describe('TreeSelect keyboard browser integration', () => {
         expect(document.body.textContent).not.toContain('Enabled Child')
     })
 
+    it('selects the original leaf by keyboard after the search data changes', async () => {
+        const treeNodes = ref<TreeNode[]>([
+            { id: 'archive', label: 'Archive', children: [{ id: 'previous', label: 'Previous' }] },
+        ])
+        const modelValue = ref<string | string[]>()
+        const selected = ref<TreeNode | TreeNode[]>()
+        wrapper = mount(defineComponent({
+            setup() {
+                return () => h(TreeSelect, {
+                    nodes: treeNodes.value,
+                    modelValue: modelValue.value,
+                    'onUpdate:modelValue': (value: string | string[] | undefined) => {
+                        modelValue.value = value
+                    },
+                    onSelect: (node: TreeNode | TreeNode[] | undefined) => {
+                        selected.value = node
+                    },
+                })
+            },
+        }), { attachTo: host! })
+        const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')!
+        await userEvent.click(trigger)
+        const input = document.querySelector<HTMLInputElement>('input[type="text"]')!
+        await userEvent.type(input, 'Archive')
+
+        const archive = getTreeItem('Archive')
+        expect(archive.getAttribute('aria-expanded')).toBe('false')
+        await userEvent.tab()
+        await pressKey(archive, 'Enter')
+        expect(trigger.getAttribute('aria-expanded')).toBe('true')
+        expect(modelValue.value).toBeUndefined()
+        expect(selected.value).toBeUndefined()
+
+        treeNodes.value = [{
+            id: 'new',
+            label: 'New folder',
+            disabled: true,
+            children: [{ id: 'incoming', label: 'Archive copy', data: { version: 'incoming' } }],
+        }]
+        await nextTick()
+        expect(input.value).toBe('Archive')
+        const folder = getTreeItem('New folder')
+        expect(folder.getAttribute('aria-expanded')).toBe('true')
+        expect(folder.getAttribute('aria-disabled')).toBe('true')
+        const incoming = getTreeItem('Archive copy')
+        expect(incoming.getAttribute('aria-expanded')).toBeNull()
+        await userEvent.click(input)
+        await userEvent.tab()
+        await pressKey(incoming, 'Enter')
+        await expect.poll(() => modelValue.value).toBe('incoming')
+        expect(selected.value).toBe(treeNodes.value[0].children![0])
+        await expect.poll(() => trigger.getAttribute('aria-expanded')).toBe('false')
+    })
+
     it('enters the tree, navigates across nested levels once, and restores trigger focus on close', async () => {
         wrapper = mount(TreeSelect, { props: { nodes }, attachTo: host! })
         const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')

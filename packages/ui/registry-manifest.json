@@ -1317,6 +1317,7 @@
     "files": [
       "TreeSelect.vue",
       "TreeSelectNode.vue",
+      "tree-select-search.ts",
       "tree-select-types.ts",
       "tree-select-variants.ts"
     ],

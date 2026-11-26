@@ -371,6 +371,80 @@ describe('TreeSelect', () => {
         expect(document.body.textContent).toContain('Grandchild 2-1-1')
     })
 
+    it('keeps a directory that alone matches the query collapsed and unselectable', async () => {
+        wrapper = mount(TreeSelect, { ...localeProvide, props: { nodes }, attachTo: document.body })
+        await openTreeSelect(wrapper)
+        const directory = document.body.querySelector<HTMLElement>('[role="treeitem"]')!
+        directory.firstElementChild!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        await nextTick()
+        expect(directory.getAttribute('aria-expanded')).toBe('true')
+
+        const input = document.body.querySelector('input[type="text"]') as HTMLInputElement
+        input.value = 'ROOT 1'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+
+        expect(directory.textContent).toBe('Root 1')
+        expect(directory.getAttribute('aria-expanded')).toBe('false')
+        expect(directory.getAttribute('aria-controls')).toBeNull()
+        directory.firstElementChild!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        directory.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+        await nextTick()
+        expect(directory.getAttribute('aria-expanded')).toBe('false')
+        expect(directory.getAttribute('aria-selected')).toBe('false')
+        expect(wrapper.find('[role="combobox"]').attributes('aria-expanded')).toBe('true')
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        expect(wrapper.emitted('select')).toBeUndefined()
+    })
+
+    it.each(['clear', 'close'])('expands new search results and restores manual expansion on %s', async (exitSearch) => {
+        wrapper = mount(TreeSelect, { ...localeProvide, props: { nodes }, attachTo: document.body })
+        await openTreeSelect(wrapper)
+        const [manualRoot] = document.body.querySelectorAll<HTMLElement>('[role="treeitem"]')
+        manualRoot.firstElementChild!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        await nextTick()
+        expect(manualRoot.getAttribute('aria-expanded')).toBe('true')
+
+        const input = document.body.querySelector('input[type="text"]') as HTMLInputElement
+        input.value = 'Grandchild'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        expect(document.body.textContent).toContain('Grandchild 2-1-1')
+        const incoming = { id: 'incoming', label: 'Grandchild incoming' }
+        await wrapper.setProps({ nodes: [...nodes, { id: 'new', label: 'New root', children: [incoming] }] })
+        expect(input.value).toBe('Grandchild')
+        expect(document.body.textContent).toContain('Grandchild incoming')
+        const newRoot = [...document.body.querySelectorAll('[role="treeitem"]')]
+            .find(item => item.firstElementChild?.textContent === 'New root')!
+        expect(newRoot.getAttribute('aria-expanded')).toBe('true')
+        expect(newRoot.querySelector('[role="group"]')?.id).toBe(newRoot.getAttribute('aria-controls'))
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+        if (exitSearch === 'clear') {
+            input.value = ''
+            input.dispatchEvent(new Event('input', { bubbles: true }))
+            await nextTick()
+        } else {
+            await wrapper.find('[role="combobox"]').trigger('keydown', { key: 'Escape' })
+            await nextTick()
+            await openTreeSelect(wrapper)
+            expect(document.body.querySelector<HTMLInputElement>('input[type="text"]')?.value).toBe('')
+        }
+
+        const roots = document.body.querySelectorAll('[role="tree"] > [role="treeitem"]')
+        expect(Array.from(roots, root => [
+            root.firstElementChild?.textContent,
+            root.getAttribute('aria-expanded'),
+        ])).toEqual([
+            ['Root 1', 'true'],
+            ['Root 2', 'false'],
+            ['Leaf Node', null],
+            ['New root', 'false'],
+        ])
+        expect(document.body.textContent).toContain('Child 1-1')
+        expect(document.body.textContent).not.toContain('Grandchild incoming')
+    })
+
     it('restores original expansion state after clearing search', async () => {
         wrapper = mount(TreeSelect, {
             ...localeProvide,

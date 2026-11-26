@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, useId } from 'vue'
+import { computed, inject, ref, useId } from 'vue'
 import { getDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
+import { treeSelectVisibleChildrenKey } from './tree-select-search'
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_SELECT, treeChevronBaseClass, treeChevronExpandedClass } from '@/lib/tree-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
@@ -39,8 +40,11 @@ const emit = defineEmits<{
     'pointer-leave': [id: string]
 }>()
 
-const isLeaf = computed(() => !props.node.children || props.node.children.length === 0)
-const isExpanded = computed(() => props.expandedIds.has(props.node.id))
+const getVisibleChildren = inject(treeSelectVisibleChildrenKey, (node: TreeNode) => node.children)
+const visibleChildren = computed(() => getVisibleChildren(props.node))
+const hasVisibleChildren = computed(() => !!visibleChildren.value?.length)
+const isLeaf = computed(() => !props.node.children?.length)
+const isExpanded = computed(() => hasVisibleChildren.value && props.expandedIds.has(props.node.id))
 const isSelected = computed(() => props.selectedIds.has(props.node.id))
 const isFocusVisible = ref(false)
 
@@ -69,7 +73,7 @@ function handleClick() {
     if (props.node.disabled) return
     if (isLeaf.value) {
         emit('select', props.node)
-    } else {
+    } else if (hasVisibleChildren.value) {
         emit('toggle', props.node.id)
     }
 }
@@ -165,16 +169,16 @@ function handleKeydown(e: KeyboardEvent) {
         case 'ArrowRight':
             e.preventDefault()
             // 禁用节点不可展开/折叠，仅保留导航行为
-            if (!props.node.disabled && !isLeaf.value && !isExpanded.value) {
+            if (!props.node.disabled && hasVisibleChildren.value && !isExpanded.value) {
                 emit('toggle', props.node.id)
-            } else if (!isLeaf.value && isExpanded.value) {
+            } else if (isExpanded.value) {
                 focusFirstChild()
             }
             break
         case 'ArrowLeft':
             e.preventDefault()
             // 禁用节点不可展开/折叠，仅保留导航行为
-            if (!props.node.disabled && !isLeaf.value && isExpanded.value) {
+            if (!props.node.disabled && isExpanded.value) {
                 emit('toggle', props.node.id)
             } else {
                 focusParent()
@@ -213,7 +217,7 @@ function handleBlur() {
         class="focus:outline-hidden"
         :tabindex="!node.disabled && focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
-        :aria-controls="!isLeaf && isExpanded ? contentId : undefined"
+        :aria-controls="isExpanded ? contentId : undefined"
         :aria-selected="isSelected"
         :aria-disabled="node.disabled ? true : undefined"
         @blur="handleBlur"
@@ -246,9 +250,9 @@ function handleBlur() {
             </span>
         </div>
 
-        <div v-if="!isLeaf && isExpanded" :id="contentId" role="group">
+        <div v-if="isExpanded" :id="contentId" role="group">
             <TreeSelectNode
-                v-for="child in node.children"
+                v-for="child in visibleChildren"
                 :key="child.id"
                 :node="child"
                 :selected-ids="selectedIds"
