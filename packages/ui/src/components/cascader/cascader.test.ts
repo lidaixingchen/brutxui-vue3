@@ -40,6 +40,11 @@ const options: CascaderOption[] = [
 
 let wrapper: ReturnType<typeof mount> | null = null
 
+function findOption(label: string) {
+    return Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+        .find(row => row.querySelector('[data-slot="cascader-option-label"]')?.textContent === label)
+}
+
 afterEach(() => {
     if (wrapper) {
         wrapper.unmount()
@@ -443,24 +448,18 @@ describe('Cascader', () => {
             expect(vm.activeColumnIndex).toBe(2)
         })
 
-        it('clamps activeColumnIndex when the preselected middle node is missing from options', async () => {
-            // 预选路径中间节点失效时，columns 实际列数少于 valPath 长度：
-            // activeColumnIndex 应 clamp 到最后一列（而非指向不存在的列），
-            // 且 'nonexistent' 不在该列选项中，activeItemIndex 应为 -1（无高亮）。
+        it('opens without a current option when part of the model path is missing', async () => {
             wrapper = mount(Cascader, {
                 ...localeProvide,
                 props: { options, modelValue: ['zh', 'nonexistent', 'hd'] },
                 attachTo: document.body,
             })
-            const vm = wrapper.vm as any
-            vm.open = true
-            await nextTick()
+            const trigger = wrapper.get('[role="combobox"]')
+            await trigger.trigger('click')
 
-            expect(vm.activePath).toEqual(['zh', 'nonexistent', 'hd'])
-            // columns = [options, zh.children]，实际最后一列索引为 1
-            expect(vm.activeColumnIndex).toBe(1)
-            // 'nonexistent' 不在 columns[1]（zh 的子选项 bj/sh）中
-            expect(vm.activeItemIndex).toBe(-1)
+            expect(trigger.attributes('aria-activedescendant')).toBeUndefined()
+            expect(findOption('China')?.hasAttribute('data-selected-trail')).toBe(false)
+            expect(findOption('Beijing')).toBeUndefined()
         })
 
         it('keeps the selected marker when the selected item is current', async () => {
@@ -483,6 +482,201 @@ describe('Cascader', () => {
             expect(haidian?.getAttribute('aria-selected')).toBe('true')
             expect(haidian?.getAttribute('data-highlighted')).toBe('')
             expect(haidian?.querySelector('svg')).not.toBeNull()
+        })
+    })
+
+    describe('controlled paths as options change', () => {
+        const oldPath = ['p', 'old']
+        const firstPath = ['p', 'first']
+        const secondPath = ['p', 'second']
+        const currentChildren = [
+            { value: 'first', label: 'First' },
+            { value: 'second', label: 'Second' },
+        ]
+        const currentOptions = [{ value: 'p', label: 'Parent', children: currentChildren }]
+        const fullOptions = [{
+            value: 'p',
+            label: 'Parent',
+            children: [{ value: 'old', label: 'Old' }, ...currentChildren],
+        }]
+
+        it('restores a selected leaf as its options arrive while the panel is open', async () => {
+            const arrivingOptions = ref<CascaderOption[]>([])
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: arrivingOptions.value, modelValue: firstPath, open: true },
+                attachTo: document.body,
+            })
+            const trigger = wrapper.get('[role="combobox"]')
+            expect(trigger.attributes('aria-activedescendant')).toBeUndefined()
+
+            arrivingOptions.value.push({
+                value: 'p',
+                label: 'Parent',
+                children: currentChildren.map(child => ({ ...child })),
+            })
+            await nextTick()
+            expect(trigger.text()).toBe('Parent / First')
+            const leaf = findOption('First')
+            expect(leaf?.getAttribute('aria-selected')).toBe('true')
+            expect(trigger.attributes('aria-activedescendant')).toBe(leaf?.id)
+            expect(wrapper.emitted('change')).toBeUndefined()
+
+            findOption('Second')!.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }))
+            await nextTick()
+            const children = arrivingOptions.value[0]!.children!
+            children.unshift({ value: 'old', label: 'Old' })
+            await nextTick()
+            expect(trigger.attributes('aria-activedescendant')).toBe(findOption('Second')?.id)
+            expect(findOption('First')?.getAttribute('aria-selected')).toBe('true')
+
+            const first = children[1]!
+            first.value = 'renamed'
+            await nextTick()
+            expect(trigger.text()).toBe('Select path...')
+            first.value = firstPath[1]!
+            await nextTick()
+            expect(trigger.text()).toBe('Parent / First')
+            expect(trigger.attributes('aria-activedescendant')).toBe(findOption('Second')?.id)
+        })
+
+        it('uses a shared sibling lookup for a wide controlled selection and parent toggle', async () => {
+            const childCount = 1000
+            let reads = 0
+            const children = Array.from({ length: childCount }, (_, index) => ({
+                get value() {
+                    reads++
+                    return index
+                },
+                label: String(index),
+            }))
+            const paths = Array.from({ length: childCount }, (_, index) => ['wide', index])
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: {
+                    options: [{ value: 'wide', label: 'Wide', children }],
+                    multiple: true,
+                    modelValue: [],
+                    open: true,
+                },
+                attachTo: document.body,
+            })
+            await nextTick()
+            reads = 0
+            await wrapper.setProps({ modelValue: paths })
+            expect(wrapper.get('[role="combobox"]').text()).toBe(`${childCount} selected`)
+            const checkbox = findOption('Wide')?.querySelector<HTMLElement>('[role="checkbox"]')
+            expect(checkbox?.getAttribute('aria-checked')).toBe('true')
+            const readsPerChildBudget = 10
+            expect(reads).toBeLessThan(childCount * readsPerChildBudget)
+            checkbox!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[]]])
+            await wrapper.setProps({ modelValue: [] })
+            checkbox!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[]], [paths]])
+        })
+
+        it('hides an incomplete single path until it returns and replaces it on a new selection', async () => {
+            const replacement = { value: 'replacement', label: 'Replacement' }
+            const updatedOptions = [...currentOptions, replacement]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: fullOptions, modelValue: oldPath, open: false },
+                attachTo: document.body,
+            })
+            const trigger = wrapper.get('[role="combobox"]')
+            expect(trigger.text()).toBe('Parent / Old')
+
+            await wrapper.setProps({ options: updatedOptions, open: true })
+            expect(trigger.text()).toBe('Select path...')
+            expect(findOption('Parent')?.getAttribute('aria-selected')).toBe('false')
+            expect(findOption('Parent')?.hasAttribute('data-selected-trail')).toBe(false)
+
+            await wrapper.setProps({ options: fullOptions })
+            expect(trigger.text()).toBe('Parent / Old')
+            expect(findOption('Parent')?.hasAttribute('data-selected-trail')).toBe(true)
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+            expect(wrapper.emitted('change')).toBeUndefined()
+
+            await wrapper.setProps({ options: updatedOptions })
+            findOption('Replacement')!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[replacement.value]]])
+            expect(wrapper.emitted('change')).toEqual([[[replacement.value]]])
+        })
+
+        it('summarizes current paths and only changes available leaves on a parent toggle', async () => {
+            const selectedPaths = [oldPath, firstPath, secondPath]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: fullOptions, multiple: true, modelValue: selectedPaths },
+                attachTo: document.body,
+            })
+            const trigger = wrapper.get('[role="combobox"]')
+            const parentCheckbox = () => findOption('Parent')?.querySelector<HTMLElement>('[role="checkbox"]')
+            expect(trigger.text()).toBe('3 selected')
+            await wrapper.setProps({ options: currentOptions })
+            expect(trigger.text()).toBe('Parent / First, Parent / Second')
+            await trigger.trigger('click')
+            expect(trigger.attributes('aria-activedescendant')).toBe(findOption('First')?.id)
+            expect(parentCheckbox()?.getAttribute('aria-checked')).toBe('true')
+
+            findOption('Parent')!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[oldPath]]])
+            await wrapper.setProps({ modelValue: [oldPath] })
+            expect(parentCheckbox()?.getAttribute('aria-checked')).toBe('false')
+            expect(findOption('Parent')?.hasAttribute('data-selected-trail')).toBe(false)
+            expect(trigger.text()).toBe('Select path...')
+
+            parentCheckbox()!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[oldPath]], [selectedPaths]])
+            expect(wrapper.emitted('change')).toEqual([[[oldPath]], [selectedPaths]])
+            await wrapper.setProps({ modelValue: selectedPaths, options: fullOptions })
+            expect(trigger.text()).toBe('3 selected')
+            expect(parentCheckbox()?.getAttribute('aria-checked')).toBe('true')
+            expect(findOption('Old')?.getAttribute('aria-selected')).toBe('true')
+            expect(wrapper.emitted('change')).toHaveLength(2)
+        })
+
+        it('clears even when all model paths are temporarily unavailable', async () => {
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: currentOptions, multiple: true, modelValue: [oldPath], clearable: true },
+                attachTo: document.body,
+            })
+            const trigger = wrapper.get('[role="combobox"]')
+            expect(trigger.text()).toBe('Select path...')
+            trigger.element.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+            await nextTick()
+            await wrapper.get('button[aria-label="Clear"]').trigger('click')
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[]]])
+            expect(wrapper.emitted('change')).toEqual([[[]]])
+            await wrapper.setProps({ modelValue: [], options: fullOptions })
+            expect(trigger.text()).toBe('Select path...')
+        })
+
+        it('renders and toggles a parent path independently in strict mode', async () => {
+            const parentPath = ['p']
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: currentOptions, multiple: true, modelValue: [parentPath, firstPath], open: true },
+                attachTo: document.body,
+            })
+            const trigger = wrapper.get('[role="combobox"]')
+            const parentCheckbox = () => findOption('Parent')?.querySelector('[role="checkbox"]')
+            await nextTick()
+            expect(trigger.text()).toBe('Parent / First')
+            expect(findOption('Parent')?.getAttribute('aria-selected')).toBe('false')
+            expect(parentCheckbox()?.getAttribute('aria-checked')).toBe('mixed')
+
+            await wrapper.setProps({ checkStrictly: true })
+            expect(trigger.text()).toBe('Parent, Parent / First')
+            expect(findOption('Parent')?.getAttribute('aria-selected')).toBe('true')
+            expect(parentCheckbox()?.getAttribute('aria-checked')).toBe('true')
+            expect(findOption('First')?.getAttribute('aria-selected')).toBe('true')
+            expect(wrapper.emitted('change')).toBeUndefined()
+
+            findOption('Parent')!.click()
+            expect(wrapper.emitted('update:modelValue')).toEqual([[[firstPath]]])
         })
     })
 

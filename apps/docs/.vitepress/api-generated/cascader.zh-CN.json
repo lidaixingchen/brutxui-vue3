@@ -160,7 +160,7 @@
             ],
             "references": []
           },
-          "description": "显示清除操作以移除已选路径。",
+          "description": "显示清除操作，可移除绑定值中的所有路径，包括暂时缺失的路径。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
@@ -259,7 +259,7 @@
             "literals": [],
             "references": []
           },
-          "description": "多选时触发器最多直接显示的路径数量；其余路径折叠为汇总。",
+          "description": "多选时触发器最多直接显示的路径数量，超出后显示当前可匹配的选中路径总数。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
@@ -327,7 +327,7 @@
             "literals": [],
             "references": []
           },
-          "description": "未选择路径时触发器显示的文字。",
+          "description": "当前没有可匹配的选中路径时，触发器显示的文字。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",

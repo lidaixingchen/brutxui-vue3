@@ -160,7 +160,7 @@
             ],
             "references": []
           },
-          "description": "Shows a clear action for removing the selected paths.",
+          "description": "Shows a clear action that removes all bound paths, including temporarily unavailable paths.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
@@ -259,7 +259,7 @@
             "literals": [],
             "references": []
           },
-          "description": "In multiple mode, the maximum number of paths shown directly in the trigger; remaining paths are collapsed into a summary.",
+          "description": "In multiple mode, the maximum number of paths shown directly in the trigger. Above this limit, the trigger shows the total number of currently matching selected paths.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
@@ -327,7 +327,7 @@
             "literals": [],
             "references": []
           },
-          "description": "Text shown in the trigger when no path is selected.",
+          "description": "Text shown in the trigger when no selected path matches the current options.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",

@@ -109,6 +109,12 @@ By default, only leaf nodes can be selected. Set `checkStrictly` to `true` to al
 </template>
 ```
 
+### Asynchronous Option Updates
+
+The trigger's labels and count and the panel's selection indicators use complete paths that match the current `options` at every level and are valid for the current selection mode. Leaf paths are valid by default. With `checkStrictly` enabled, parent paths are valid too.
+
+When `options` updates asynchronously, temporarily unavailable paths stay in `v-model`. Updating the options alone emits neither `update:modelValue` nor `change`. Selection reappears when the options return and the path is still in the model. In multiple mode, checking or unchecking a parent only affects paths currently available for selection. Clearing removes every path in the model, and choosing a new path in single mode replaces the previous one.
+
 ## API Reference
 
 <span id="cascader-1"></span>

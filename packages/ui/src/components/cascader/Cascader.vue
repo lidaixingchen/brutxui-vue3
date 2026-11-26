@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, useId, watch } from 'vue'
+import { computed, nextTick, ref, useId, watch, type ComputedRef } from 'vue'
 import { ChevronsUpDown, ChevronRight, Check, X } from '@lucide/vue'
 import { PopoverRoot } from 'reka-ui'
 import PopoverTrigger from '../popover/PopoverTrigger.vue'
@@ -151,13 +151,33 @@ const itemClasses = computed(() => cn(cascaderItemVariants()))
 const selectionIndicatorClasses = computed(() => cn(cascaderSelectionIndicatorVariants()))
 const pathIndicatorClasses = computed(() => cn(cascaderPathIndicatorVariants()))
 
+// 同级路径共享索引，响应式数组或选项值发生变化时只重算对应这一层。
+const optionIndices = new WeakMap<CascaderOption[], ComputedRef<Map<CascaderValue, number>>>()
+
+function findOptionIndex(options: CascaderOption[], value: CascaderValue | undefined): number {
+    if (value === undefined || options.length === 0) return -1
+    let indices = optionIndices.get(options)
+    if (!indices) {
+        indices = computed(() => {
+            const byValue = new Map<CascaderValue, number>()
+            options.forEach((option, index) => {
+                const value = option.value
+                if (!Number.isNaN(value) && !byValue.has(value)) byValue.set(value, index)
+            })
+            return byValue
+        })
+        optionIndices.set(options, indices)
+    }
+    return indices.value.get(value) ?? -1
+}
+
 // Compute dynamically displayed columns based on activePath
 const columns = computed(() => {
     const cols: CascaderOption[][] = [props.options]
     let currentOptions = props.options
     for (let i = 0; i < activePath.value.length; i++) {
         const val = activePath.value[i]
-        const option = currentOptions.find(opt => opt.value === val)
+        const option = currentOptions[findOptionIndex(currentOptions, val)]
         if (option && option.children && option.children.length > 0) {
             cols.push(option.children)
             currentOptions = option.children
@@ -245,14 +265,16 @@ function findNearestEnabledIndex(options: CascaderOption[], preferredIndex: numb
 
 function reconcileActiveItem() {
     if (!open.value) return
+    if (activePath.value.length === 0) {
+        restoreActiveSelection()
+        return
+    }
     const previousColumnIndex = activeColumnIndex.value
     const visibleColumns = columns.value
     const targetColumnIndex = Math.min(previousColumnIndex, Math.max(visibleColumns.length - 1, 0))
     const targetOptions = visibleColumns[targetColumnIndex] || []
     const pathValue = activePath.value[targetColumnIndex]
-    const pathIndex = pathValue === undefined
-        ? -1
-        : targetOptions.findIndex((option) => option.value === pathValue)
+    const pathIndex = findOptionIndex(targetOptions, pathValue)
     const activeIndex = pathIndex >= 0
         ? pathIndex
         : targetColumnIndex === previousColumnIndex
@@ -326,24 +348,79 @@ function getLeafPaths(option: CascaderOption, parentPath: CascaderValue[]): Casc
     return getRelativeLeafPaths(option).map(leaf => [...parentPath, ...leaf])
 }
 
-// Check if a specific path is selected
-function isPathSelected(path: CascaderValue[]): boolean {
-    if (!props.modelValue) return false
-    if (props.multiple) {
-        if (!Array.isArray(props.modelValue) || props.modelValue.length === 0) return false
-        // Ensure structure is correct
-        const valArray = props.modelValue as CascaderValue[][]
-        return valArray.some(p => isPathEqual(p, path))
-    } else {
-        if (!Array.isArray(props.modelValue) || props.modelValue.length === 0) return false
-        // For single select, modelValue is CascaderValue[]
-        const first = props.modelValue[0]
-        if (Array.isArray(first)) {
-            // Safeguard against invalid model formats
-            return false
-        }
-        return isPathEqual(props.modelValue as CascaderValue[], path)
+const modelPaths = computed<CascaderValue[][]>(() => {
+    const value = props.modelValue
+    if (!Array.isArray(value) || value.length === 0) return []
+    if (props.multiple) return value.filter(Array.isArray)
+    return Array.isArray(value[0]) ? [] : [value as CascaderValue[]]
+})
+
+interface ResolvedSelection {
+    path: CascaderValue[]
+    options: CascaderOption[]
+    optionIndex: number
+}
+
+const resolvedSelections = computed(() => {
+    const selections: ResolvedSelection[] = []
+    for (const path of modelPaths.value) {
+        const selection = resolveSelection(path)
+        if (selection) selections.push(selection)
     }
+    return selections
+})
+
+function resolveSelection(path: CascaderValue[]): ResolvedSelection | undefined {
+    const options: CascaderOption[] = []
+    let siblings = props.options
+    let optionIndex = -1
+    for (const value of path) {
+        optionIndex = findOptionIndex(siblings, value)
+        const option = siblings[optionIndex]
+        if (!option) return
+        options.push(option)
+        siblings = option.children ?? []
+    }
+    if (optionIndex < 0 || (!props.checkStrictly && siblings.length > 0)) return
+    return { path, options, optionIndex }
+}
+
+interface PathIndex {
+    children: Map<CascaderValue, PathIndex>
+    selected: boolean
+}
+
+function addIndexedPath(root: PathIndex, path: CascaderValue[]): boolean {
+    let node = root
+    for (const value of path) {
+        let child = node.children.get(value)
+        if (!child) {
+            child = { children: new Map(), selected: false }
+            node.children.set(value, child)
+        }
+        node = child
+    }
+    if (node.selected) return false
+    node.selected = true
+    return true
+}
+
+function indexPaths(paths: CascaderValue[][]): PathIndex {
+    const root: PathIndex = { children: new Map(), selected: false }
+    for (const path of paths) addIndexedPath(root, path)
+    return root
+}
+
+function findIndexedPath(root: PathIndex, path: CascaderValue[]): PathIndex | undefined {
+    let node: PathIndex | undefined = root
+    for (const value of path) node = node?.children.get(value)
+    return node
+}
+
+const selectedPaths = computed(() => indexPaths(resolvedSelections.value.map(selection => selection.path)))
+
+function isPathSelected(path: CascaderValue[]): boolean {
+    return findIndexedPath(selectedPaths.value, path)?.selected === true
 }
 
 function isPathEqual(p1: CascaderValue[], p2: CascaderValue[]): boolean {
@@ -351,25 +428,9 @@ function isPathEqual(p1: CascaderValue[], p2: CascaderValue[]): boolean {
     return p1.every((v, i) => v === p2[i])
 }
 
-function isPathPrefix(fullPath: CascaderValue[], prefixPath: CascaderValue[]): boolean {
-    if (prefixPath.length >= fullPath.length) return false
-    return prefixPath.every((v, i) => v === fullPath[i])
-}
-
 function isOnSelectedTrail(option: CascaderOption, colIdx: number): boolean {
-    if (!props.modelValue) return false
     const optionPath = getOptionPath(option, colIdx)
-    if (props.multiple) {
-        if (!Array.isArray(props.modelValue) || props.modelValue.length === 0) return false
-        const first = props.modelValue[0]
-        if (!Array.isArray(first)) return false
-        const paths = props.modelValue as CascaderValue[][]
-        return paths.some(p => isPathPrefix(p, optionPath))
-    } else {
-        if (!Array.isArray(props.modelValue)) return false
-        if (props.modelValue.length === 0) return false
-        return isPathPrefix(props.modelValue as CascaderValue[], optionPath)
-    }
+    return Boolean(findIndexedPath(selectedPaths.value, optionPath)?.children.size)
 }
 
 // Checkbox selection state for an option node
@@ -381,7 +442,10 @@ function getOptionCheckState(option: CascaderOption, colIdx: number): 'checked' 
     const leaves = getLeafPaths(option, activePath.value.slice(0, colIdx))
     if (leaves.length === 0) return 'unchecked'
 
-    const selectedCount = leaves.filter(p => isPathSelected(p)).length
+    let selectedCount = 0
+    for (const leaf of leaves) {
+        if (isPathSelected(leaf)) selectedCount++
+    }
     if (selectedCount === 0) return 'unchecked'
     if (selectedCount === leaves.length) return 'checked'
     return 'indeterminate'
@@ -397,88 +461,38 @@ function getCheckboxChecked(option: CascaderOption, colIdx: number): boolean | '
 // Handle checkbox clicking in multi-select mode
 function toggleCheckbox(option: CascaderOption, colIdx: number, checked?: boolean | 'indeterminate') {
     if (option.disabled) return
-    const optionPath = getOptionPath(option, colIdx)
-    
-    if (props.checkStrictly) {
-        const current = Array.isArray(props.modelValue) && Array.isArray(props.modelValue[0]) 
-            ? [...props.modelValue] as CascaderValue[][] 
-            : []
-        const index = current.findIndex(p => isPathEqual(p, optionPath))
-        
-        const shouldSelect = checked !== undefined
-            ? checked === true || checked === 'indeterminate'
-            : index < 0
+    let next = [...modelPaths.value]
 
+    if (props.checkStrictly) {
+        const optionPath = getOptionPath(option, colIdx)
+        const index = next.findIndex(path => isPathEqual(path, optionPath))
+        const shouldSelect = checked === undefined ? index < 0 : checked !== false
         if (shouldSelect) {
-            if (index < 0) {
-                current.push(optionPath)
-            }
-        } else {
-            if (index >= 0) {
-                current.splice(index, 1)
-            }
+            if (index < 0) next.push(optionPath)
+        } else if (index >= 0) {
+            next.splice(index, 1)
         }
-        emit('update:modelValue', current)
-        emit('change', current)
     } else {
         const leaves = getLeafPaths(option, activePath.value.slice(0, colIdx))
-        const current = Array.isArray(props.modelValue) && (props.modelValue.length === 0 || Array.isArray(props.modelValue[0]))
-            ? [...props.modelValue] as CascaderValue[][]
-            : []
-        const currentState = getOptionCheckState(option, colIdx)
-        
-        const shouldDeselect = checked !== undefined
-            ? checked === false
-            : currentState === 'checked'
-        
-        let next: CascaderValue[][]
+        const shouldDeselect = checked === undefined
+            ? leaves.length > 0 && leaves.every(isPathSelected)
+            : checked === false
         if (shouldDeselect) {
-            // Deselect all descendant leaf paths
-            next = current.filter(p => !leaves.some(l => isPathEqual(l, p)))
+            const leafIndex = indexPaths(leaves)
+            next = next.filter(path => !findIndexedPath(leafIndex, path)?.selected)
         } else {
-            // Select all descendant leaf paths
-            next = [...current]
+            const currentIndex = indexPaths(next)
             for (const leaf of leaves) {
-                if (!next.some(p => isPathEqual(p, leaf))) {
-                    next.push(leaf)
-                }
+                if (addIndexedPath(currentIndex, leaf)) next.push(leaf)
             }
         }
-        emit('update:modelValue', next)
-        emit('change', next)
     }
+    emit('update:modelValue', next)
+    emit('change', next)
 }
 
-// Get path labels by traversing options tree
-function getPathLabels(path: CascaderValue[]): string[] {
-    const labels: string[] = []
-    let currentOptions = props.options
-    for (const val of path) {
-        const opt = currentOptions.find(o => o.value === val)
-        if (opt) {
-            labels.push(opt.label)
-            currentOptions = opt.children || []
-        } else {
-            break
-        }
-    }
-    return labels
-}
-
-const selectedDisplayPaths = computed(() => {
-    if (!hasValue.value) return []
-    if (props.multiple && Array.isArray(props.modelValue)) {
-        return props.modelValue as CascaderValue[][]
-    }
-    if (Array.isArray(props.modelValue) && props.modelValue.length > 0) {
-        const labels = getPathLabels(props.modelValue as CascaderValue[])
-        return labels.length > 0 ? [props.modelValue as CascaderValue[]] : []
-    }
-    return []
-})
-
-const { hasValue, triggerClasses } = useSelectableTrigger<CascaderValue[] | CascaderValue[][]>({
-    modelValue: () => props.modelValue,
+const { triggerClasses } = useSelectableTrigger({
+    hasValue: () => resolvedSelections.value.length > 0,
     baseClass: () => cn(cascaderTriggerVariants({ size: props.size }), cascaderControlTriggerVariants({ disabled: props.disabled })),
     class: () => props.class,
 })
@@ -516,11 +530,11 @@ watch(columnsRef, (rail, _, onCleanup) => {
 }, { flush: 'post' })
 
 const displayText = useSelectionDisplayText({
-    selectedItems: selectedDisplayPaths,
+    selectedItems: resolvedSelections,
     placeholder: resolvedPlaceholder,
     multiple: () => props.multiple,
     maxDisplay: () => props.maxDisplay,
-    getLabel: (path) => getPathLabels(path).join(props.separator),
+    getLabel: selection => selection.options.map(option => option.label).join(props.separator),
     formatList: (labels) => labels.join(', '),
     formatCount: (count) => t('cascader.selectedCount', { count }),
 })
@@ -528,7 +542,7 @@ const displayText = useSelectionDisplayText({
 function setActiveItem(option: CascaderOption, colIdx: number) {
     activeColumnIndex.value = colIdx
     const currentColumnOptions = columns.value[colIdx] || []
-    activeItemIndex.value = currentColumnOptions.findIndex(o => o.value === option.value)
+    activeItemIndex.value = findOptionIndex(currentColumnOptions, option.value)
     activePath.value = [...activePath.value.slice(0, colIdx), option.value]
 }
 
@@ -586,47 +600,21 @@ const {
     },
 })
 
+function restoreActiveSelection() {
+    const selection = resolvedSelections.value[0]
+    activePath.value = selection ? [...selection.path] : []
+    activeColumnIndex.value = selection ? selection.path.length - 1 : 0
+    activeItemIndex.value = selection?.optionIndex ?? -1
+}
+
+if (open.value) restoreActiveSelection()
+
 // Synchronize keyboard focus state on popover open state transition
 watch(open, (isOpen) => {
     focusVisibleOptionPath.value = undefined
     emit('open-change', isOpen)
     if (isOpen) {
-        const hasValue = Array.isArray(props.modelValue) && props.modelValue.length > 0
-        let valPath: CascaderValue[] | null = null
-        
-        if (hasValue) {
-            if (props.multiple) {
-                const first = props.modelValue[0]
-                if (Array.isArray(first)) {
-                    valPath = first as CascaderValue[]
-                }
-            } else {
-                const first = props.modelValue[0]
-                if (!Array.isArray(first)) {
-                    valPath = props.modelValue as CascaderValue[]
-                }
-            }
-        }
-        
-        if (valPath && valPath.length > 0) {
-            activePath.value = [...valPath]
-            // 预选路径可能包含已失效的中间节点：columns 按 activePath 展开，实际列数
-            // 可能少于 valPath 长度。clamp 到最后一列，避免 activeColumnIndex 指向
-            // 不存在的列导致高亮/键盘导航失效
-            const maxColumn = Math.max(0, columns.value.length - 1)
-            activeColumnIndex.value = Math.min(valPath.length - 1, maxColumn)
-            const currentOptions = columns.value[activeColumnIndex.value] || []
-            const activeVal = valPath[activeColumnIndex.value]
-            const foundIndex = currentOptions.findIndex(o => o.value === activeVal)
-            // 预选值未找到时不高亮任何项（-1），避免错误高亮首项误导用户
-            activeItemIndex.value = foundIndex
-        } else {
-            activePath.value = []
-            activeColumnIndex.value = 0
-            // 无选中值时不预置高亮：实际焦点仍在触发按钮上，aria-activedescendant
-            // 应保持 undefined，直到用户真正开始键盘导航
-            activeItemIndex.value = -1
-        }
+        restoreActiveSelection()
     } else {
         activePath.value = []
         activeColumnIndex.value = 0
@@ -689,7 +677,7 @@ function handleKeyDown(e: KeyboardEvent) {
             e.preventDefault()
             const activePathValue = activePath.value[activeColumnIndex.value]
             const currentOpt = currentColumnOptions[activeItemIndex.value]
-                ?? currentColumnOptions.find((option) => option.value === activePathValue)
+                ?? currentColumnOptions[findOptionIndex(currentColumnOptions, activePathValue)]
             if (currentOpt && currentOpt.children && currentOpt.children.length > 0) {
                 const parentColumnIndex = activeColumnIndex.value
                 const childIndex = findNearestEnabledIndex(currentOpt.children, 0)
@@ -707,7 +695,7 @@ function handleKeyDown(e: KeyboardEvent) {
                 const parentColumnIndex = activeColumnIndex.value - 1
                 const parentVal = activePath.value[parentColumnIndex]
                 const parentColumnOptions = columns.value[parentColumnIndex] || []
-                const parentIndex = parentColumnOptions.findIndex((option) => option.value === parentVal)
+                const parentIndex = findOptionIndex(parentColumnOptions, parentVal)
                 const nextIndex = findNearestEnabledIndex(parentColumnOptions, parentIndex)
                 activeColumnIndex.value = parentColumnIndex
                 activeItemIndex.value = nextIndex
