@@ -829,7 +829,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 14
+            "line": 21
           },
           "origin": "declared",
           "required": true,
@@ -856,7 +856,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 15
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -893,7 +893,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 16
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -925,7 +925,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 17
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -957,7 +957,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 18
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -989,7 +989,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 19
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -1034,7 +1034,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectItem.vue",
-            "line": 20
+            "line": 27
           },
           "origin": "declared",
           "required": false,
