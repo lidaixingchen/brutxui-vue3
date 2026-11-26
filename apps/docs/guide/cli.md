@@ -73,7 +73,7 @@ npx brutx-vue@latest init
 init 命令将自动完成以下初始化步骤：
 
 1. 检测项目框架（Vite + Vue、Nuxt 等）与 Tailwind CSS 版本（v4 / v3）
-2. 自动探测全局 CSS 入口文件及 `tsconfig.json` 别名配置
+2. 自动探测全局 CSS 入口文件及 `tsconfig.json` 中 `compilerOptions.paths` 声明的别名
 3. 安装核心基础依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
 4. 在 `src/lib/utils.ts` 中生成 `cn()` 工具函数
 5. 在全局样式中注入 Neo-Brutalist 设计令牌与工具类标记块
@@ -489,6 +489,8 @@ npx brutx-vue@latest registry remove https://mirror.example.com/registry
 | `trustedPublicKeys` | `array` | *(可选)* 项目级追加信任的 Ed25519 SPKI 公钥列表 |
 | `rules` | `object` | *(可选)* 调优或禁用特定的诊断规则级别（`"off"` / `"warn"` / `"error"`） |
 | `plugins` | `string[]` | *(可选)* 自定义诊断规则插件列表（支持本地相对路径或 npm 包名） |
+
+CLI 优先使用 TypeScript 配置中 `compilerOptions.paths` 的显式映射解析别名。自定义导入前缀时，将映射声明在项目的 `tsconfig.json` 或它继承的配置中。
 
 ---
 

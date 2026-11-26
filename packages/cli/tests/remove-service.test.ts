@@ -316,6 +316,90 @@ describe('remove service', () => {
         expect(referenced).toEqual(new Set(candidates.slice(1)));
     });
 
+    it('keeps shared files used by handwritten sources and removes unreferenced files', async () => {
+        const { buttonFiles, cardFiles, orphanFile } = await seedProject(tmpDir);
+        const directory = path.dirname(orphanFile);
+        const candidates = ['hash', 'custom', 'relative', 'external', 'escape'].map(name => path.join(directory, `${name}.ts`));
+        await Promise.all(candidates.map(file => fs.outputFile(file, 'export {};')));
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), {
+            compilerOptions: { paths: {
+                '@/*': ['./src/*'],
+                '#/*': ['./missing/*', './src/*'],
+                'project-hooks/*': ['./src/composables/*'],
+                'composables/escape': ['../outside/escape'],
+            } },
+        });
+        await fs.writeFile(path.join(tmpDir, 'src/main.ts'), [
+            "import '#/composables/hash?raw';",
+            "import './composables/relative.js';",
+            "import 'composables/external';",
+            "import 'composables/escape';",
+        ].join('\n'));
+        await fs.writeFile(cardFiles[0], '<script setup>\nimport "project-hooks/custom";\n</script>');
+        await updateInstalledComponents(tmpDir, [{
+            item: makeRegistryItem('button'), registrySource: 'https://example.test/registry', files: [...buttonFiles, orphanFile, ...candidates],
+        }]);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        expect(new Set(preview.orphanedFiles)).toEqual(new Set([orphanFile, ...candidates.slice(3)]));
+
+        const result = await removeComponents(context, preview.toRemove, preview.orphanedFiles, {
+            confirmation: preview.confirmation, removeOrphaned: true,
+        });
+        expect(result).toEqual({ totalRemoved: buttonFiles.length, orphanedRemoved: 3 });
+        for (const file of candidates.slice(0, 3)) expect(await fs.pathExists(file)).toBe(true);
+        for (const file of [...buttonFiles, orphanFile, ...candidates.slice(3)]) expect(await fs.pathExists(file)).toBe(false);
+    });
+
+    it('resolves bare imports under an inherited baseUrl after trying paths targets', async () => {
+        const { buttonFiles, cardFiles, orphanFile } = await seedProject(tmpDir);
+        const shadowedFile = path.join(path.dirname(orphanFile), 'shadowed.ts');
+        await fs.outputFile(shadowedFile, 'export {};');
+        await fs.outputFile(path.join(tmpDir, 'src/overrides/shadowed.ts'), 'export {};');
+        await fs.outputJson(path.join(tmpDir, 'configs/base.json'), {
+            compilerOptions: { baseUrl: '../src', paths: {
+                '@/*': ['./*'],
+                'composables/useButton': ['./missing/useButton', './also-missing/useButton'],
+                'composables/shadowed': ['./missing/shadowed', './overrides/shadowed'],
+            } },
+        });
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), { extends: './configs/base.json' });
+        await fs.writeFile(cardFiles[0], '<script setup>\nimport "composables/useButton";\nimport "composables/shadowed";\nimport "reka-ui";\n</script>');
+        await updateInstalledComponents(tmpDir, [{
+            item: makeRegistryItem('button'), registrySource: 'https://example.test/registry', files: [...buttonFiles, orphanFile, shadowedFile],
+        }]);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        expect(preview.orphanedFiles).toEqual([shadowedFile]);
+
+        const result = await removeComponents(context, preview.toRemove, preview.orphanedFiles, {
+            confirmation: preview.confirmation, removeOrphaned: true,
+        });
+        expect(result.orphanedRemoved).toBe(1);
+        expect(await fs.pathExists(orphanFile)).toBe(true);
+        expect(await fs.pathExists(shadowedFile)).toBe(false);
+    });
+
+    it('protects a new import when the extended tsconfig changes after remove preview', async () => {
+        const { buttonFiles, orphanFile } = await seedProject(tmpDir);
+        const baseConfigPath = path.join(tmpDir, 'configs/base.json');
+        const writeBaseConfig = (paths: Record<string, string[]>) => fs.outputJson(baseConfigPath, { compilerOptions: { paths } });
+        const paths = { '@/*': ['../src/*'] };
+        await writeBaseConfig(paths);
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), { extends: './configs/base.json' });
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        expect(preview.orphanedFiles).toEqual([orphanFile]);
+
+        await writeBaseConfig({ ...paths, '#/*': ['../src/*'] });
+        await fs.writeFile(path.join(tmpDir, 'src/main.ts'), 'import "#/composables/useButton";');
+        const result = await removeComponents(context, preview.toRemove, preview.orphanedFiles, {
+            confirmation: preview.confirmation, removeOrphaned: true,
+        });
+        expect(result).toEqual({ totalRemoved: buttonFiles.length, orphanedRemoved: 0 });
+        expect(await fs.pathExists(orphanFile)).toBe(true);
+    });
+
     it('waits for the project write lock before checking new ownership and removing anything', async () => {
         const fsAdapter = new MemoryFileSystemAdapter();
         const { context, cwd, componentFiles, orphanFiles } = await createMemoryProject(fsAdapter, ['alpha', 'beta'], ['shared']);

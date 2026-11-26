@@ -132,6 +132,10 @@ interface RawTsConfig extends TsConfig {
     extends?: string | string[];
 }
 
+export interface ResolvedTsConfig extends TsConfig {
+    pathOrigins: { baseUrl?: string; paths?: string };
+}
+
 export async function resolveTsConfigExtendsPath(extend: string, baseDir: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string | null> {
     const candidates: string[] = [];
 
@@ -162,7 +166,7 @@ export async function resolveTsConfigExtendsPath(extend: string, baseDir: string
     return null;
 }
 
-export async function readTsConfigFile(configPath: string, visited: Set<string>, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<TsConfig | null> {
+export async function readTsConfigFile(configPath: string, visited: Set<string>, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<ResolvedTsConfig | null> {
     let realPath: string;
     try {
         realPath = await fsAdapter.realpath(configPath);
@@ -182,6 +186,8 @@ export async function readTsConfigFile(configPath: string, visited: Set<string>,
     if (!parsed) return null;
 
     const mergedOptions: NonNullable<TsConfig['compilerOptions']> = {};
+    const pathOrigins: ResolvedTsConfig['pathOrigins'] = {};
+    const configDir = path.dirname(path.resolve(configPath));
 
     const extendsValue = parsed.extends;
     let extendsList: string[] | undefined;
@@ -192,20 +198,23 @@ export async function readTsConfigFile(configPath: string, visited: Set<string>,
     }
     if (extendsList) {
         for (const extend of extendsList) {
-            const extendPath = await resolveTsConfigExtendsPath(extend, path.dirname(configPath), fsAdapter);
+            const extendPath = await resolveTsConfigExtendsPath(extend, configDir, fsAdapter);
             if (!extendPath) continue;
-            const base = await readTsConfigFile(extendPath, visited, fsAdapter);
-            if (base?.compilerOptions) {
+            const base = await readTsConfigFile(extendPath, new Set(visited), fsAdapter);
+            if (base) {
                 Object.assign(mergedOptions, base.compilerOptions);
+                Object.assign(pathOrigins, base.pathOrigins);
             }
         }
     }
 
     Object.assign(mergedOptions, parsed.compilerOptions);
-    return { compilerOptions: mergedOptions };
+    if (parsed.compilerOptions?.baseUrl !== undefined) pathOrigins.baseUrl = configDir;
+    if (parsed.compilerOptions?.paths !== undefined) pathOrigins.paths = configDir;
+    return { compilerOptions: mergedOptions, pathOrigins };
 }
 
-export async function readTsConfig(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<TsConfig | null> {
+export async function readTsConfig(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<ResolvedTsConfig | null> {
     for (const configFile of CONFIG_FILES.tsconfig) {
         const configPath = path.join(cwd, configFile);
 
@@ -229,23 +238,70 @@ export async function findCssFile(cwd: string, projectType: ProjectType, fsAdapt
 
 const CONVENTIONAL_ALIAS_PREFIXES = ['@', '~', '#'] as const;
 
+function isBareSpecifier(specifier: string): boolean {
+    return !path.isAbsolute(specifier) && !/^(?:\.{1,2})(?:[/\\]|$)/.test(specifier);
+}
+
+function getTsConfigBaseDirectory(cwd: string, tsConfig: ResolvedTsConfig | null): string | undefined {
+    const baseUrl = tsConfig?.compilerOptions?.baseUrl;
+    return baseUrl === undefined ? undefined : path.resolve(tsConfig?.pathOrigins.baseUrl ?? cwd, baseUrl);
+}
+
+export function getTsConfigBaseUrlCandidate(specifier: string, cwd: string, tsConfig: ResolvedTsConfig | null): string | undefined {
+    const baseDirectory = getTsConfigBaseDirectory(cwd, tsConfig);
+    return baseDirectory && isBareSpecifier(specifier) ? path.resolve(baseDirectory, specifier) : undefined;
+}
+
+export function getTsConfigPathCandidates(specifier: string, cwd: string, tsConfig: ResolvedTsConfig | null): string[] {
+    const paths = tsConfig?.compilerOptions?.paths;
+    if (!paths || !isBareSpecifier(specifier)) return [];
+
+    // TypeScript checks exact keys first and uses configuration order to break wildcard prefix ties.
+    let targets = Object.hasOwn(paths, specifier) ? paths[specifier] : undefined;
+    let wildcard: string | undefined;
+    if (!targets) {
+        let longestPrefix = -1;
+        for (const [pattern, replacements] of Object.entries(paths)) {
+            const split = pattern.indexOf('*');
+            if (split <= longestPrefix || split !== pattern.lastIndexOf('*')) continue;
+            const prefix = pattern.slice(0, split);
+            const suffix = pattern.slice(split + 1);
+            if (specifier.length < prefix.length + suffix.length || !specifier.startsWith(prefix) || !specifier.endsWith(suffix)) continue;
+
+            targets = replacements;
+            wildcard = specifier.slice(prefix.length, specifier.length - suffix.length);
+            longestPrefix = split;
+        }
+    }
+
+    if (!targets?.length) return [];
+    const baseDir = getTsConfigBaseDirectory(cwd, tsConfig) ?? tsConfig?.pathOrigins.paths ?? cwd;
+    return targets.map(target => path.resolve(baseDir, wildcard ? target.replace('*', () => wildcard) : target));
+}
+
 export async function getAliasFromTsConfig(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<AliasConfig | null> {
     const tsConfig = await readTsConfig(cwd, fsAdapter);
     const paths = tsConfig?.compilerOptions?.paths;
 
     if (!paths) return null;
 
-    const wildcardAliases = Object.keys(paths).filter(alias => alias.endsWith('/*'));
-    const conventionalPrefix = CONVENTIONAL_ALIAS_PREFIXES
-        .find(prefix => wildcardAliases.includes(`${prefix}/*`));
-    const prefix = conventionalPrefix ?? wildcardAliases[0]?.replace('/*', '');
-    if (!prefix) return null;
-
-    return {
-        components: `${prefix}/components`,
-        utils: `${prefix}/lib/utils`,
-        composables: `${prefix}/composables`,
-    };
+    const wildcardPrefixes = Object.keys(paths)
+        .filter(alias => alias.endsWith('/*') && alias.indexOf('*') === alias.length - 1)
+        .map(alias => alias.slice(0, -'/*'.length))
+        .filter(Boolean);
+    const orderedPrefixes = new Set([
+        ...CONVENTIONAL_ALIAS_PREFIXES.filter(prefix => wildcardPrefixes.includes(prefix)),
+        ...wildcardPrefixes,
+    ]);
+    for (const prefix of orderedPrefixes) {
+        const aliases: AliasConfig = {
+            components: `${prefix}/components`,
+            utils: `${prefix}/lib/utils`,
+            composables: `${prefix}/composables`,
+        };
+        if (Object.values(aliases).every(alias => getTsConfigPathCandidates(alias, cwd, tsConfig).length > 0)) return aliases;
+    }
+    return null;
 }
 
 export async function getDefaultAliases(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<AliasConfig> {

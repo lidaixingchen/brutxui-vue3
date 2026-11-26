@@ -404,19 +404,11 @@ export class ComponentMutationEngine {
                     finalSources.set(filePath, { componentName, content });
                 }
             }
-            const candidates = new Set([...deletions.keys()].filter(file => !protectedRetirements.has(file)));
-            while (candidates.size > 0) {
-                const referenced = await findFilesReferencedByInstalledComponents(
-                    this.context, manifest, [...candidates], updatingNames, finalSources,
-                );
-                if (referenced.size === 0) break;
-                for (const filePath of referenced) {
-                    protectedRetirements.add(filePath);
-                    candidates.delete(filePath);
-                    const content = await this.context.fs.readFile(filePath, 'utf-8');
-                    finalSources.set(filePath, { componentName: deletions.get(filePath)!, content });
-                }
-            }
+            const candidates = [...deletions.keys()].filter(file => !protectedRetirements.has(file));
+            const referenced = await findFilesReferencedByInstalledComponents(
+                this.context, manifest, candidates, updatingNames, finalSources,
+            );
+            for (const filePath of referenced) protectedRetirements.add(filePath);
         }
         for (const file of files) {
             if (file.action !== 'delete') continue;
@@ -522,6 +514,24 @@ export class ComponentMutationEngine {
             await assertMergeFilesUnchanged(this.context, plan.observedFiles);
             const updatedNames = new Set(plan.items.filter(item => !plan.registrySelectionOnly?.has(item.name)).map(item => item.name));
             const retainedPaths = collectInstalledFilePaths(this.context, previousManifest, updatedNames);
+            if (deletedFiles > 0) {
+                const candidates: string[] = [];
+                const plannedSources = new Map<string, PlannedComponentSource>();
+                for (const file of plan.files) {
+                    if (file.action === 'delete') {
+                        if (!retainedPaths.has(file.filePath)) candidates.push(file.filePath);
+                    } else if (file.action !== 'skip') {
+                        plannedSources.set(file.filePath, {
+                            componentName: file.componentName,
+                            content: file.mergedContent ?? file.sourceContent,
+                        });
+                    }
+                }
+                const referenced = await findFilesReferencedByInstalledComponents(
+                    this.context, previousManifest, candidates, new Set(), plannedSources,
+                );
+                for (const file of referenced) retainedPaths.add(file);
+            }
             if (plan.ensureUtils) {
                 await ensureUtilsFile(this.context, undefined, undefined, transaction);
             }

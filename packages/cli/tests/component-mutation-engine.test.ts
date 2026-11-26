@@ -301,6 +301,36 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect((await readManifest(projectCwd, fs))?.components.card.files).not.toContain(sharedRelative);
     });
 
+    it.each(['before planning', 'before execution'])('keeps a shared file imported by handwritten code %s', async timing => {
+        const baseConfigPath = path.join(projectCwd, 'tsconfig.base.json');
+        const paths = { '@/*': ['./src/*'] };
+        await fs.writeJson(baseConfigPath, { compilerOptions: { paths } });
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), { extends: './tsconfig.base.json' });
+        const card = { ...buttonFiles[0], path: 'components/ui/card/Card.vue' };
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const unused = { ...shared, path: 'lib/unused.ts' };
+        const items = [makeComponentItem('card', [card, shared, unused])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['card'] }), options);
+        if (timing === 'before planning') {
+            await fs.writeJson(baseConfigPath, { compilerOptions: { baseUrl: './src', paths: { '@/*': ['./*'] } } });
+            await fs.writeFile(path.join(projectCwd, 'src/main.ts'), 'import "lib/shared";');
+        }
+
+        items[0] = makeComponentItem('card', [card]);
+        const plan = await engine.planUpdate({ components: ['card'] });
+        if (timing === 'before execution') {
+            await fs.writeJson(baseConfigPath, { compilerOptions: { paths: { ...paths, '#/*': ['./src/*'] } } });
+            await fs.writeFile(path.join(projectCwd, 'src/main.ts'), 'import "#/lib/shared";');
+        }
+        const result = await engine.execute(plan, options);
+        expect(result.filesDeleted).toEqual([await context.resolveTargetPath(unused.path)]);
+        expect(await fs.readFile(await context.resolveTargetPath(shared.path), 'utf-8')).toBe(shared.content);
+    });
+
     it('records an existing identical file when adding another owner and preserves it during removal', async () => {
         const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
         const card = makeComponentItem('card', [shared]);

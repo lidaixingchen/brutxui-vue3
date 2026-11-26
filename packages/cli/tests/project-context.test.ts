@@ -133,6 +133,101 @@ describe('ProjectContext', () => {
             .toContain("from '@/shared/types/tree'");
     });
 
+    it('projects registry files and imports under a custom tsconfig alias', async () => {
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), {
+            compilerOptions: { paths: { '#/*': ['./src/*'] } },
+        });
+        const ctx = await ProjectContext.load(projectCwd, {
+            fs,
+            configOverride: {
+                ...sampleConfig,
+                aliases: {
+                    components: '#/components',
+                    utils: '#/lib/utils',
+                    composables: '#/composables',
+                },
+                sharedBase: '#/components/brutx/shared',
+            },
+        });
+
+        expect(ctx.toRelativePosixPath(await ctx.resolveTargetPath('components/ui/button/Button.vue')))
+            .toBe('src/components/ui/button/Button.vue');
+        expect(ctx.toRelativePosixPath(await ctx.resolveTargetPath('composables/useToast.ts')))
+            .toBe('src/components/brutx/shared/hooks/useToast.ts');
+        expect(ctx.toRelativePosixPath(await ctx.resolveUtilsFilePath()))
+            .toBe('src/components/brutx/shared/utils.ts');
+        expect(ctx.transformImports("import { cn } from '@/lib/utils'", 'file.ts'))
+            .toContain("from '#/components/brutx/shared/utils'");
+    });
+
+    it('prioritizes exact paths, then the longest matching wildcard prefix', async () => {
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), {
+            compilerOptions: {
+                paths: {
+                    'app/*': ['./src/*'],
+                    'app/ui/*': ['./overrides/*', './src/widgets/*'],
+                    'app/ui/*.test': ['./tests/*'],
+                    'app/ui/special': ['./src/special'],
+                    'app/static/*': ['./src/static'],
+                },
+            },
+        });
+        await fs.ensureDir(path.join(projectCwd, 'src/widgets/button'));
+        const ctx = await ProjectContext.load(projectCwd, { fs });
+
+        const cases = {
+            'app/ui/special': 'src/special',
+            'app/ui/button': 'src/widgets/button',
+            'app/ui/button.test': 'overrides/button.test',
+            'app/elsewhere': 'src/elsewhere',
+            'app/static/ignored': 'src/static',
+            './app/elsewhere': 'app/elsewhere',
+            'src/components': 'src/components',
+        };
+        for (const [specifier, expected] of Object.entries(cases)) {
+            expect(ctx.toRelativePosixPath(await ctx.resolveAliasPath(specifier))).toBe(expected);
+        }
+    });
+
+    it.each([
+        { baseUrl: undefined, target: '../src/*' },
+        { baseUrl: '../src', target: './*' },
+    ])('uses the declaring tsconfig directory with baseUrl $baseUrl', async ({ baseUrl, target }) => {
+        await fs.writeJson(path.join(projectCwd, 'configs/base.json'), {
+            compilerOptions: { baseUrl, paths: { 'app/*': [target] } },
+        });
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), { extends: './configs/base.json' });
+        const ctx = await ProjectContext.load(projectCwd, { fs });
+
+        expect(ctx.toRelativePosixPath(await ctx.resolveAliasPath('app/components'))).toBe('src/components');
+    });
+
+    it('applies inherited paths from each extends entry in order', async () => {
+        await fs.writeJson(path.join(projectCwd, 'configs/common.json'), {
+            compilerOptions: { paths: { '#/*': ['../src/common/*'] } },
+        });
+        await fs.writeJson(path.join(projectCwd, 'configs/left.json'), {
+            extends: './common.json',
+            compilerOptions: { paths: { '#/*': ['../src/left/*'] } },
+        });
+        await fs.writeJson(path.join(projectCwd, 'configs/right.json'), { extends: './common.json' });
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), {
+            extends: ['./configs/left.json', './configs/right.json'],
+        });
+        const ctx = await ProjectContext.load(projectCwd, { fs });
+
+        expect(ctx.toRelativePosixPath(await ctx.resolveAliasPath('#/components'))).toBe('src/common/components');
+    });
+
+    it('rejects a custom alias target outside the project', async () => {
+        await fs.writeJson(path.join(projectCwd, 'tsconfig.json'), {
+            compilerOptions: { paths: { '#/*': ['../outside/*'] } },
+        });
+        const ctx = await ProjectContext.load(projectCwd, { fs });
+
+        await expect(ctx.resolveAliasPath('#/components')).rejects.toMatchObject({ code: 'PATH_UNSAFE' });
+    });
+
     it('should resolve import aliases in source code', async () => {
         const customConfig: BrutalistConfig = {
             ...sampleConfig,

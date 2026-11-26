@@ -74,7 +74,7 @@ npx brutx-vue@latest init
 The init command executes the following setup steps automatically:
 
 1. Detects project framework (Vite + Vue, Nuxt, etc.) and Tailwind CSS version (v4 / v3)
-2. Discovers global CSS entry files and `tsconfig.json` path aliases
+2. Discovers global CSS entry files and aliases declared in `compilerOptions.paths` in `tsconfig.json`
 3. Installs core dependencies (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `@lucide/vue`)
 4. Generates the `cn()` utility function in `src/lib/utils.ts`
 5. Injects Neo-Brutalist design tokens and utility markers into your stylesheet
@@ -490,6 +490,8 @@ Running `init` generates `components.json` in your project root:
 | `trustedPublicKeys` | `array` | *(Optional)* Project-level trusted Ed25519 SPKI public keys |
 | `rules` | `object` | *(Optional)* Diagnostic rule severity overrides (`"off"` / `"warn"` / `"error"`) |
 | `plugins` | `string[]` | *(Optional)* Custom diagnostic rule plugins (relative path or npm package) |
+
+The CLI resolves aliases using explicit mappings in TypeScript's `compilerOptions.paths` first. Declare custom import prefixes in the project's `tsconfig.json` or in a configuration it extends.
 
 ---
 

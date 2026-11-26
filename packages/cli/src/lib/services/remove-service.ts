@@ -1,6 +1,8 @@
 import path from 'path';
 import { isDeepStrictEqual } from 'node:util';
 import { extractModuleSpecifiers } from 'brutx-shared-vue/ast';
+import { getModuleSpecifierPath } from 'brutx-shared-vue/module-resolver';
+import { getTsConfigBaseUrlCandidate, getTsConfigPathCandidates, readTsConfig, type ResolvedTsConfig } from '../env-detector.js';
 import type { BrutxManifest, RegistryItem } from '../types.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentIdentity, readManifest, removeInstalledComponents } from '../manifest.js';
@@ -16,8 +18,7 @@ const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
 /** 声明文件后缀需整体剥离：`foo.d.ts` 不能被常规 `.ts` 剥离成 `foo.d`。 */
 const DECLARATION_FILE_SUFFIXES = ['.d.ts', '.d.mts', '.d.cts'] as const;
-/** 引用判定并发批量大小：避免一次打开过多文件句柄。 */
-const REFERENCE_CHECK_BATCH_SIZE = 10;
+const RELATIVE_IMPORT = /^(?:\.{1,2})(?:[/\\]|$)/;
 
 export interface RemovePreparation {
     installed: string[];
@@ -64,7 +65,7 @@ function isInsideDirectory(filePath: string, directoryPath: string): boolean {
  */
 function stripAliasPrefix(specifier: string, aliasDir: string): string | null {
     const strip = (rel: string): string | null => {
-        const clean = rel.split(/[?#]/)[0];
+        const clean = getModuleSpecifierPath(rel);
         // 规范化后判断：只拦截会解析到基础目录本身或目录之外的路径
         // （''、'.'、'./' 会落到目录本身；'..' 前缀会逃逸出目录），
         // 放行 path.join 会安全规范化的中间 . 段（如 @/hooks/foo/./bar）。
@@ -85,7 +86,7 @@ function stripAliasPrefix(specifier: string, aliasDir: string): string | null {
 
 /** 规范化 import specifier：去查询串、扩展名与尾部 /index，便于跨形式比较。 */
 function normalizeImportTarget(specifier: string): string {
-    let result = specifier.split(/[?#]/)[0];
+    let result = getModuleSpecifierPath(specifier);
     // 声明后缀整体优先剥离：`foo.d.ts` → `foo`，与源码 `@/types/foo` 的无扩展名形式对齐，
     // 避免先被常规 `.ts` 截断成 `foo.d` 导致声明文件被误判为未被引用
     for (const suffix of DECLARATION_FILE_SUFFIXES) {
@@ -114,40 +115,13 @@ function importTargetsComponent(specifier: string, componentName: string, compon
     return target === componentName || target.startsWith(`${componentName}/`);
 }
 
-interface AliasDirEntry {
-    aliasDir: string;
-    absDir: string;
-}
-
-/** 解析各 alias 配置对应的绝对目录，供 import 图引用校验匹配使用。 */
-async function resolveAliasDirs(context: ProjectContext): Promise<AliasDirEntry[]> {
-    const config = context.requireConfig();
-    const componentsPath = await context.resolveComponentsDir();
-    const entries: AliasDirEntry[] = [
-        { aliasDir: config.aliases.components.replace(/^@\//, ''), absDir: componentsPath },
-        { aliasDir: config.aliases.composables.replace(/^@\//, ''), absDir: await context.resolveAliasPath(config.aliases.composables) },
-    ];
-    const utilsDirAlias = path.dirname(config.aliases.utils);
-    entries.push({
-        aliasDir: utilsDirAlias.replace(/^@\//, ''),
-        absDir: await context.resolveAliasPath(utilsDirAlias),
-    });
-    if (config.sharedBase) {
-        entries.push({
-            aliasDir: config.sharedBase.replace(/^@\//, ''),
-            absDir: await context.resolveAliasPath(config.sharedBase),
-        });
-    }
-    return entries;
-}
-
 /**
- * 组件间 import 图：specifier → 组件名集合（依赖检查、孤立判定共用）。
+ * 导入图按 specifier 索引来源，来源标识为组件名或手写文件路径。
  * 相对导入额外记录 importer 文件路径集合：其解析基准是 importer 实际文件所在目录，
  * 而非组件根目录。
  */
 interface ImportGraph {
-    /** import specifier → 发起该 import 的组件名集合 */
+    /** import specifier → 导入来源集合 */
     byComponent: Map<string, Set<string>>;
     /** 相对 import specifier → 发起该 import 的文件绝对路径集合 */
     byImporterFile: Map<string, Map<string, string>>;
@@ -158,7 +132,7 @@ function indexImports(graph: ImportGraph, componentName: string, importerFile: s
         const importers = graph.byComponent.get(specifier) ?? new Set<string>();
         importers.add(componentName);
         graph.byComponent.set(specifier, importers);
-        if (specifier.startsWith('.')) {
+        if (RELATIVE_IMPORT.test(specifier)) {
             const files = graph.byImporterFile.get(specifier) ?? new Map<string, string>();
             files.set(importerFile, componentName);
             graph.byImporterFile.set(specifier, files);
@@ -194,86 +168,52 @@ async function resolveImportFile(
     return null;
 }
 
-function isProjectImport(specifier: string, context: ProjectContext): boolean {
-    if (specifier.startsWith('@/') || specifier.startsWith('~/')) return true;
-    if (!/^@[^/]+\//.test(specifier)) return false;
-    return Object.keys(context.tsConfig?.compilerOptions?.paths ?? {}).some(pattern => {
-        const wildcard = pattern.indexOf('*');
-        if (wildcard < 0) return specifier === pattern;
-        const prefix = pattern.slice(0, wildcard);
-        const suffix = pattern.slice(wildcard + 1);
-        return specifier.length >= prefix.length + suffix.length
-            && specifier.startsWith(prefix) && specifier.endsWith(suffix);
-    });
-}
-
-/**
- * 判断目标文件是否仍被 remaining 组件以 import 引用：
- * 覆盖 alias 形式（@/composables/x 等）与相对路径形式（./../x）两类 import，
- * 供 manifest 孤立判定在删除前用 import 图交叉确认。
- */
-async function isReferencedByRemainingComponents(
-    absoluteFile: string,
-    aliasDirs: AliasDirEntry[],
-    importGraph: ImportGraph,
-    remainingComponents: Set<string>,
+async function findReferencedPaths(
     context: ProjectContext,
-    plannedSources: ReadonlyMap<string, PlannedComponentSource> = new Map(),
-    resolvedImports: Map<string, Promise<string | null>> = new Map(),
-): Promise<boolean> {
-    const fileTargets = new Map<string, Set<string>>();
-    for (const { aliasDir, absDir } of aliasDirs) {
-        const rel = path.relative(absDir, absoluteFile);
-        if (rel === '' || !isInsideDirectory(absoluteFile, absDir)) continue;
-        if (!fileTargets.has(aliasDir)) {
-            fileTargets.set(aliasDir, new Set());
+    tsConfig: ResolvedTsConfig | null,
+    importGraph: ImportGraph,
+    paths: ReadonlySet<string>,
+    plannedSources: ReadonlyMap<string, PlannedComponentSource>,
+): Promise<Set<string>> {
+    const referenced = new Set<string>();
+    const config = context.requireConfig();
+    const importRoots = [
+        ...Object.values(config.aliases),
+        path.posix.dirname(config.aliases.utils),
+        config.sharedBase,
+    ].filter((root): root is string => Boolean(root && root !== '.'));
+
+    const resolvePaths = async (candidates: string[]): Promise<boolean> => {
+        for (const candidate of candidates) {
+            if (!await context.isSafePath(candidate)) continue;
+            const file = await resolveImportFile(candidate, context.fs, plannedSources);
+            if (!file) continue;
+            if (paths.has(file) && await context.isSafePath(file)) referenced.add(file);
+            return true;
         }
-        fileTargets.get(aliasDir)!.add(normalizeImportTarget(rel.split(path.sep).join('/')));
-    }
+        return false;
+    };
 
-    for (const [specifier, importers] of importGraph.byComponent) {
-        if (![...importers].some(importer => remainingComponents.has(importer))) continue;
-        const cleanSpecifier = specifier.split(/[?#]/)[0];
-
-        if (specifier.startsWith('.')) {
-            const importerFiles = importGraph.byImporterFile.get(specifier);
-            if (!importerFiles) continue;
-            for (const [importerFile, componentName] of importerFiles) {
-                if (!remainingComponents.has(componentName)) continue;
-                const target = path.resolve(path.dirname(importerFile), cleanSpecifier);
-                if (!resolvedImports.has(target)) {
-                    resolvedImports.set(target, resolveImportFile(target, context.fs, plannedSources));
-                }
-                if (await resolvedImports.get(target) === absoluteFile) {
-                    return true;
-                }
+    for (const specifier of importGraph.byComponent.keys()) {
+        const cleanSpecifier = getModuleSpecifierPath(specifier);
+        if (RELATIVE_IMPORT.test(cleanSpecifier)) {
+            for (const importer of importGraph.byImporterFile.get(specifier)?.keys() ?? []) {
+                await resolvePaths([path.resolve(path.dirname(importer), cleanSpecifier)]);
             }
             continue;
         }
+        const mappedPaths = getTsConfigPathCandidates(cleanSpecifier, context.cwd, tsConfig);
+        if (await resolvePaths(mappedPaths)) continue;
+        const baseUrlPath = getTsConfigBaseUrlCandidate(cleanSpecifier, context.cwd, tsConfig);
+        if (baseUrlPath && await resolvePaths([baseUrlPath])) continue;
 
-        if (isProjectImport(cleanSpecifier, context)) {
-            if (!resolvedImports.has(cleanSpecifier)) {
-                const resolution = context.resolveAliasPath(cleanSpecifier).catch(() => null)
-                    .then(target => target ? resolveImportFile(target, context.fs, plannedSources) : null);
-                resolvedImports.set(cleanSpecifier, resolution);
-            }
-            const resolved = await resolvedImports.get(cleanSpecifier);
-            if (resolved) {
-                if (resolved === absoluteFile) return true;
-                continue;
-            }
-        }
-
-        for (const { aliasDir } of aliasDirs) {
-            const stripped = stripAliasPrefix(specifier, aliasDir);
-            if (stripped === null) continue;
-            if (fileTargets.get(aliasDir)?.has(normalizeImportTarget(stripped))) {
-                return true;
-            }
+        if (mappedPaths.length === 0 && (cleanSpecifier.startsWith('@/') || cleanSpecifier.startsWith('~/')
+            || importRoots.some(root => cleanSpecifier === root || cleanSpecifier.startsWith(`${root}/`)))) {
+            const candidate = await context.resolveAliasPath(cleanSpecifier, tsConfig).catch(() => null);
+            if (candidate) await resolvePaths([candidate]);
         }
     }
-
-    return false;
+    return referenced;
 }
 
 export async function findFilesReferencedByInstalledComponents(
@@ -282,34 +222,52 @@ export async function findFilesReferencedByInstalledComponents(
     paths: readonly string[],
     excludedComponents: ReadonlySet<string>,
     plannedSources: ReadonlyMap<string, PlannedComponentSource> = new Map(),
+    excludedDirectories: readonly string[] = [],
 ): Promise<Set<string>> {
-    const referenced = new Set<string>();
-    if (paths.length === 0) return referenced;
+    if (paths.length === 0) return new Set();
 
+    const tsConfig = await readTsConfig(context.cwd, context.fs);
+    const candidates = new Set(paths);
     const importGraph: ImportGraph = { byComponent: new Map(), byImporterFile: new Map() };
-    const remaining = new Set<string>();
+    const seen = new Set([...paths, ...plannedSources.keys()]);
+    const isSource = (file: string) => COMPONENT_FILE_EXTENSIONS.some(ext => ext === path.extname(file));
+    const indexSource = async (importer: string): Promise<void> => {
+        if (!isSource(importer) || !await context.isSafePath(importer) || !await context.fs.pathExists(importer)) return;
+        const content = await context.fs.readFile(importer, 'utf-8');
+        indexImports(importGraph, importer, importer, extractModuleSpecifiers(content, importer));
+    };
+
     for (const [name, entry] of Object.entries(manifest?.components ?? {})) {
-        if (excludedComponents.has(name)) continue;
-        remaining.add(name);
         for (const file of entry.files) {
             const importer = resolveInstalledFile(context, file);
-            if (plannedSources.has(importer) || !COMPONENT_FILE_EXTENSIONS.some(ext => ext === path.extname(importer))) continue;
-            if (!await context.isSafePath(importer) || !await context.fs.pathExists(importer)) continue;
-            const content = await context.fs.readFile(importer, 'utf-8');
-            indexImports(importGraph, name, importer, extractModuleSpecifiers(content, importer));
+            if (!seen.has(importer) && !excludedComponents.has(name)) await indexSource(importer);
+            // 清单覆盖已安装文件的归属，扫描手写源码时跳过待移除或替换的旧内容。
+            if (excludedComponents.has(name)) continue;
+            seen.add(importer);
         }
     }
-    for (const [importer, { componentName, content }] of plannedSources) {
-        if (!COMPONENT_FILE_EXTENSIONS.some(ext => ext === path.extname(importer))) continue;
-        remaining.add(componentName);
-        indexImports(importGraph, componentName, importer, extractModuleSpecifiers(content, importer));
+    for (const [name, entry] of Object.entries(manifest?.components ?? {})) {
+        if (!excludedComponents.has(name)) continue;
+        for (const file of entry.files) seen.add(resolveInstalledFile(context, file));
     }
-    if (importGraph.byComponent.size === 0) return referenced;
-    const aliasDirs = await resolveAliasDirs(context);
-    const resolvedImports = new Map<string, Promise<string | null>>();
-    for (const candidate of paths) {
-        if (await isReferencedByRemainingComponents(candidate, aliasDirs, importGraph, remaining, context, plannedSources, resolvedImports)) {
-            referenced.add(candidate);
+    for (const [importer, { componentName, content }] of plannedSources) {
+        if (isSource(importer)) indexImports(importGraph, componentName, importer, extractModuleSpecifiers(content, importer));
+    }
+    for (const file of await scanComponentFiles(context.cwd, context.fs)) {
+        const importer = path.join(context.cwd, file);
+        if (seen.has(importer) || excludedDirectories.some(dir => isInsideDirectory(importer, dir))) continue;
+        await indexSource(importer);
+    }
+    const referenced = new Set<string>();
+    while (candidates.size > 0 && importGraph.byComponent.size > 0) {
+        const resolved = await findReferencedPaths(context, tsConfig, importGraph, candidates, plannedSources);
+        importGraph.byComponent.clear();
+        importGraph.byImporterFile.clear();
+        // 被保留的共享文件也可能导入其他候选文件。
+        for (const file of resolved) {
+            referenced.add(file);
+            candidates.delete(file);
+            await indexSource(file);
         }
     }
     return referenced;
@@ -319,59 +277,19 @@ async function findManifestKnownFiles(
     context: ProjectContext,
     manifest: BrutxManifest | null,
     removedComponents: string[],
-    removedComponentDirs: string[],
-    remainingComponents: string[],
-    importGraph: ImportGraph
 ): Promise<string[]> {
-    if (!manifest) {
-        return [];
-    }
-
-    const remainingFiles = collectInstalledFilePaths(context, manifest, new Set(removedComponents));
-    const componentsPath = await context.resolveComponentsDir();
-    const remainingSet = new Set(remainingComponents);
-    const aliasDirs = await resolveAliasDirs(context);
-
     const candidateFiles: string[] = [];
     for (const component of removedComponents) {
-        const entry = manifest.components[component];
+        const entry = manifest?.components[component];
         if (!entry) continue;
-
         for (const manifestFile of entry.files) {
             const absolutePath = resolveInstalledFile(context, manifestFile);
-            if (remainingFiles.has(absolutePath)) continue;
-            if (!await context.isSafePath(absolutePath)) continue;
-            if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
-            if (!await context.fs.pathExists(absolutePath)) continue;
-            candidateFiles.push(absolutePath);
-        }
-    }
-
-    const knownFiles: string[] = [];
-    const resolvedImports = new Map<string, Promise<string | null>>();
-    for (let offset = 0; offset < candidateFiles.length; offset += REFERENCE_CHECK_BATCH_SIZE) {
-        const batch = candidateFiles.slice(offset, offset + REFERENCE_CHECK_BATCH_SIZE);
-        const referencedFlags = await Promise.all(
-            batch.map(file => isReferencedByRemainingComponents(file, aliasDirs, importGraph, remainingSet, context, undefined, resolvedImports))
-        );
-        for (let i = 0; i < batch.length; i++) {
-            if (!referencedFlags[i]) {
-                knownFiles.push(batch[i]);
+            if (await context.isSafePath(absolutePath) && await context.fs.pathExists(absolutePath)) {
+                candidateFiles.push(absolutePath);
             }
         }
     }
-
-    const uniqueKnownFiles = [...new Set(knownFiles)];
-
-    const sharedOrphans = uniqueKnownFiles.filter(file => !isInsideDirectory(file, componentsPath));
-    if (sharedOrphans.length > 0) {
-        logger.warn(
-            `${sharedOrphans.length} shared file(s) declared by the removed component(s) are orphaned based on manifest ownership — ` +
-            `verify they are not imported by non-component code (e.g. App.vue, main.ts).`
-        );
-    }
-
-    return uniqueKnownFiles;
+    return candidateFiles;
 }
 
 async function scanAllImports(componentsPath: string, fsAdapter: FileSystemAdapter): Promise<ImportGraph> {
@@ -610,22 +528,9 @@ async function getOrphansWithoutCurrentReferences(
     removedNames: ReadonlySet<string>,
     removedDirectories: readonly string[],
 ): Promise<string[]> {
-    if (paths.length === 0) return [];
-    const sources = new Map<string, PlannedComponentSource>();
-    const remainingNames = (await context.getInstalledComponentNames()).filter(name => !removedNames.has(name));
-    for (const name of remainingNames) {
-        const directory = await context.resolveComponentDir(name);
-        if (!await context.fs.pathExists(directory)) continue;
-        for (const file of await scanComponentFiles(directory, context.fs)) {
-            const importer = path.join(directory, file);
-            if (!COMPONENT_FILE_EXTENSIONS.some(ext => ext === path.extname(importer))) continue;
-            if (removedDirectories.some(removed => isInsideDirectory(importer, removed))) continue;
-            if (sources.has(importer) || !await context.isSafePath(importer)) continue;
-            const content = await context.fs.readFile(importer, 'utf-8');
-            sources.set(importer, { componentName: name, content });
-        }
-    }
-    const referenced = await findFilesReferencedByInstalledComponents(context, manifest, paths, removedNames, sources);
+    const referenced = await findFilesReferencedByInstalledComponents(
+        context, manifest, paths, removedNames, undefined, removedDirectories,
+    );
     return paths.filter(file => !referenced.has(file));
 }
 
@@ -662,7 +567,7 @@ export async function prepareRemoveComponents(
         ? [
             ...new Set([
                 ...await findOrphanedFiles(context, remaining, toRemove, importGraph.byComponent),
-                ...await findManifestKnownFiles(context, manifest, toRemove, removedComponentDirs, remaining, importGraph),
+                ...await findManifestKnownFiles(context, manifest, toRemove),
             ]),
         ]
         : [];

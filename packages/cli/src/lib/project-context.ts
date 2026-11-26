@@ -25,6 +25,8 @@ import {
     detectWorkspaceRoot,
     readTsConfig,
     clearProjectTypeCache,
+    getTsConfigPathCandidates,
+    type ResolvedTsConfig,
 } from './env-detector.js';
 import { ComponentScanner } from './component-scanner.js';
 
@@ -47,7 +49,7 @@ export class ProjectContext {
     readonly cwd: string;
     readonly fs: FileSystemAdapter;
     readonly env: ProjectEnvironmentInfo;
-    readonly tsConfig: TsConfig | null;
+    readonly tsConfig: ResolvedTsConfig | null;
     readonly auditLog: AuditLogStorage;
 
     private _config?: BrutalistConfig;
@@ -60,7 +62,7 @@ export class ProjectContext {
         cwd: string,
         fsAdapter: FileSystemAdapter,
         env: ProjectEnvironmentInfo,
-        tsConfig: TsConfig | null,
+        tsConfig: ResolvedTsConfig | null,
         config?: BrutalistConfig,
         registryClient?: RegistryClient,
     ) {
@@ -291,75 +293,24 @@ export class ProjectContext {
         return path.join(this.cwd, locations[0] ?? 'src/index.css');
     }
 
-    async resolveAliasPath(alias: string): Promise<string> {
-        const match = alias.match(/^(@[^/]*|~)\/(.*)/);
-        let resolvedPath: string;
-
-        if (!match) {
-            resolvedPath = path.join(this.cwd, alias);
-        } else {
-            const [, aliasPrefix, relativePath] = match;
-            const resolvedFromConfig = await this.resolveFromTsConfig(aliasPrefix, relativePath);
-            resolvedPath = resolvedFromConfig ?? await this.resolveByProjectType(relativePath);
+    async resolveAliasPath(alias: string, tsConfig = this.tsConfig): Promise<string> {
+        const candidates = getTsConfigPathCandidates(alias, this.cwd, tsConfig);
+        let resolvedPath = candidates[0];
+        for (const candidate of candidates) {
+            if (await this.fs.pathExists(candidate)) {
+                resolvedPath = candidate;
+                break;
+            }
         }
 
+        if (resolvedPath === undefined) {
+            const relativePath = alias.replace(/^(@[^/]*|~)\//, '');
+            resolvedPath = relativePath === alias
+                ? path.resolve(this.cwd, alias)
+                : await this.resolveByProjectType(relativePath);
+        }
         await this.assertSafePath(resolvedPath);
         return resolvedPath;
-    }
-
-    private async resolveFromTsConfig(aliasPrefix: string, relativePath: string): Promise<string | null> {
-        const paths = this.tsConfig?.compilerOptions?.paths;
-        if (!paths) return null;
-
-        const specifier = `${aliasPrefix}/${relativePath}`;
-        const matches = Object.entries(paths).flatMap(([pattern, targets]) => {
-            const wildcardIndex = pattern.indexOf('*');
-            if (wildcardIndex < 0) {
-                return pattern === specifier
-                    ? [{ targets, prefixLength: pattern.length, suffixLength: 0, suffix: '' }]
-                    : [];
-            }
-
-            const prefix = pattern.slice(0, wildcardIndex);
-            const suffix = pattern.slice(wildcardIndex + 1);
-            if (
-                !specifier.startsWith(prefix) ||
-                !specifier.endsWith(suffix) ||
-                specifier.length < prefix.length + suffix.length
-            ) {
-                return [];
-            }
-
-            return [{
-                targets,
-                prefixLength: prefix.length,
-                suffixLength: suffix.length,
-                suffix: specifier.slice(prefix.length, specifier.length - suffix.length),
-            }];
-        }).sort((left, right) =>
-            right.prefixLength - left.prefixLength || right.suffixLength - left.suffixLength
-        );
-        const matchedPaths = matches[0];
-        if (!matchedPaths) return null;
-
-        const baseUrl = this.tsConfig?.compilerOptions?.baseUrl || '.';
-        const baseDir = path.isAbsolute(baseUrl) ? baseUrl : path.join(this.cwd, baseUrl);
-
-        const resolveTarget = (targetPath: string): string => {
-            const target = targetPath.includes('*')
-                ? targetPath.replaceAll('*', () => matchedPaths.suffix)
-                : path.join(targetPath, matchedPaths.suffix);
-            return path.join(baseDir, target);
-        };
-
-        for (const targetPath of matchedPaths.targets) {
-            const candidate = resolveTarget(targetPath);
-            if (await this.fs.pathExists(candidate)) {
-                return candidate;
-            }
-        }
-
-        return resolveTarget(matchedPaths.targets[0]);
     }
 
     private async resolveByProjectType(relativePath: string): Promise<string> {
