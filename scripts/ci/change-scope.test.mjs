@@ -76,6 +76,19 @@ test('browser configuration, fixtures and cross-package imports select the brows
     )
 })
 
+test('site routing and artifact regressions select the site job', () => {
+    for (const file of [
+        'apps/docs/.vitepress/site-translations.ts',
+        'apps/docs/.vitepress/site-translations.test.ts',
+        'apps/docs/.vitepress/site-translations-dev.test.ts',
+        'scripts/docs/site-languages.test.mjs',
+    ]) {
+        const flags = classifyGitChangePaths([file])
+        assert.deepEqual(flags, expectedFlags('docs', 'site'))
+        assert.deepEqual(selectCiChecks(flags), ['tooling', 'site'])
+    }
+})
+
 test('registry page and demo inputs select registry validation while other site changes stay scoped', () => {
     for (const section of ['components', 'blocks', 'en/components', 'en/blocks']) {
         const flags = classifyGitChangePaths([`apps/docs/${section}/example.md`])

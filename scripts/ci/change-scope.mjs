@@ -317,6 +317,11 @@ function classifySharedPath(file, flags) {
 }
 
 function classifyScriptPath(file, flags) {
+    if (file === 'scripts/docs/site-languages.test.mjs') {
+        mark(flags, 'docs', 'site')
+        return
+    }
+
     mark(flags, 'tooling')
 
     if (isWithin(file, 'scripts/release')) {

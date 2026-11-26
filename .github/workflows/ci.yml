@@ -556,6 +556,11 @@ jobs:
             - name: Build and typecheck docs
               run: pnpm exec turbo run build:artifact typecheck:source --filter=docs
 
+            - name: Test docs routes and built site
+              run: |
+                  pnpm --filter docs test
+                  pnpm test:docs:site
+
             - name: Prepare documentation deployment artifact
               if: github.event_name == 'push' && github.ref == 'refs/heads/main'
               id: docs-artifact
