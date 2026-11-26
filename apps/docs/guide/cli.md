@@ -87,10 +87,18 @@ init 命令将自动完成以下初始化步骤：
 | `-y, --yes` | 跳过交互提示并使用检测到的默认值 | `false` |
 | `-d, --defaults` | 使用官方默认推荐配置 | `false` |
 | `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
-| `-f, --force` | 强制覆盖已有的 `components.json` 与样式注入 | `false` |
+| `-f, --force` | 重新配置项目并刷新受管设计令牌 | `false` |
 | `-s, --silent` | 静默输出模式 | `false` |
 | `--vscode` | 自动生成 VS Code 智能代码片段（Snippets） | `false` |
 | `--workspace-root <path>` | 显式指定 Monorepo 工作区根目录路径 | 自动检测 |
+
+使用全局参数 `--dry-run` 或环境变量 `BRUTX_DRY_RUN=1` 预览初始化计划。预览列出各目标的文件、目录和依赖命令，全程只读且不会启动包管理器。
+
+```bash
+brutx-vue --dry-run init --yes --vscode
+```
+
+在工作区子包中初始化时，共享依赖安装到工作区根目录，组件依赖安装到当前子包。 依赖安装失败时，`init` 会返回非零退出码。用相同参数重跑即可补齐未完成的步骤，已有配置、别名和样式会保留。需要重新配置项目并刷新受管设计令牌和选中的代码片段时，使用 `--force`。
 
 ---
 

@@ -2,6 +2,120 @@ import { describe, it, expect } from 'vitest';
 import { injectNuxtConfig } from '../src/lib/frameworks/nuxt-config.js';
 
 describe('NuxtConfigModifier', () => {
+    const targets = { cssPath: 'assets/css/main.css', componentsRelDir: 'components/ui' };
+
+    it('appends missing targets while preserving entry order and comments', () => {
+        const source = `export default defineNuxtConfig({
+    components: ['~/widgets', { path: '~/icons', prefix: 'Icon' }],
+    css: [
+        '~/assets/css/reset.css', // reset
+        '~/assets/css/theme.css' // user theme
+    ],
+    devtools: { enabled: true },
+})`;
+        const result = injectNuxtConfig(source, targets);
+        expect(result.status).toBe('injected');
+        expect(result.content).toBe(`export default defineNuxtConfig({
+    components: ['~/widgets', { path: '~/icons', prefix: 'Icon' }, '~/components/ui'],
+    css: [
+        '~/assets/css/reset.css', // reset
+        '~/assets/css/theme.css', // user theme
+        'assets/css/main.css'
+    ],
+    devtools: { enabled: true },
+})`);
+        expect(injectNuxtConfig(result.content, targets)).toEqual({
+            content: result.content, changed: false, status: 'unchanged',
+        });
+    });
+
+    it('recognizes alias equivalents and an existing recursive directory without deduplicating user entries', () => {
+        const source = `export default defineNuxtConfig({
+    components: ['~/widgets', { path: '@@/components/', extensions: ['.vue'] }],
+    css: ['~/assets/css/main.css', '@@/assets/css/main.css'],
+})`;
+        expect(injectNuxtConfig(source, targets)).toEqual({ content: source, changed: false, status: 'unchanged' });
+    });
+
+    it('adds only the missing target to components.dirs while preserving object options', () => {
+        const source = `export default defineNuxtConfig({
+    components: { dirs: ['~/widgets'], global: true },
+    css: ['@@/assets/css/main.css'],
+})`;
+        const result = injectNuxtConfig(source, targets);
+        expect(result.status).toBe('injected');
+        expect(result.content).toBe(source.replace("['~/widgets']", "['~/widgets', '~/components/ui']"));
+    });
+
+    it('distinguishes source-relative aliases from root-relative targets with a custom srcDir', () => {
+        const source = `export default defineNuxtConfig({
+    srcDir: 'client',
+    components: ['@/components'],
+    css: ['~/assets/css/main.css'],
+})`;
+        expect(injectNuxtConfig(source, {
+            componentsRelDir: 'client/components/ui', cssPath: 'client/assets/css/main.css',
+        })).toEqual({ content: source, changed: false, status: 'unchanged' });
+
+        const result = injectNuxtConfig(source, targets);
+        expect(result.status).toBe('injected');
+        expect(result.content).toContain("['@/components', '~~/components/ui']");
+        expect(result.content).toContain("['~/assets/css/main.css', '~~/assets/css/main.css']");
+        expect(injectNuxtConfig(result.content, targets).status).toBe('unchanged');
+    });
+
+    it('preserves default auto-discovery when components is explicitly enabled', () => {
+        const source = `export default defineNuxtConfig({ components: true, css: [] })`;
+        const result = injectNuxtConfig(source, targets);
+        expect(result.content).toBe(source.replace('css: []', "css: ['assets/css/main.css']"));
+        expect(result.status).toBe('injected');
+        expect(injectNuxtConfig(source, { ...targets, componentsRelDir: 'widgets' })).toEqual({
+            content: source, changed: false, status: 'manual-required',
+        });
+    });
+
+    it('preserves closing-line indentation and line endings when appending to an empty array', () => {
+        const source = [
+            'export default defineNuxtConfig({',
+            "\tcomponents: ['~/components'],",
+            '\tcss: [',
+            '\t\t// Global styles',
+            '\t],',
+            '})',
+        ].join('\r\n');
+        const result = injectNuxtConfig(source, targets);
+        expect(result.status).toBe('injected');
+        expect(result.content).toContain("// Global styles\r\n\t\t'assets/css/main.css'\r\n\t]");
+    });
+
+    it('uses the effective root properties when duplicate declarations exist', () => {
+        const source = `export default defineNuxtConfig({
+    components: ['~/components'],
+    components: ['~/widgets'],
+    css: ['~/assets/css/reset.css'],
+    css: ['~/assets/css/main.css'],
+})`;
+        const result = injectNuxtConfig(source, targets);
+        expect(result.status).toBe('injected');
+        expect(result.content).toBe(source.replace("['~/widgets']", "['~/widgets', '~/components/ui']"));
+    });
+
+    it.each([
+        "components: false, css: ['~/assets/css/reset.css']",
+        'components: componentDirs, css: []',
+        "components: ['~/components'], css: [...globalStyles]",
+        "components: [{ path: '~/components', extensions: ['ts'] }], css: []",
+        "components: [{ path: '~/components', ignore: ['ui/**'] }], css: []",
+        'components: { dirs: componentDirs }, css: []',
+        "components: ['~/components'], [key]: [], css: []",
+        '...defaults, css: []',
+    ])('preserves the whole file when either target requires manual configuration (%s)', properties => {
+        const source = `export default defineNuxtConfig({ ${properties} })`;
+        expect(injectNuxtConfig(source, targets)).toEqual({
+            content: source, changed: false, status: 'manual-required',
+        });
+    });
+
     it('injects missing components and css entries into empty defineNuxtConfig', () => {
         const source = 'export default defineNuxtConfig({\n})\n';
         const result = injectNuxtConfig(source, {

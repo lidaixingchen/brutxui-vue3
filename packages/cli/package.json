@@ -49,12 +49,14 @@
         "jsonc-parser": "^3.3.1",
         "magic-string": "^0.30.21",
         "ora": "^9.4.0",
+        "semver": "^7.8.5",
         "typescript": "^6.0.3"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^25.9.1",
+        "@types/semver": "^7.8.0",
         "@vitest/coverage-v8": "^4.1.11",
         "brutx-shared-vue": "workspace:*",
         "eslint": "^10.4.1",

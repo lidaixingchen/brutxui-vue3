@@ -65,10 +65,18 @@ brutx-vue init [options]
 | `-y, --yes` | 跳过确认提示 |
 | `-d, --defaults` | 使用默认配置 |
 | `-c, --cwd <cwd>` | 指定工作目录 |
-| `-f, --force` | 强制覆盖已有配置 |
+| `-f, --force` | 重新配置项目并刷新受管设计令牌 |
 | `-s, --silent` | 静默输出 |
 | `--vscode` | 生成 VS Code snippets |
 | `--workspace-root <path>` | 指定工作区根目录（默认自动检测） |
+
+使用全局参数 `--dry-run` 或环境变量 `BRUTX_DRY_RUN=1` 预览初始化计划。预览列出各目标的文件、目录和依赖命令，全程只读且不会启动包管理器。
+
+```bash
+brutx-vue --dry-run init --yes --vscode
+```
+
+在工作区子包中初始化时，共享依赖安装到工作区根目录，组件依赖安装到当前子包。 依赖安装失败时，`init` 会返回非零退出码。用相同参数重跑即可补齐未完成的步骤，已有配置、别名和样式会保留。需要重新配置项目并刷新受管设计令牌和选中的代码片段时，使用 `--force`。
 
 ### `brutx-vue add [components...]`
 

@@ -290,7 +290,7 @@ describe('injectNuxtConfig root-key detection', () => {
     it('ignores key literals inside comments and strings', () => {
         const content = `export default defineNuxtConfig({
     // components: ['~/fake']
-    const note = "css: []";
+    note: "css: []",
 })
 `;
         const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
@@ -321,14 +321,15 @@ describe('injectNuxtConfig root-key detection', () => {
 
     it('handles comments before colon without ReDoS vulnerability', () => {
         const pathological = `export default defineNuxtConfig({
-    components ${'/* *//* */'.repeat(25)}
+    components ${'/* *//* */'.repeat(25)} : ['~/components'],
 })
 `;
         const start = Date.now();
         const result = injectNuxtConfig(pathological, 'assets/css/main.css', 'components');
         const duration = Date.now() - start;
         expect(duration).toBeLessThan(100);
-        expect(result).toContain("components: ['~/components']");
+        expect(result?.match(/^\s*components\b/gm)).toHaveLength(1);
+        expect(result).toContain("css: ['assets/css/main.css']");
     });
 
     it('returns null when defineNuxtConfig is absent', () => {

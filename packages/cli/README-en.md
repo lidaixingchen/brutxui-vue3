@@ -52,8 +52,16 @@ brutx-vue init [options]
 | `-y, --yes`         | Skip confirmation prompts  |
 | `-d, --defaults`    | Use default configuration  |
 | `-c, --cwd <cwd>`   | Specify working directory  |
-| `-f, --force`       | Overwrite existing config  |
+| `-f, --force` | Reconfigure the project and refresh managed design tokens |
 | `-s, --silent`      | Suppress output            |
+
+Preview the initialization plan with the global flag or `BRUTX_DRY_RUN=1`. The preview lists file and directory changes and dependency commands for each target, without writing files or starting a package manager.
+
+```bash
+brutx-vue --dry-run init --yes --vscode
+```
+
+When initializing a workspace subpackage, the shared dependencies go to the workspace root and the component dependencies go to the subpackage. If dependency installation fails, `init` exits with an error. Re-run the same command to finish the outstanding steps and keep your configuration, aliases, and existing styles. Use `--force` to reconfigure an existing project and refresh the managed design tokens and requested snippets.
 
 ### `brutx-vue add [components...]`
 

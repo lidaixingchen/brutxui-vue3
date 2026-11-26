@@ -767,6 +767,11 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
+  semver@7.8.6:
+    resolution: {integrity: sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
@@ -1240,6 +1245,7 @@ snapshots:
       jsonc-parser: 3.3.1
       magic-string: 0.30.21
       ora: 9.4.1
+      semver: 7.8.6
       typescript: 6.0.3
     transitivePeerDependencies:
       - '@types/node'
@@ -1471,6 +1477,8 @@ snapshots:
       '@rolldown/binding-win32-x64-msvc': 1.0.3
 
   safer-buffer@2.1.2: {}
+
+  semver@7.8.6: {}
 
   signal-exit@4.1.0: {}
 

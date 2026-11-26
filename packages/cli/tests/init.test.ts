@@ -4,6 +4,11 @@ import os from 'os';
 import path from 'path';
 import type { CliError } from '../src/lib/error.js';
 import type { BrutalistConfig } from '../src/lib/types.js';
+import { SHARED_DEPENDENCIES, COMPONENT_DEPENDENCIES, BRUTX_CSS_START_MARKER, BRUTX_CSS_END_MARKER } from '../src/lib/constants.js';
+import { installPackages } from '../src/lib/package-manager.js';
+import { resetGlobalDryRun, setGlobalDryRun } from '../src/lib/global-dry-run.js';
+import { logger } from '../src/lib/logger.js';
+import { runProcess } from '../src/lib/run-process.js';
 
 const mockInput = vi.fn();
 const mockConfirm = vi.fn();
@@ -16,6 +21,10 @@ vi.mock('@inquirer/prompts', () => ({
 vi.mock('../src/lib/package-manager.js', () => ({
     installPackages: vi.fn(),
     getInstallCommand: vi.fn(() => 'npm install'),
+}));
+
+vi.mock('../src/lib/run-process.js', () => ({
+    runProcess: vi.fn(),
 }));
 
 async function setupProject(files: Record<string, string | object> = {}): Promise<string> {
@@ -39,8 +48,196 @@ async function setupProject(files: Record<string, string | object> = {}): Promis
 describe('init', { timeout: 25000 }, () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.mocked(installPackages).mockReset();
         mockInput.mockImplementation(async (opt: { default?: string }) => opt.default ?? '');
         mockConfirm.mockImplementation(async (opt: { default?: boolean }) => opt.default ?? true);
+    });
+
+    it.each(['global flag', 'environment variable'] as const)('plans without writing or installing via the %s', async (source) => {
+        const css = '@import "tailwindcss";\n:root { --custom: red; }\n';
+        const cwd = await setupProject({
+            'src/index.css': css,
+            'nuxt.config.ts': 'export default defineNuxtConfig({})\n',
+            'pnpm-lock.yaml': '',
+        });
+        if (source === 'global flag') setGlobalDryRun(true);
+        else vi.stubEnv('BRUTX_DRY_RUN', '1');
+
+        try {
+            const { init } = await import('../src/commands/init.js');
+            const before = await fs.readdir(cwd, { recursive: true });
+
+            await init({ cwd, yes: true, vscode: true, silent: true });
+
+            expect(await fs.readdir(cwd, { recursive: true })).toEqual(before);
+            expect(await fs.readFile(path.join(cwd, 'src/index.css'), 'utf8')).toBe(css);
+            expect(await fs.readFile(path.join(cwd, 'nuxt.config.ts'), 'utf8')).toBe('export default defineNuxtConfig({})\n');
+            expect(installPackages).not.toHaveBeenCalled();
+        } finally {
+            resetGlobalDryRun();
+            vi.unstubAllEnvs();
+            await fs.remove(cwd);
+        }
+    });
+
+    it('shows the physical stylesheet target when Nuxt configuration needs a manual edit', async () => {
+        const nuxtConfig = "export default defineNuxtConfig({ srcDir: 'frontend/', components: false })\n";
+        const cwd = await setupProject({
+            'package.json': { dependencies: { nuxt: '^4.0.0', vue: '^3.5.0' } },
+            'nuxt.config.ts': nuxtConfig,
+            'components.json': {
+                tailwind: { config: '', css: '~/assets/css/main.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            },
+            'tsconfig.json': { compilerOptions: { paths: { '~/*': ['./other/*'] } } },
+            'other/assets/css/main.css': '.project-style {}',
+        });
+        const info = vi.spyOn(logger, 'info').mockImplementation(() => {});
+        try {
+            const { init } = await import('../src/commands/init.js');
+            await init({ cwd, yes: true, dryRun: true, silent: true });
+
+            expect(info).toHaveBeenCalledWith('    css: ["~~/other/assets/css/main.css"],');
+            expect(await fs.readFile(path.join(cwd, 'nuxt.config.ts'), 'utf8')).toBe(nuxtConfig);
+        } finally {
+            info.mockRestore();
+            await fs.remove(cwd);
+        }
+    });
+
+    it('retries only the missing dependencies and keeps existing project files', async () => {
+        const cwd = await setupProject({
+            'src/index.css': '@import "tailwindcss";\n',
+            'pnpm-lock.yaml': '',
+        });
+        const customStyles = `${BRUTX_CSS_START_MARKER}\n:root { --user-color: red; }\n${BRUTX_CSS_END_MARKER}`;
+        try {
+            const { init } = await import('../src/commands/init.js');
+            vi.mocked(installPackages).mockRejectedValueOnce(new Error('pnpm exited with code 42'));
+
+            await expect(init({ cwd, yes: true, vscode: true, silent: true })).rejects.toMatchObject({
+                exitCode: 1,
+                message: expect.stringContaining('code 42'),
+            });
+            expect(installPackages).toHaveBeenNthCalledWith(1, 'pnpm', [...SHARED_DEPENDENCIES, ...COMPONENT_DEPENDENCIES], cwd);
+
+            const configPath = path.join(cwd, 'components.json');
+            const config = await fs.readJson(configPath);
+            config.aliases.components = '@/custom-components';
+            const configText = JSON.stringify(config);
+            const stylesPath = path.join(cwd, config.tailwind.tokensFile);
+            const snippetsPath = path.join(cwd, '.vscode/brutx.code-snippets');
+            const customSnippets = '{"Custom": {"prefix": "custom"}}';
+            await fs.writeFile(configPath, configText);
+            await fs.writeFile(stylesPath, customStyles);
+            await fs.writeFile(snippetsPath, customSnippets);
+
+            const dependencies = [...SHARED_DEPENDENCIES, ...COMPONENT_DEPENDENCIES];
+            const alreadyInstalled = dependencies.shift()!;
+            const packageJson = path.join(cwd, 'package.json');
+            await fs.writeJson(packageJson, { dependencies: { vue: '^3.5.0', [alreadyInstalled]: 'custom-version' } });
+            vi.mocked(installPackages).mockImplementationOnce(async (_pm, missing) => {
+                const manifest = await fs.readJson(packageJson);
+                for (const dependency of [alreadyInstalled, ...missing]) {
+                    manifest.dependencies[dependency] ??= 'installed-version';
+                    await fs.outputJson(path.join(cwd, 'node_modules', dependency, 'package.json'), { name: dependency });
+                }
+                await fs.writeJson(packageJson, manifest);
+            });
+
+            await init({ cwd, yes: true, vscode: true, silent: true });
+
+            expect(installPackages).toHaveBeenNthCalledWith(2, 'pnpm', dependencies, cwd);
+            expect(await fs.readFile(configPath, 'utf8')).toBe(configText);
+            expect(await fs.readFile(stylesPath, 'utf8')).toBe(customStyles);
+            expect(await fs.readFile(snippetsPath, 'utf8')).toBe(customSnippets);
+            expect(await fs.pathExists(path.join(cwd, 'src/custom-components/ui'))).toBe(true);
+
+            await init({ cwd, yes: true, vscode: true, silent: true });
+
+            expect(installPackages).toHaveBeenCalledTimes(2);
+            expect(await fs.readFile(configPath, 'utf8')).toBe(configText);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it.each([
+        { declaration: '2.0.0', hoistedVersion: '1.0.0', repair: true },
+        { declaration: '^2.0.0', hoistedVersion: '2.1.0', repair: false },
+        { declaration: '^2.0.0', hoistedVersion: '2.1.0-beta.1', repair: true },
+        { declaration: 'workspace:^2.0.0', hoistedVersion: '1.0.0', repair: true },
+        { declaration: 'file:../../vendor/reka-ui', hoistedVersion: '1.0.0', repair: false },
+    ])('plans compatible hoists and repairs mismatched ranges for $declaration and $hoistedVersion', async ({ declaration, hoistedVersion, repair }) => {
+        const workspace = await setupProject({
+            'pnpm-workspace.yaml': 'packages:\n  - apps/*\n',
+            'package.json': {
+                dependencies: Object.fromEntries(SHARED_DEPENDENCIES.map(name => [name, '^1.0.0'])),
+            },
+            'apps/example/package.json': { dependencies: { '@lucide/vue': '~1.6.0', 'reka-ui': declaration } },
+        });
+        const cwd = path.join(workspace, 'apps/example');
+        const info = vi.spyOn(logger, 'info');
+        try {
+            for (const [name, version] of [
+                ...SHARED_DEPENDENCIES.map(name => [name, '1.0.0']),
+                ['@lucide/vue', '1.6.2'],
+                ['reka-ui', hoistedVersion],
+            ]) {
+                await fs.outputJson(path.join(workspace, 'node_modules', name, 'package.json'), { name, version });
+            }
+            const { init } = await import('../src/commands/init.js');
+            await init({ cwd, yes: true, dryRun: true, silent: true });
+            const expected = repair ? '[Dry Run] Would install dependencies:' : '[Dry Run] Would keep dependencies:';
+            expect(info).toHaveBeenCalledWith(expect.stringContaining(`${expected} ${cwd}`));
+            expect(runProcess).not.toHaveBeenCalled();
+
+            await init({ cwd, yes: true, silent: true });
+            expect(installPackages).not.toHaveBeenCalled();
+            if (repair) {
+                expect(runProcess).toHaveBeenCalledExactlyOnceWith('pnpm', ['install'], expect.objectContaining({ cwd }));
+            } else {
+                expect(runProcess).not.toHaveBeenCalled();
+            }
+        } finally {
+            info.mockRestore();
+            await fs.remove(workspace);
+        }
+    });
+
+    it('skips external VS Code snippets in automatic mode and rejects an explicit write', async () => {
+        const initialCss = '@import "tailwindcss";\n';
+        const cwd = await setupProject({ 'src/index.css': initialCss });
+        const external = await setupProject({ 'brutx.code-snippets': '{"shared":{}}' });
+        const info = vi.spyOn(logger, 'info');
+        const warn = vi.spyOn(logger, 'warn');
+        try {
+            await fs.symlink(external, path.join(cwd, '.vscode'), 'junction');
+            const { init } = await import('../src/commands/init.js');
+
+            await init({ cwd, yes: true, dryRun: true, silent: true });
+            expect(info).toHaveBeenCalledWith(expect.stringContaining('[Dry Run] Would skip: VS Code snippets'));
+            expect(installPackages).not.toHaveBeenCalled();
+
+            for (const dryRun of [true, false]) {
+                await expect(init({ cwd, yes: true, vscode: true, dryRun, silent: true })).rejects.toMatchObject({
+                    code: 'PATH_UNSAFE',
+                });
+                expect(await fs.pathExists(path.join(cwd, 'components.json'))).toBe(false);
+                expect(await fs.readFile(path.join(cwd, 'src/index.css'), 'utf8')).toBe(initialCss);
+            }
+
+            await init({ cwd, yes: true, silent: true });
+            expect(await fs.pathExists(path.join(cwd, 'components.json'))).toBe(true);
+            expect(installPackages).toHaveBeenCalledTimes(1);
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Skipped VS Code snippets.'));
+            expect(await fs.readFile(path.join(external, 'brutx.code-snippets'), 'utf8')).toBe('{"shared":{}}');
+        } finally {
+            info.mockRestore();
+            warn.mockRestore();
+            await fs.remove(cwd);
+            await fs.remove(external);
+        }
     });
 
     it('should use split tokens mode by default with --yes on new projects', async () => {
