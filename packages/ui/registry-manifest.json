@@ -385,7 +385,8 @@
     ],
     "directives": [],
     "lib": [
-      "collection-item-variants.ts"
+      "collection-item-variants.ts",
+      "env.ts"
     ]
   },
   "cookie-consent": {

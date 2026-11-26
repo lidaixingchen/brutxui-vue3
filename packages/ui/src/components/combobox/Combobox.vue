@@ -13,6 +13,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import { provideCommandSelectionContext } from '../command/command-context'
 import Spinner from '../spinner/Spinner.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
@@ -130,6 +131,9 @@ const showCreateItem = computed(() =>
     props.creative && filteredOptions.value.length === 0 && !!searchQuery.value.trim()
 )
 
+const emptySelection: string[] = []
+provideCommandSelectionContext(value => !showCreateItem.value && isSelected(value))
+
 const createItemLabel = computed(() =>
     t('combobox.create', { query: searchQuery.value.trim() })
 )
@@ -226,7 +230,6 @@ defineExpose({
                 :title="resolvedAriaLabelledby || resolvedAriaLabel ? undefined : resolvedPlaceholder"
                 :aria-labelledby="resolvedAriaLabelledby"
                 :aria-label="resolvedAriaLabel"
-                :aria-multiselectable="multiple || undefined"
                 aria-haspopup="listbox"
                 :disabled="disabled"
                 :class="triggerClasses"
@@ -238,7 +241,7 @@ defineExpose({
         </PopoverTrigger>
         <PopoverContent :class="contentClasses" align="start">
           <div :id="contentId">
-            <Command disable-filter>
+            <Command disable-filter :model-value="emptySelection" :multiple="multiple" :disabled="disabled">
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
                     <CommandEmpty v-if="!showCreateItem">

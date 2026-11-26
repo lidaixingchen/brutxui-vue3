@@ -53,6 +53,8 @@ const options = [
 
 ### Multi-select Mode
 
+Checkmarks and `aria-selected` reflect the `modelValue` supplied by the parent. The parent can decide whether to update the selection after receiving `update:modelValue`.
+
 ```vue
 <script setup>
 import { ref } from 'vue'

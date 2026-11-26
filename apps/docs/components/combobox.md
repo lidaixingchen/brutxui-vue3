@@ -52,6 +52,8 @@ const options = [
 
 ### 多选模式
 
+多选选项的勾选标记和 `aria-selected` 以父组件确认的 `modelValue` 为准。父组件可以接收 `update:modelValue` 后决定是否更新选择。
+
 ```vue
 <script setup>
 import { ref } from 'vue'

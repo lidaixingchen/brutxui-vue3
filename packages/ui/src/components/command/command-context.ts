@@ -5,6 +5,7 @@ import type { CommandFocusMode } from './command-focus'
 export type CommandRootContext = {
     allItems: Ref<Map<string, string>>
     allGroups: Ref<Map<string, Set<string>>>
+    filterDisabled: ComputedRef<boolean>
     filterSearch: Ref<string>
     filterState: ComputedRef<{
         count: number
@@ -12,7 +13,6 @@ export type CommandRootContext = {
         groups: Set<string>
     }>
     focusMode: Readonly<Ref<CommandFocusMode>>
-    highlightedElement: Ref<HTMLElement | null>
 }
 
 /**
@@ -22,6 +22,9 @@ export type CommandRootContext = {
  */
 export const [injectCommandRootContext, provideCommandRootContext]
     = createContext<CommandRootContext>('Command')
+
+export const [injectCommandSelectionContext, provideCommandSelectionContext]
+    = createContext<(value: string) => boolean>('CommandSelection')
 
 export type CommandGroupContext = {
     id: string

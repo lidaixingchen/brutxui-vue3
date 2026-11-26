@@ -151,7 +151,6 @@ describe('CommandInput', () => {
         })
         await nextTick()
         await nextTick()
-        // 未命中项按 v-if 卸载，不再残留 DOM（reka 键盘导航不会命中隐藏项）
         const items = wrapper.findAll('[data-slot="command-item"]')
         expect(items.length).toBe(1)
         expect(items[0].text()).toContain('Alpha')

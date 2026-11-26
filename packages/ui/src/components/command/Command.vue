@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import { ListboxRoot, useFilter } from 'reka-ui'
 import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<CommandProps>(), {
 const allItems = ref<Map<string, string>>(new Map())
 const allGroups = ref<Map<string, Set<string>>>(new Map())
 const filterSearch = ref('')
-const highlightedElement = ref<HTMLElement | null>(null)
+const listbox = useTemplateRef('listbox')
 const commandFocus = useCommandFocus()
 
 const { contains } = useFilter({ sensitivity: 'base' })
@@ -75,15 +75,20 @@ const filterState = computed<{
 provideCommandRootContext({
     allItems,
     allGroups,
+    filterDisabled: computed(() => props.disableFilter),
     filterSearch,
     filterState,
     focusMode: commandFocus.mode,
-    highlightedElement,
 })
 
-function handleHighlight(payload?: { ref: HTMLElement }) {
-    highlightedElement.value = payload?.ref ?? null
-}
+// 过滤结果变化时，清除已退出导航的选项所持有的虚拟焦点。
+watch([filterState, () => listbox.value?.highlightedElement], ([state, highlighted], [previousState]) => {
+    const root = listbox.value
+    if (!root) return
+    if (highlighted && !highlighted.hidden && !highlighted.inert && (highlighted.isConnected || root.getItems().some(item => item.ref === highlighted))) return
+    if (highlighted) root.highlightedElement = null
+    if (state !== previousState && (highlighted || filterSearch.value)) root.highlightFirstItem()
+}, { flush: 'post' })
 
 defineExpose({ filterSearch })
 
@@ -98,10 +103,10 @@ const classes = computed(() =>
 
 <template>
     <ListboxRoot
+        ref="listbox"
         :class="classes"
         :highlight-on-hover="true"
         as="div"
-        @highlight="handleHighlight"
         @keydown.capture="commandFocus.handleKeydown"
         @pointermove.capture="commandFocus.handlePointerMove"
     >

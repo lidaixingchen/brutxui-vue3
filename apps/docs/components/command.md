@@ -60,7 +60,9 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 
 ## 搜索过滤
 
-`CommandInput` 输入的文本会自动过滤 `CommandItem`，匹配逻辑基于项目文本内容。当所有项目都被过滤掉时，`CommandEmpty` 会自动显示；当某个分组内所有项目都被过滤掉时，该分组会自动隐藏。
+`CommandInput` 按 `CommandItem` 插槽中的可见文案过滤，文案更新后会重新匹配。没有可见文案时使用 `value`。当所有项目都被过滤掉时，`CommandEmpty` 会自动显示。某个分组没有匹配项时会自动隐藏。
+
+服务端渲染时，预设查询先按 `value` 匹配。如果查询只命中插槽文案，对应选项会在浏览器水合后显示。
 
 ```vue
 <Command>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, onUpdated, ref, watch, type ComponentPublicInstance } from 'vue'
-import { ListboxItem, useId } from 'reka-ui'
+import { computed, onBeforeUnmount, useAttrs, useTemplateRef, watch, watchEffect, type ComponentPublicInstance } from 'vue'
+import { injectListboxRootContext, ListboxItem, Primitive, useId, type PrimitiveProps } from 'reka-ui'
 import type { ClassValue } from 'clsx'
+import { getMutationObserverCtor } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { commandItemVariants } from './command-variants'
-import { injectCommandRootContext, injectCommandGroupContext } from './command-context'
+import { injectCommandRootContext, injectCommandGroupContext, injectCommandSelectionContext } from './command-context'
 
 interface CommandItemProps {
     value: string
@@ -12,19 +13,26 @@ interface CommandItemProps {
     class?: ClassValue
 }
 
+defineOptions({ inheritAttrs: false })
+
 const props = defineProps<CommandItemProps>()
 
 const emit = defineEmits<{ select: [value: string] }>()
 
 const rootContext = injectCommandRootContext()
 const groupContext = injectCommandGroupContext(null)
+const selection = injectCommandSelectionContext(null)
+const listboxContext = injectListboxRootContext()
+const attrs = useAttrs()
 const id = useId(undefined, 'brutx-command-item')
 
-const itemRef = ref<ComponentPublicInstance | null>(null)
+const itemRef = useTemplateRef<ComponentPublicInstance>('item')
+const itemElement = computed(() => {
+    const root = itemRef.value?.$el as Element | CharacterData | undefined
+    if (!root) return
+    return (root.nodeType === Node.ELEMENT_NODE ? root : root.nextElementSibling) as HTMLElement | null
+})
 
-// setup 阶段同步注册（先以 value 兜底索引文本）：
-// - 让过滤计算在首次渲染前即可看到本项，消除「未注册即放行」与闪烁窗口；
-// - 条目元素随后按 v-if 卸载（隐藏）时 CommandItem 组件仍保持挂载，索引不会随隐藏丢失。
 rootContext.allItems.value.set(id, props.value)
 const groupId = groupContext?.id
 if (groupId) {
@@ -37,19 +45,39 @@ if (groupId) {
     }
 }
 
-const isRender = computed(() => {
-    if (!rootContext.filterSearch.value) return true
-    const items = rootContext.filterState.value.items
-    // disableFilter 或过滤计算尚未产出条目（防御分支）时不做过滤
-    if (items.size === 0) return true
-    return (items.get(id) ?? 0) > 0
+const isVisible = computed(() =>
+    rootContext.filterDisabled.value
+    || !rootContext.filterSearch.value
+    || (rootContext.filterState.value.items.get(id) ?? 0) > 0
+)
+
+function getItemAttrs() {
+    const { as: _as, asChild: _asChild, 'as-child': _asChildAttr, ...itemAttrs } = attrs
+    return itemAttrs
+}
+
+function hasBooleanAttr(value: unknown): boolean {
+    return value === '' || Boolean(value)
+}
+
+function getSurfaceAttrs(): PrimitiveProps {
+    return {
+        as: attrs.as as PrimitiveProps['as'],
+        asChild: hasBooleanAttr(attrs.asChild ?? attrs['as-child']),
+    }
+}
+
+function isAvailable() {
+    return isVisible.value && !hasBooleanAttr(attrs.hidden) && !hasBooleanAttr(attrs.inert)
+}
+
+const selectionAttrs = computed(() => {
+    if (!selection) return {}
+    const selected = selection(props.value)
+    return { 'aria-selected': selected, 'data-state': selected ? 'checked' : 'unchecked' }
 })
 
-// 索引文本读取：递归收集可见文本节点，跳过 hidden 属性 / aria-hidden="true" / sr-only 的
-// 子元素（如仅 hover 显示的快捷键、装饰徽标），避免把屏幕不可见文本计入搜索索引——这是
-// 原 innerText 语义（只取渲染可见文本）在 v-if 卸载改造后的延续。不做 getComputedStyle
-// 判定：那会触发强制同步布局，违背用 textContent 换性能的初衷；纯 CSS display:none 的
-// 隐藏内容仍会被计入，属已接受的行为边界。
+// 收集插槽显示文本，跳过显式隐藏及读屏专用的子元素。
 function getSearchableText(el: HTMLElement): string {
     let text = ''
     for (const node of el.childNodes) {
@@ -66,15 +94,23 @@ function getSearchableText(el: HTMLElement): string {
     return text
 }
 
-function syncIndexText() {
-    const el = itemRef.value?.$el as HTMLElement | undefined
-    if (!el) return
-    // 条目已由 v-show 改为 v-if：隐藏项被卸载、itemRef 为 null，隐藏项不再残留 DOM。
-    // 读取时跳过显式隐藏子元素并 trim，避免把不可见文本计入搜索索引
-    const text = getSearchableText(el).trim() || props.value
-    if (rootContext.allItems.value.get(id) !== text)
-        rootContext.allItems.value.set(id, text)
-}
+watchEffect((onCleanup) => {
+    const el = itemElement.value
+    if (!el || rootContext.filterDisabled.value) return
+    const value = props.value
+    const syncIndexText = () => rootContext.allItems.value.set(id, getSearchableText(el).trim() || value)
+    syncIndexText()
+    const Observer = getMutationObserverCtor()
+    if (!Observer) return
+    const observer = new Observer(syncIndexText)
+    observer.observe(el, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributeFilter: ['hidden', 'aria-hidden', 'class'],
+    })
+    onCleanup(() => observer.disconnect())
+}, { flush: 'post' })
 
 const classes = computed(() =>
     cn(commandItemVariants(), props.class)
@@ -82,34 +118,21 @@ const classes = computed(() =>
 
 const isFocusVisible = computed(() =>
     rootContext.focusMode.value === 'keyboard'
-    && rootContext.highlightedElement.value === (itemRef.value?.$el as HTMLElement | undefined)
+    && listboxContext.highlightedElement.value === itemElement.value
 )
 
 // 原语缓存选项子树，虚拟焦点属性需同步到实际选项元素。
-watch([isFocusVisible, itemRef], ([focusVisible, instance]) => {
-    const element = instance?.$el as HTMLElement | undefined
-    if (!element) return
-
-    if (focusVisible) {
-        element.setAttribute('data-focus-visible', '')
-    }
-    else {
-        element.removeAttribute('data-focus-visible')
-    }
+watch([isFocusVisible, itemElement], ([focusVisible, element]) => {
+    element?.toggleAttribute('data-focus-visible', focusVisible)
 }, { flush: 'post', immediate: true })
 
-// onMounted 覆盖首次挂载：初始 filterSearch 为空时全部条目可见、itemRef 可用，同步插槽显示文本；
-// 否则索引停留在 setup 的 value 兜底，显示文本与 value 不一致时按显示文本搜索会漏匹配
-// onUpdated 覆盖后续插槽内容变化（异步请求 / 国际化切换 / 条件渲染）时的索引同步；
-// 隐藏条目 itemRef 为 null 会提前返回，重新可见时随 v-if 重新挂载再次同步、可自愈
-onMounted(syncIndexText)
-onUpdated(syncIndexText)
+function handleSelect() {
+    if (isAvailable() && !props.disabled && !listboxContext.disabled.value)
+        emit('select', props.value)
+}
 
-// 条目元素用 v-if 而非 v-show：display:none 的项仍会被 reka Listbox 键盘导航命中，
-// 卸载可见性不匹配的项可使其从导航集合中移除（setup 同步注册保证隐藏后索引仍在，无死锁）。
 onBeforeUnmount(() => {
     rootContext.allItems.value.delete(id)
-    const groupId = groupContext?.id
     if (groupId) {
         const group = rootContext.allGroups.value.get(groupId)
         group?.delete(id)
@@ -122,15 +145,26 @@ onBeforeUnmount(() => {
 
 <template>
     <ListboxItem
-        v-if="isRender"
         :id="id"
-        ref="itemRef"
+        v-bind="getItemAttrs()"
+        as-child
         :value="value"
-        :disabled="disabled"
-        :class="classes"
-        data-slot="command-item"
-        @select="emit('select', value)"
+        :disabled="disabled || !isAvailable()"
+        @select="handleSelect"
     >
-        <slot />
+        <!-- Reka 导航排除禁用项。隐藏时保留插槽实例供搜索索引追踪显示文案。 -->
+        <Primitive
+            v-show="isVisible"
+            ref="item"
+            :class="classes"
+            :role="isVisible ? 'option' : undefined"
+            :data-slot="isVisible ? 'command-item' : undefined"
+            v-bind="{ ...getSurfaceAttrs(), ...selectionAttrs }"
+            :hidden="!isVisible || attrs.hidden"
+            :inert="!isVisible || attrs.inert"
+            :aria-hidden="!isAvailable() || attrs['aria-hidden']"
+        >
+            <slot />
+        </Primitive>
     </ListboxItem>
 </template>

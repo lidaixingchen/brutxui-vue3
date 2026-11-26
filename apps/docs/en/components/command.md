@@ -61,7 +61,9 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 
 ## Search Filtering
 
-Text entered in `CommandInput` automatically filters `CommandItem` elements. The matching logic is based on item text content. When all items are filtered out, `CommandEmpty` is automatically displayed; when all items within a group are filtered out, that group is automatically hidden.
+`CommandInput` filters `CommandItem` elements by their visible slot text and matches again when that text changes. Items without visible text use `value`. `CommandEmpty` appears when no items match, and groups without matches are hidden.
+
+During server rendering, a preset query matches against `value`. An item that matches only by its slot text appears after hydration.
 
 ```vue
 <Command>

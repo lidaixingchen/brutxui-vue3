@@ -595,6 +595,7 @@ describe('SSR smoke: wrapper components', () => {
         {
             name: 'CommandItem',
             render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandItem, { value: 'item1' }, () => 'Item 1'))),
+            expectedHtml: /<div\b(?=[^>]*role="option")(?=[^>]*data-slot="command-item")[^>]*>(?:<!--[^>]*-->)*Item 1/,
         },
         {
             name: 'CommandSeparator',
