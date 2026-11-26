@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
@@ -91,6 +91,7 @@ const layoutComponents = computed(() => {
 
 // 跳转输入值
 const jumpValue = ref('')
+const pageSizeMenuOpen = ref(false)
 
 function range(start: number, end: number) {
     if (end < start) return []
@@ -213,6 +214,11 @@ const pageButtonInactiveClasses = computed(() =>
 const isHidden = computed(() => {
     return props.hideOnSinglePage && computedTotalPages.value <= 1
 })
+const showPageSizes = computed(() => !isHidden.value && layoutComponents.value.includes('sizes'))
+
+watch([() => props.disabled, showPageSizes], ([disabled, visible]) => {
+    if (disabled || !visible) pageSizeMenuOpen.value = false
+})
 
 function onPageChange(page: number) {
     if (page >= FIRST_PAGE && page <= computedTotalPages.value) {
@@ -221,6 +227,8 @@ function onPageChange(page: number) {
 }
 
 function onPageSizeChange(size: number) {
+    if (props.disabled) return
+
     emit('update:pageSize', size)
     // 重新计算当前页，与 computedTotalPages 的优先级保持一致
     const newTotalPages = props.totalPages !== undefined
@@ -259,10 +267,11 @@ function onJumpToPage() {
 
         <!-- 每页条数选择 -->
         <div
-            v-if="layoutComponents.includes('sizes')"
+            v-if="showPageSizes"
             class="flex items-center gap-2"
         >
             <SelectRoot
+                v-model:open="pageSizeMenuOpen"
                 :model-value="String(pageSize)"
                 :disabled="disabled"
                 @update:model-value="onPageSizeChange(Number($event))"
@@ -279,6 +288,7 @@ function onJumpToPage() {
                         v-for="sizeOption in pageSizes"
                         :key="sizeOption"
                         :value="String(sizeOption)"
+                        :disabled="disabled"
                     >
                         {{ t('pagination.perPageOption', { size: sizeOption }) }}
                     </SelectItem>
