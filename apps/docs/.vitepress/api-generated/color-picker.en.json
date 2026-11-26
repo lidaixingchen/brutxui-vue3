@@ -104,15 +104,7 @@
           "nullable": true,
           "default": {
             "declaration": {
-              "kind": "value",
-              "text": "null",
-              "source": {
-                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "null"
+              "kind": "absent"
             }
           }
         },
@@ -1121,6 +1113,41 @@
           }
         },
         {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-confirmOnBlur",
+          "name": "confirmOnBlur",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Confirms a valid color or empty value when the input loses focus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
           "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-disabled",
           "name": "disabled",
           "kind": "props",
@@ -1136,7 +1163,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -1168,7 +1195,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -1217,7 +1244,7 @@
             ],
             "references": []
           },
-          "description": "Confirms a valid color or empty value on Enter or blur; invalid text is restored from the current model value.",
+          "description": "Confirms a valid color or empty value on Enter, or on blur with `confirmOnBlur` enabled. Invalid text is restored to the current color.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
@@ -1249,7 +1276,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 27
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1291,7 +1318,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 28
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -1326,7 +1353,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 29
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -1364,7 +1391,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 30
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -1399,7 +1426,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 31
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -1431,7 +1458,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 32
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -1462,11 +1489,11 @@
             ],
             "references": []
           },
-          "description": "Whether to display the color history section.",
+          "description": "Controls whether the panel displays and records recently confirmed colors.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 33
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -1498,7 +1525,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 34
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -1530,7 +1557,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 35
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -1565,7 +1592,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 36
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -1600,7 +1627,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 37
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -1642,7 +1669,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
-            "line": 38
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -1708,7 +1735,7 @@
             ],
             "references": []
           },
-          "description": "Emits the final color value when the user confirms the panel selection.",
+          "description": "Emits the final value after confirmation, swatch selection, or clearing. Clearing emits `null`.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"

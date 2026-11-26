@@ -1,10 +1,11 @@
 import { type DeepReadonly, type Ref, readonly, ref, watch } from 'vue'
 import { normalizeColor } from '../lib/color'
-import { hasLocalStorage, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
+import { getLocalStorage } from '../lib/env'
 
 export interface UseColorHistoryOptions {
     storageKey?: string
     maxItems?: number
+    enabled?: boolean
 }
 
 export interface UseColorHistoryReturn {
@@ -15,100 +16,95 @@ export interface UseColorHistoryReturn {
 
 const DEFAULT_MAX_ITEMS = 8
 
+function readStorage(storageKey: string | undefined): string | null | undefined {
+    if (!storageKey) return undefined
+    try {
+        return getLocalStorage()?.getItem(storageKey)
+    } catch {
+        return undefined
+    }
+}
+
+function parseHistory(raw: string | null): string[] {
+    if (!raw) return []
+    try {
+        const parsed: unknown = JSON.parse(raw)
+        if (!Array.isArray(parsed)) return []
+        const colors = parsed
+            .filter((item): item is string => typeof item === 'string')
+            .map(normalizeColor)
+            .filter((item): item is string => item !== null)
+        return [...new Set(colors)]
+    } catch {
+        return []
+    }
+}
+
 export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorHistoryReturn {
-    // 使用 getter 读取最新值，避免静态捕获导致后续 props 变更不生效
-    const getStorageKey = (): string | undefined => options.storageKey
-    const getMaxItems = (): number => options.maxItems ?? DEFAULT_MAX_ITEMS
-
+    const getStorageKey = () => options.storageKey
+    const getMaxItems = () => Math.max(0, Math.floor(options.maxItems ?? DEFAULT_MAX_ITEMS))
+    const isEnabled = () => options.enabled ?? true
     const history = ref<string[]>([])
+    let loadedKey = getStorageKey()
+    let failedWrite: { key: string; storedValue: string | null | undefined } | undefined
 
-    function loadHistory() {
-        const storageKey = getStorageKey()
-        if (!storageKey) return
-        const raw = safeGetStorageItem(storageKey)
-        if (raw) {
-            try {
-                const parsed: unknown = JSON.parse(raw)
-                if (Array.isArray(parsed)) {
-                    // 与 addToHistory 的写入校验保持一致：非法颜色（空串、无效 hex 等）
-                    // 不得注入 history，避免被篡改或旧版本写入的数据导致下游取色/渲染出错
-                    history.value = parsed
-                        .filter((item): item is string => typeof item === 'string')
-                        .map((item) => normalizeColor(item))
-                        .filter((item): item is string => !!item)
-                        .slice(0, getMaxItems())
-                }
-            } catch {
-                history.value = []
-            }
-        }
+    function currentHistory(storageKey: string | undefined, storedValue: string | null | undefined) {
+        const cached = storageKey === loadedKey ? history.value : []
+        if (storedValue === undefined) return cached
+        // 持久化失败时沿用当前面板的内存记录，检测到外部存储更新后恢复以存储值为准。
+        if (failedWrite && failedWrite.key === storageKey && failedWrite.storedValue === storedValue) return cached
+        failedWrite = undefined
+        return parseHistory(storedValue)
     }
 
-    function saveHistory() {
-        const storageKey = getStorageKey()
+    function saveHistory(colors: string[], storageKey: string | undefined, storedValue: string | null | undefined) {
+        loadedKey = storageKey
+        history.value = colors.slice(0, getMaxItems())
         if (!storageKey) return
-        // 写入前先与现有存储合并，避免多标签页共用 storageKey 时全量覆盖丢失其他标签页新增的历史
-        let merged = history.value
-        const raw = safeGetStorageItem(storageKey)
-        if (raw) {
-            try {
-                const existing: unknown = JSON.parse(raw)
-                if (Array.isArray(existing)) {
-                    // 与 loadHistory 的校验一致：非法颜色（空串、无效 hex 等）
-                    // 不得合并写回存储，避免占用 maxItems 位置且两侧校验不一致
-                    const existingValid = existing
-                        .filter((item): item is string => typeof item === 'string')
-                        .map((item) => normalizeColor(item))
-                        .filter((item): item is string => !!item)
-                    // 当前历史在前（新值优先），去重后再按 maxItems 裁剪
-                    merged = [...new Set([...history.value, ...existingValid])].slice(0, getMaxItems())
-                }
-            } catch {
-                // 存储数据非法时直接以当前历史覆盖
-            }
+        const storage = getLocalStorage()
+        if (!storage) return
+        try {
+            storage.setItem(storageKey, JSON.stringify(history.value))
+            failedWrite = undefined
+        } catch {
+            failedWrite = { key: storageKey, storedValue }
         }
-        safeSetStorageItem(storageKey, JSON.stringify(merged))
     }
 
     function addToHistory(color: string) {
+        if (!isEnabled()) return
         const normalized = normalizeColor(color)
         if (!normalized) return
-        const next = [normalized, ...history.value.filter((item) => item !== normalized)].slice(0, getMaxItems())
-        history.value = next
-        saveHistory()
+        const storageKey = getStorageKey()
+        const storedValue = readStorage(storageKey)
+        const current = currentHistory(storageKey, storedValue)
+        saveHistory([normalized, ...current.filter(item => item !== normalized)], storageKey, storedValue)
     }
 
     function clearHistory() {
-        history.value = []
+        if (!isEnabled()) return
         const storageKey = getStorageKey()
-        if (!storageKey || !hasLocalStorage) return
-        // 清除语义：全量覆盖写空数组（不走 saveHistory 的合并逻辑，
-        // 否则其他标签页残留数据会阻止清空持久化生效）
-        safeSetStorageItem(storageKey, JSON.stringify([]))
+        saveHistory([], storageKey, readStorage(storageKey))
     }
 
-    loadHistory()
-
-    // 监听 storageKey 变化，切换 key 时重新加载对应的历史记录
-    watch(
-        () => options.storageKey,
-        () => {
-            history.value = []
-            loadHistory()
-        }
-    )
-
-    // maxItems 变化时重新裁剪已有 history 并持久化，
-    // 避免新配置（如 maxItems 从 8 改为 5）要等下一次 addToHistory 才生效
-    watch(
-        () => options.maxItems,
-        () => {
-            if (history.value.length > getMaxItems()) {
-                history.value = history.value.slice(0, getMaxItems())
-                saveHistory()
+    watch([getStorageKey, getMaxItems, isEnabled], ([storageKey, maxItems, enabled], [previousKey, previousMax = maxItems, wasEnabled]) => {
+        if (!enabled) {
+            if (storageKey !== loadedKey) {
+                history.value = []
+                loadedKey = storageKey
+                failedWrite = undefined
             }
+            return
         }
-    )
+        const storedValue = readStorage(storageKey)
+        const current = currentHistory(storageKey, storedValue)
+        if (storageKey === previousKey && wasEnabled && maxItems < previousMax && current.length > maxItems) {
+            saveHistory(current, storageKey, storedValue)
+            return
+        }
+        loadedKey = storageKey
+        history.value = current.slice(0, maxItems)
+    }, { immediate: true })
 
     return {
         history: readonly(history),

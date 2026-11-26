@@ -21,7 +21,6 @@ interface ColorPickerRootProps extends ColorPickerProps {
 }
 
 const props = withDefaults(defineProps<ColorPickerRootProps>(), {
-    modelValue: null,
     format: 'hex',
     showAlpha: false,
     presets: undefined,
@@ -68,7 +67,6 @@ const {
     swatchStyle,
     handlePanelUpdate,
     handlePanelConfirm,
-    handlePanelClear,
     handleClearClick,
     handleTriggerKeydown,
 } = useColorPicker({
@@ -84,7 +82,7 @@ const {
 const triggerClasses = computed(() =>
     cn(
         colorPickerTriggerVariants({ size: props.size }),
-        !props.modelValue && 'text-brutal-muted-foreground',
+        !displayValue.value && 'text-brutal-muted-foreground',
         props.class
     )
 )
@@ -117,9 +115,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
 </script>
 
 <template>
-    <!-- 原生表单提交：触发器按钮是 type="button"，name 不随表单提交，
-         渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
-    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled">
+    <input v-if="name" type="hidden" :name="name" :value="(modelValue === undefined ? displayValue : modelValue) ?? ''" :disabled="disabled">
     <PopoverRoot v-model:open="open">
         <div :class="controlClasses">
             <PopoverTrigger :id="id" as-child>
@@ -141,7 +137,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                         class="inline-block border-2 border-brutal shrink-0"
                         :class="[
                             ICON_SIZE_CLASSES.swatch[size],
-                            !modelValue && 'opacity-40',
+                            !displayValue && 'opacity-40',
                         ]"
                         :style="swatchStyle"
                     />
@@ -154,7 +150,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                     <span class="flex items-center gap-1 shrink-0">
                         <!-- 透明占位符保持布局稳定 -->
                         <span
-                            v-if="clearable && modelValue && !disabled"
+                            v-if="clearable && displayValue && !disabled"
                             aria-hidden="true"
                             class="inline-flex items-center justify-center opacity-0 pointer-events-none"
                             :class="ICON_SIZE_CLASSES.clearButton[size]"
@@ -167,7 +163,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
             </PopoverTrigger>
             <!-- 平级定位清空按钮，与触发器解耦 -->
             <button
-                v-if="clearable && modelValue && !disabled"
+                v-if="clearable && displayValue && !disabled"
                 type="button"
                 role="button"
                 class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
@@ -198,7 +194,6 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                 :size="size"
                 @update:model-value="handlePanelUpdate"
                 @confirm="handlePanelConfirm"
-                @clear="handlePanelClear"
             />
         </PopoverContent>
     </PopoverRoot>

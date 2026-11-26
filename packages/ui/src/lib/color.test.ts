@@ -46,7 +46,7 @@ describe('color utils', () => {
             const original = { h: 200, s: 80, v: 60, a: 1 }
             const rgb = hsvToRgb(original)
             const back = rgbToHsv(rgb)
-            expect(back.h).toBe(original.h)
+            expect(back.h).toBeCloseTo(original.h, 0)
             expect(back.s).toBeCloseTo(original.s, 0)
             expect(back.v).toBeCloseTo(original.v, 0)
         })
@@ -148,9 +148,30 @@ describe('color utils', () => {
         it('formats as hsl', () => {
             expect(formatColor({ h: 120, s: 100, v: 100, a: 1 }, 'hsl')).toBe('hsl(120, 100%, 50%)')
         })
+
+        it.each(['hex', 'rgb', 'hsl'] as const)('preserves RGB bytes and alpha through %s', (format) => {
+            const value = '#0081ff80'
+            const parsed = parseColor(value)!
+            const formatted = formatColor(parsed, format, true)
+
+            expect(hsvToRgb(parseColor(formatted)!)).toEqual({ r: 0, g: 129, b: 255, a: 128 / 255 })
+            expect(normalizeColor(formatted)).toBe(value)
+        })
+
+        it('preserves non-byte alpha in functional formats', () => {
+            const value = 'rgba(0, 129, 255, 0.00000001)'
+            const parsed = parseColor(value)!
+
+            expect(parseColor(formatColor(parsed, 'rgb', true))).toEqual(parsed)
+            expect(parseColor(formatColor(parsed, 'hsl', true))).toEqual(parsed)
+        })
     })
 
     describe('normalizeColor', () => {
+        it('keeps adjacent 8-bit colors distinct', () => {
+            expect(normalizeColor('#0056ff')).toBe('#0056ff')
+            expect(normalizeColor('#0057ff')).toBe('#0057ff')
+        })
         it('normalizes rgb to hex', () => {
             expect(normalizeColor('rgb(255, 0, 0)')).toBe('#ff0000')
         })

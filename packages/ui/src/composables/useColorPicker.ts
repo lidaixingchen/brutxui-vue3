@@ -8,7 +8,7 @@ type ColorPickerEmit = ((event: 'open') => void)
     & ((event: 'update:modelValue', value: string | null) => void)
 
 export interface UseColorPickerOptions {
-    modelValue?: MaybeRefOrGetter<string | null>
+    modelValue?: MaybeRefOrGetter<string | null | undefined>
     format?: MaybeRefOrGetter<ColorPickerFormat>
     showAlpha?: MaybeRefOrGetter<boolean>
     disabled?: MaybeRefOrGetter<boolean>
@@ -44,8 +44,9 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
             options.emitUpdateOpen?.(val)
         },
     })
-    // 空字符串与 null 统一归一化为 null（与 normalizedDisplay 的判空语义一致）
     const displayValue = ref<string | null>(toValue(options.modelValue) || null)
+    let committedValue = displayValue.value
+    let previewValue: string | null | undefined
 
     // 面板内确认关闭（handlePanelConfirm）时跳过 displayValue 重置，
     // 避免父组件异步/延迟更新 modelValue 时用旧值覆盖刚确认的颜色
@@ -56,20 +57,20 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
             skipResetOnClose = false
             options.emit('open')
         } else {
+            if (!skipResetOnClose) {
+                const currentModel = toValue(options.modelValue)
+                displayValue.value = currentModel === undefined ? committedValue : currentModel || null
+            }
+            skipResetOnClose = false
+            previewValue = undefined
             options.emit('close')
-            if (skipResetOnClose) {
-                skipResetOnClose = false
-                return
-            }
-            const currentModel = toValue(options.modelValue) ?? null
-            if (displayValue.value !== currentModel) {
-                displayValue.value = currentModel
-            }
         }
     })
 
     watch(() => toValue(options.modelValue), (value) => {
-        displayValue.value = value || null
+        if (value !== undefined) committedValue = value || null
+        displayValue.value = committedValue
+        if (displayValue.value !== previewValue) previewValue = undefined
     })
 
     const normalizedDisplay = computed(() => {
@@ -82,36 +83,38 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
     })
 
     const swatchStyle = computed(() => ({
-        // 基于 displayValue（含空串归一化）计算色块：面板内编辑未提交时同步展示待选颜色
-        backgroundColor: displayValue.value || 'transparent',
+        backgroundColor: normalizedDisplay.value ?? 'transparent',
     }))
 
     function handlePanelUpdate(value: string | null) {
         displayValue.value = value
+        previewValue = value
         options.emit('update:modelValue', value)
+    }
+
+    function commitValue(value: string | null) {
+        const alreadyPublished = value === previewValue
+        displayValue.value = value
+        committedValue = value
+        previewValue = undefined
+        if (!alreadyPublished) options.emit('update:modelValue', value)
+        options.emit('change', value)
     }
 
     function handlePanelConfirm(value: string | null) {
-        displayValue.value = value
-        options.emit('update:modelValue', value)
-        options.emit('change', value)
-        skipResetOnClose = true
+        skipResetOnClose = open.value
+        commitValue(value)
         open.value = false
     }
 
-    function clearValue() {
-        displayValue.value = null
-        options.emit('update:modelValue', null)
-        options.emit('change', null)
-    }
-
     function handlePanelClear() {
-        clearValue()
+        commitValue(null)
     }
 
     function handleClearClick(event: Event) {
         event.stopPropagation()
-        clearValue()
+        if (open.value) handlePanelConfirm(null)
+        else handlePanelClear()
     }
 
     function handleTriggerKeydown(event: KeyboardEvent) {

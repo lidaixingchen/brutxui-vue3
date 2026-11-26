@@ -7,11 +7,7 @@ import {
     type ColorFormat,
     type HSVColor,
     formatColor,
-    hsvToHex,
-    hsvToHexAlpha,
     hsvToRgb,
-    isValidColor,
-    normalizeColor,
     parseColor,
 } from '@/lib/color'
 import { useLocale } from '@/composables/useLocale'
@@ -67,54 +63,63 @@ const resolvedClearHistoryLabel = computed(() => t('colorPicker.clearHistory'))
 const resolvedClearLabel = computed(() => t('colorPicker.clear'))
 const resolvedConfirmLabel = computed(() => t('colorPicker.confirm'))
 
-const normalizedPresets = computed(() => normalizePresets(props.presets))
-
-const hsv = ref<HSVColor>({ h: 0, s: 100, v: 100, a: 1 })
-
-function syncFromModel() {
-    if (props.modelValue && isValidColor(props.modelValue)) {
-        const parsed = parseColor(props.modelValue)
-        if (parsed) {
-            hsv.value = { ...parsed }
-        }
-    } else {
-        hsv.value = { h: 0, s: 100, v: 100, a: 1 }
-    }
+function effectiveHex(value: string) {
+    const color = parseColor(value)
+    return color ? formatColor(color, 'hex', props.showAlpha) : null
 }
 
-// 内部 emit 后父级回写同一值时跳过 watch 同步，避免自覆盖回环
-// （拖拽/输入过程中父级把刚发出的值回写进来，再同步会扰动滑块/光标）
-let lastEmittedPanel: string | null | undefined
+const normalizedPresets = computed(() => normalizePresets(props.presets).map(preset => ({
+    ...preset,
+    normalizedValue: effectiveHex(preset.value),
+})))
 
-watch(() => props.modelValue, (val) => {
-    // 与 ColorPickerInput 的 lastEmitted 同源问题：每次触发都先清空标记，
-    // 避免残留旧值把后续恰好等于该旧值的外部写入误判为「自回写」而跳过同步
-    const skip = val === lastEmittedPanel
-    lastEmittedPanel = undefined
-    if (skip) return
-    syncFromModel()
+const DEFAULT_SLIDER_COLOR: HSVColor = { h: 0, s: HSV_COMPONENT_MAX, v: HSV_COMPONENT_MAX, a: 1 }
+const draft = ref<HSVColor | null>(null)
+const hsv = computed(() => draft.value ?? DEFAULT_SLIDER_COLOR)
+const formattedValue = computed(() => draft.value ? formatColor(draft.value, props.format, props.showAlpha) : null)
+const hexPreview = computed(() => draft.value ? formatColor(draft.value, 'hex', props.showAlpha) : null)
+
+let lastPublished: string | null | undefined
+let previewValue: string | null | undefined
+
+watch(() => props.modelValue, (value) => {
+    // 父组件回写同一值时保留滑块草稿的连续坐标。
+    if (value === lastPublished) return
+    lastPublished = undefined
+    previewValue = undefined
+    draft.value = value ? parseColor(value) : null
 }, { immediate: true })
 
-const formattedValue = computed(() => {
-    if (!props.modelValue) return ''
-    return formatColor(hsv.value, props.format, props.showAlpha)
-})
-
-const hexPreview = computed(() => {
-    if (!props.modelValue) return ''
-    return props.showAlpha ? hsvToHexAlpha(hsv.value) : hsvToHex(hsv.value)
-})
-
-function emitUpdate() {
-    const value = formatColor(hsv.value, props.format, props.showAlpha)
-    lastEmittedPanel = value
+function publishValue(value: string | null) {
+    lastPublished = value
     emit('update:modelValue', value)
 }
 
+function publishPreview() {
+    const value = formattedValue.value
+    if (value === previewValue) return
+    previewValue = value
+    publishValue(value)
+}
+
 const { history, addToHistory, clearHistory } = useColorHistory({
-    storageKey: props.historyStorageKey,
-    maxItems: props.historyMax,
+    get storageKey() { return props.historyStorageKey },
+    get maxItems() { return props.historyMax },
+    get enabled() { return props.showHistory },
 })
+
+const shownHistory = computed(() => props.showAlpha
+    ? history.value
+    : [...new Set(history.value.flatMap(color => effectiveHex(color) ?? []))])
+
+function confirmSelection() {
+    const value = formattedValue.value
+    const alreadyPublished = value === previewValue
+    previewValue = undefined
+    if (!alreadyPublished) publishValue(value)
+    if (value !== null) addToHistory(value)
+    emit('confirm', value)
+}
 
 const svPadEl = ref<HTMLDivElement | null>(null)
 const hueSliderEl = ref<HTMLDivElement | null>(null)
@@ -135,17 +140,17 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
     const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left))
     const y = Math.max(0, Math.min(rect.height, event.clientY - rect.top))
     if (target === 'sv') {
-        hsv.value = {
+        draft.value = {
             ...hsv.value,
             s: Math.round((x / rect.width) * HSV_PERCENT_PRECISION) / (HSV_PERCENT_PRECISION / HSV_COMPONENT_MAX),
             v: Math.round((1 - y / rect.height) * HSV_PERCENT_PRECISION) / (HSV_PERCENT_PRECISION / HSV_COMPONENT_MAX),
         }
     } else if (target === 'hue') {
-        hsv.value = { ...hsv.value, h: Math.round((x / rect.width) * HUE_DEGREES) }
+        draft.value = { ...hsv.value, h: Math.round((x / rect.width) * HUE_DEGREES) }
     } else {
-        hsv.value = { ...hsv.value, a: Math.round((x / rect.width) * ALPHA_PRECISION) / ALPHA_PRECISION }
+        draft.value = { ...hsv.value, a: Math.round((x / rect.width) * ALPHA_PRECISION) / ALPHA_PRECISION }
     }
-    emitUpdate()
+    publishPreview()
 }
 
 function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
@@ -188,16 +193,7 @@ function handlePointerUp(event: PointerEvent) {
 
 // 系统手势/滚动等取消指针，或指针捕获丢失：清理会话，后续悬停移动不再误触发
 function handlePointerCancel(event: PointerEvent) {
-    // 删除缺失键为无操作：指针已被系统取消或元素丢失捕获时安全兜底
-    activeDrags.delete(event.pointerId)
-}
-
-function confirmSelection() {
-    const value = formatColor(hsv.value, props.format, props.showAlpha)
-    emit('confirm', value)
-    if (value && isValidColor(value)) {
-        addToHistory(value)
-    }
+    if (activeDrags.delete(event.pointerId) && activeDrags.size === 0) previewValue = undefined
 }
 
 const svBackground = computed(() => {
@@ -227,59 +223,41 @@ const alphaTrackBackground = computed(() => {
 })
 
 const previewStyle = computed(() => ({
-    backgroundColor: props.modelValue ?? 'transparent',
+    backgroundColor: formattedValue.value ?? 'transparent',
 }))
 
 const swatchSize = computed<ColorPickerSize>(() => (props.size === 'lg' ? 'default' : 'sm'))
 
 function handlePresetSelect(value: string) {
     const parsed = parseColor(value)
-    if (parsed) {
-        hsv.value = { ...parsed }
-        emitUpdate()
-        confirmSelection()
-    }
+    if (!parsed) return
+    draft.value = parsed
+    confirmSelection()
 }
 
 function handleInputUpdate(value: string | null) {
-    if (value === null) return
-    const parsed = parseColor(value)
-    if (parsed) {
-        hsv.value = { ...parsed }
-        const formatted = formatColor(hsv.value, props.format, props.showAlpha)
-        lastEmittedPanel = formatted
-        emit('update:modelValue', formatted)
-    }
+    draft.value = value ? parseColor(value) : null
+    publishPreview()
 }
 
 function handleInputConfirm(value: string | null) {
-    // 与 confirmSelection 一致：先校验再 emit/写历史，非法或空值一律透传 null，
-    // 避免脏数据进入历史记录或透传给外层 confirm 消费者
-    if (value && isValidColor(value)) {
-        emit('confirm', value)
-        addToHistory(value)
-    } else {
-        emit('confirm', null)
-    }
-}
-
-function handleConfirm() {
+    draft.value = value ? parseColor(value) : null
     confirmSelection()
 }
 
 function handleClear() {
+    draft.value = null
     emit('clear')
-    emit('update:modelValue', null)
-    emit('confirm', null)
+    confirmSelection()
 }
 
 const hasPresets = computed(() => props.showPresets && normalizedPresets.value.length > 0)
-const hasHistory = computed(() => props.showHistory && history.value.length > 0)
+const hasHistory = computed(() => props.showHistory && shownHistory.value.length > 0)
 const hasSwatches = computed(() => hasPresets.value || hasHistory.value)
 const panelClasses = computed(() => cn(colorPickerPanelVariants({ swatches: hasSwatches.value })))
 const bodyClasses = computed(() => cn(colorPickerBodyVariants({ swatches: hasSwatches.value })))
 const footerPreviewClasses = computed(() =>
-    cn('col-start-1 size-10 border-3 border-brutal', props.showInput && 'row-start-2 @md/color-picker:row-start-1', !props.modelValue && 'opacity-50')
+    cn('col-start-1 size-10 border-3 border-brutal', props.showInput && 'row-start-2 @md/color-picker:row-start-1', !draft.value && 'opacity-50')
 )
 const footerActionClasses = computed(() =>
     cn('col-start-2 flex flex-wrap items-center justify-end gap-2 @md/color-picker:col-start-3 @md/color-picker:row-start-1', props.showInput ? 'row-start-2' : 'row-start-1')
@@ -292,8 +270,8 @@ function handleKeydownHue(event: KeyboardEvent) {
     else if (event.key === 'ArrowRight') next += step
     else return
     event.preventDefault()
-    hsv.value = { ...hsv.value, h: ((next % 360) + 360) % 360 }
-    emitUpdate()
+    draft.value = { ...hsv.value, h: ((next % 360) + 360) % 360 }
+    publishPreview()
 }
 
 function handleKeydownSv(event: KeyboardEvent) {
@@ -307,8 +285,8 @@ function handleKeydownSv(event: KeyboardEvent) {
     else if (event.key === 'ArrowDown') v = Math.max(0, v - step)
     else return
     event.preventDefault()
-    hsv.value = { ...hsv.value, s, v }
-    emitUpdate()
+    draft.value = { ...hsv.value, s, v }
+    publishPreview()
 }
 
 function handleKeydownAlpha(event: KeyboardEvent) {
@@ -318,11 +296,10 @@ function handleKeydownAlpha(event: KeyboardEvent) {
     else if (event.key === 'ArrowRight') a = Math.min(1, a + step)
     else return
     event.preventDefault()
-    hsv.value = { ...hsv.value, a: Math.round(a * 100) / 100 }
-    emitUpdate()
+    draft.value = { ...hsv.value, a: Math.round(a * ALPHA_PRECISION) / ALPHA_PRECISION }
+    publishPreview()
 }
 
-const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(props.modelValue) : null))
 </script>
 
 <template>
@@ -346,6 +323,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                     @pointercancel="handlePointerCancel"
                     @lostpointercapture="handlePointerCancel"
                     @keydown="handleKeydownSv"
+                    @keydown.enter.prevent="confirmSelection"
                 >
                     <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
                     <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to top, #000, rgba(0,0,0,0))" />
@@ -361,7 +339,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                         role="slider"
                         tabindex="0"
                         :aria-label="t('colorPicker.hue')"
-                        :aria-valuenow="hsv.h"
+                        :aria-valuenow="Math.round(hsv.h)"
                         aria-valuemin="0"
                         aria-valuemax="360"
                         class="relative h-4 w-full border-3 border-brutal cursor-pointer"
@@ -373,6 +351,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                         @pointercancel="handlePointerCancel"
                         @lostpointercapture="handlePointerCancel"
                         @keydown="handleKeydownHue"
+                        @keydown.enter.prevent="confirmSelection"
                     >
                         <div
                             class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
@@ -398,6 +377,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                         @pointercancel="handlePointerCancel"
                         @lostpointercapture="handlePointerCancel"
                         @keydown="handleKeydownAlpha"
+                        @keydown.enter.prevent="confirmSelection"
                     >
                         <div
                             class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
@@ -418,11 +398,11 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                         <ColorPickerSwatch
                             v-for="preset in normalizedPresets"
                             :key="preset.value"
-                            :value="preset.value"
-                            :label="preset.label"
+                            :value="showAlpha ? preset.value : preset.normalizedValue ?? preset.value"
+                            :label="preset.label ?? preset.value"
                             :disabled="preset.disabled"
                             :size="swatchSize"
-                            :selected="preset.value === normalizedModelValue"
+                            :selected="preset.normalizedValue !== null && preset.normalizedValue === hexPreview"
                             @select="handlePresetSelect"
                         />
                     </div>
@@ -430,8 +410,8 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
 
                 <ColorPickerHistory
                     v-if="hasHistory"
-                    :history="history"
-                    :model-value="normalizedModelValue"
+                    :history="shownHistory"
+                    :model-value="hexPreview"
                     :size="swatchSize"
                     :aria-label="resolvedHistoryLabel"
                     :clear-label="resolvedClearHistoryLabel"
@@ -450,6 +430,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 :format="format"
                 :show-alpha="showAlpha"
                 :aria-label="t('colorPicker.hex')"
+                :confirm-on-blur="false"
                 @update:model-value="handleInputUpdate"
                 @confirm="handleInputConfirm"
             />
@@ -468,7 +449,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                     variant="primary"
                     size="sm"
                     type="button"
-                    @click="handleConfirm"
+                    @click="confirmSelection"
                 >
                     {{ resolvedConfirmLabel }}
                 </Button>

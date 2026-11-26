@@ -205,7 +205,7 @@ const {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `modelValue` | `MaybeRefOrGetter<string \| null>` | `null` | Currently selected color (supports v-model) |
+| `modelValue` | `MaybeRefOrGetter<string \| null \| undefined>` | `null` | Currently selected color (supports v-model) |
 | `format` | `MaybeRefOrGetter<'hex' \| 'rgb' \| 'hsl'>` | `'hex'` | Color format |
 | `showAlpha` | `MaybeRefOrGetter<boolean>` | `false` | Whether to support the alpha channel |
 | `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Whether disabled |
@@ -220,7 +220,7 @@ const {
 | `normalizedDisplay` | `ComputedRef<string \| null>` | Display string normalized by `format` (`null` if unparseable) |
 | `swatchStyle` | `ComputedRef<{ backgroundColor: string }>` | Inline style for the trigger swatch |
 | `handlePanelUpdate(value)` | `(value: string \| null) => void` | Called when panel value updates; syncs `displayValue` and triggers `update:modelValue` |
-| `handlePanelConfirm(value)` | `(value: string \| null) => void` | Called on panel confirm; triggers `update:modelValue` / `change` and closes the panel |
+| `handlePanelConfirm(value)` | `(value: string \| null) => void` | Publishes a value that has not already been previewed, emits `change`, and closes the panel |
 | `handlePanelClear()` | `() => void` | Called on panel clear; triggers `update:modelValue(null)` / `change(null)` |
 | `handleClearClick(event)` | `(event: MouseEvent) => void` | Trigger clear button click callback; stops event propagation and clears |
 | `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | Trigger keyboard event callback; `Enter` / `Space` opens the panel (no response when disabled) |
@@ -264,6 +264,8 @@ const color = ref(null)
 | `Enter` / `Space` | Open the panel (no response when disabled) |
 | `Escape` | Close the panel |
 
+Entering a valid color in the panel emits a live `update:modelValue` preview. Press Enter in the text field or on a slider, click Confirm, or select a swatch to commit the selection and emit one `change`. Clearing commits `null`. Moving focus out of the text field formats the input. Escape closes the panel without emitting `change` or writing history. The parent retains any preview it has accepted through `v-model`.
+
 ### Saturation/Brightness Area
 
 | Key | Action |
@@ -295,8 +297,8 @@ A: The component automatically normalizes the existing color value to the format
 
 **Q: Where is color history stored? How do I clear it?**
 
-A: Color history is stored in the browser's `localStorage` by default, with the key controlled by the `historyStorageKey` prop (default: `'brutx-color-history'`). It can be cleared via the browser developer tools' Application panel, or programmatically with `localStorage.removeItem('brutx-color-history')`. Setting a different `historyStorageKey` allows maintaining independent histories for different use cases.
+A: Color history is stored in the browser's `localStorage` by default, with the key controlled by the `historyStorageKey` prop (default: `'brutx-color-history'`). It can be cleared via the browser developer tools' Application panel, or programmatically with `localStorage.removeItem('brutx-color-history')`. Changes to `historyStorageKey` or `historyMax` update an open panel immediately. Disabling `showHistory` suspends history display and writes.
 
 **Q: How does the output format change when `showAlpha` is enabled?**
 
-A: When the alpha channel is enabled, the output value includes alpha information. The `hex` format becomes 8 digits (e.g., `#FF6B6B80`), `rgb` becomes `rgba()`, and `hsl` becomes `hsla()`. When `showAlpha` is disabled, the output reverts to the standard format without opacity.
+A: When the alpha channel is enabled, the output value includes alpha information. The `hex` format becomes 8 digits (e.g., `#FF6B6B80`), `rgb` becomes `rgba()`, and `hsl` becomes `hsla()`. With `showAlpha` disabled, both the output and swatches use opaque colors. Preset and history selection states compare those opaque colors.

@@ -55,12 +55,13 @@ const content = {
                 modelValue: { zh: '当前颜色；有效颜色会按 `format` 归一化显示，`null` 时输入框为空。', en: 'The current color. Valid values are displayed in the requested `format`; `null` leaves the input empty.' },
                 format: { zh: '输入框颜色值归一化及输出时使用的格式。', en: 'The format used to normalize and emit the input value.' },
                 showAlpha: { zh: '格式化颜色值时是否保留透明度通道。', en: 'Whether formatted color values include the alpha channel.' },
+                confirmOnBlur: { zh: '输入框失焦时确认有效颜色或空值。', en: 'Confirms a valid color or empty value when the input loses focus.' },
                 disabled: { zh: '禁用原生文本输入。', en: 'Disables the native text input.' },
                 ariaLabel: { zh: '文本输入框的无障碍名称。', en: 'The accessible name of the text input.' },
             },
             events: {
                 'update:modelValue': { zh: '输入值为空或解析为有效颜色时发出；无效文本不会更新颜色值。', en: 'Emitted when the input is empty or contains a valid color; invalid text does not update the color value.' },
-                confirm: { zh: '按 Enter 或离开输入框时确认有效颜色或空值；无效文本会恢复为当前 model 值。', en: 'Confirms a valid color or empty value on Enter or blur; invalid text is restored from the current model value.' },
+                confirm: { zh: '按 Enter 确认有效颜色或空值。启用 `confirmOnBlur` 时，失焦也会确认。无效文本会恢复为当前颜色。', en: 'Confirms a valid color or empty value on Enter, or on blur with `confirmOnBlur` enabled. Invalid text is restored to the current color.' },
             },
         },
         ColorPickerPanel: {
@@ -71,7 +72,7 @@ const content = {
                 presets: { zh: '色板内容，可传字符串或 `ColorPreset`；未提供时使用内置默认色板。', en: 'Swatches as strings or `ColorPreset` objects. The built-in palette is used when omitted.' },
                 showPresets: { zh: '是否渲染预设色板区域。', en: 'Whether to render the preset swatches section.' },
                 presetsLabel: { zh: '预设区域标题；未提供时使用本地化文案。', en: 'The preset-section heading; localized text is used when omitted.' },
-                showHistory: { zh: '是否显示颜色历史区域。', en: 'Whether to display the color history section.' },
+                showHistory: { zh: '控制是否显示和记录最近确认的颜色。', en: 'Controls whether the panel displays and records recently confirmed colors.' },
                 historyMax: { zh: '历史记录保留的最大颜色数量。', en: 'The maximum number of colors retained in history.' },
                 historyStorageKey: { zh: '传给颜色历史存储逻辑的 `localStorage` 键名。', en: 'The `localStorage` key passed to the color-history storage logic.' },
                 showInput: { zh: '是否显示可编辑的颜色文本输入框。', en: 'Whether to show the editable color text input.' },
@@ -81,7 +82,7 @@ const content = {
             events: {
                 'update:modelValue': { zh: '颜色通过面板控件变化时发出新值。', en: 'Emits the new value when a panel control changes the color.' },
                 clear: { zh: '用户清除当前颜色时发出，不带参数。', en: 'Emitted without a payload when the user clears the current color.' },
-                confirm: { zh: '用户确认面板颜色时发出最终颜色值。', en: 'Emits the final color value when the user confirms the panel selection.' },
+                confirm: { zh: '确认、选择色块或清除时发出最终值。清除时最终值为 `null`。', en: 'Emits the final value after confirmation, swatch selection, or clearing. Clearing emits `null`.' },
             },
         },
         ColorPickerSwatch: {

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { nextTick, reactive } from 'vue'
 import { useColorHistory } from './useColorHistory'
 
 // Mock localStorage
@@ -87,6 +88,68 @@ describe('useColorHistory', () => {
 
         const { history } = useColorHistory({ storageKey: 'test-colors' })
         expect(history.value).toEqual(['#ff0000', '#00ff00'])
+    })
+
+    it('uses the new storage key when adding a color in the same tick', async () => {
+        const oldKey = 'old-colors'
+        const newKey = 'new-colors'
+        localStorageMock.setItem(oldKey, JSON.stringify(['#0056ff']))
+        localStorageMock.setItem(newKey, JSON.stringify(['#0057ff']))
+        const options = reactive({ storageKey: oldKey })
+        const { history, addToHistory } = useColorHistory(options)
+
+        options.storageKey = newKey
+        addToHistory('#ffffff')
+        await nextTick()
+
+        expect(history.value).toEqual(['#ffffff', '#0057ff'])
+        expect(JSON.parse(localStorageMock.getItem(oldKey)!)).toEqual(['#0056ff'])
+        expect(JSON.parse(localStorageMock.getItem(newKey)!)).toEqual(['#ffffff', '#0057ff'])
+    })
+
+    it('uses the persisted history after another instance clears the same key', () => {
+        const storageKey = 'shared-colors'
+        localStorageMock.setItem(storageKey, JSON.stringify(['#0056ff', '#0057ff']))
+        const first = useColorHistory({ storageKey })
+        const second = useColorHistory({ storageKey })
+
+        first.clearHistory()
+        second.addToHistory('#ffffff')
+        first.addToHistory('#ff0000')
+
+        const expected = ['#ff0000', '#ffffff']
+        expect(first.history.value).toEqual(expected)
+        expect(JSON.parse(localStorageMock.getItem(storageKey)!)).toEqual(expected)
+    })
+
+    it('does not reintroduce entries trimmed by another instance', async () => {
+        const storageKey = 'limited-colors'
+        localStorageMock.setItem(storageKey, JSON.stringify(['#0056ff', '#0057ff']))
+        const options = reactive({ storageKey, maxItems: 2 })
+        useColorHistory(options)
+        const second = useColorHistory({ storageKey })
+
+        options.maxItems = 1
+        await nextTick()
+        second.addToHistory('#ffffff')
+
+        expect(second.history.value).toEqual(['#ffffff', '#0056ff'])
+        expect(JSON.parse(localStorageMock.getItem(storageKey)!)).toEqual(['#ffffff', '#0056ff'])
+    })
+
+    it('retains recent selections in memory while persistence fails', () => {
+        const storageKey = 'unwritable-colors'
+        const { history, addToHistory } = useColorHistory({ storageKey })
+        localStorageMock.setItem.mockImplementationOnce(() => { throw new Error('Storage unavailable') })
+        localStorageMock.setItem.mockImplementationOnce(() => { throw new Error('Storage unavailable') })
+
+        addToHistory('#0056ff')
+        addToHistory('#0057ff')
+        expect(history.value).toEqual(['#0057ff', '#0056ff'])
+        expect(localStorageMock.getItem(storageKey)).toBeNull()
+
+        addToHistory('#ffffff')
+        expect(JSON.parse(localStorageMock.getItem(storageKey)!)).toEqual(['#ffffff', '#0057ff', '#0056ff'])
     })
 
     it('handles invalid localStorage data gracefully', () => {

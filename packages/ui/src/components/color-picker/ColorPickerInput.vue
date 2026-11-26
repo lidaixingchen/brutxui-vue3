@@ -8,6 +8,7 @@ interface ColorPickerInputProps {
     modelValue?: string | null
     format?: 'hex' | 'rgb' | 'hsl'
     showAlpha?: boolean
+    confirmOnBlur?: boolean
     disabled?: boolean
     ariaLabel?: string
 }
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<ColorPickerInputProps>(), {
     modelValue: null,
     format: 'hex',
     showAlpha: false,
+    confirmOnBlur: true,
     disabled: false,
     ariaLabel: undefined,
 })
@@ -34,20 +36,16 @@ function formatToProp(color: string): string | null {
 }
 
 function syncFromModel() {
-    if (props.modelValue && isValidColor(props.modelValue)) {
-        text.value = formatToProp(props.modelValue) ?? ''
-    } else {
-        text.value = ''
-    }
+    text.value = props.modelValue ? formatToProp(props.modelValue) ?? '' : ''
 }
 
 // 内部更新后由父级回写同一值时跳过同步，避免把归一化结果强行覆盖回输入框导致光标跳动
 let lastEmitted: string | null | undefined
 
-watch(() => props.modelValue, (val) => {
+watch(() => [props.modelValue, props.format, props.showAlpha] as const, ([val], previous) => {
     // 每次触发都先清空标记：父级回写同一值（val === lastEmitted）时跳过同步，
     // 外部写入时同步并清标记，避免残留旧值把后续恰好等于该旧值的外部写入误判为「自回写」
-    const skip = val === lastEmitted
+    const skip = val === lastEmitted && previous?.[1] === props.format && previous?.[2] === props.showAlpha
     lastEmitted = undefined
     if (skip) return
     syncFromModel()
@@ -74,25 +72,22 @@ function handleInput(event: Event) {
     if (target.value === '') {
         lastEmitted = null
         emit('update:modelValue', null)
-    } else if (isValidColor(target.value)) {
+    } else {
         const normalized = formatToProp(target.value)
+        if (normalized === null) return
         lastEmitted = normalized
         emit('update:modelValue', normalized)
     }
 }
 
-function doConfirm() {
-    if (text.value && isValidColor(text.value)) {
-        // isValidColor 已保证 parseColor 成功，formatToProp 恒非空；
-        // null 分支不可达，防御性回退为原始文本
-        const normalized = formatToProp(text.value) ?? text.value
-        text.value = normalized
-        emit('confirm', normalized)
-    } else if (!text.value) {
-        emit('confirm', null)
-    } else {
+function finishInput(confirm: boolean) {
+    const normalized = text.value ? formatToProp(text.value) : null
+    if (text.value && normalized === null) {
         syncFromModel()
+        return
     }
+    text.value = normalized ?? ''
+    if (confirm) emit('confirm', normalized)
 }
 
 function handleBlur() {
@@ -100,7 +95,7 @@ function handleBlur() {
         suppressBlur = false
         return
     }
-    doConfirm()
+    finishInput(props.confirmOnBlur)
 }
 
 function handleKeydown(event: KeyboardEvent) {
@@ -108,7 +103,7 @@ function handleKeydown(event: KeyboardEvent) {
         event.preventDefault()
         // 先标记再确认：抑制随后由失焦触发的重复 confirm（同一输入只确认一次）
         suppressBlur = true
-        doConfirm()
+        finishInput(true)
     }
 }
 </script>

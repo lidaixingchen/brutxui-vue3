@@ -744,6 +744,10 @@ describe('ColorPickerInput', () => {
     })
 })
 
+function mockSliderLayout(element: Element) {
+    vi.spyOn(element, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 100, 100))
+}
+
 describe('ColorPickerPanel pointer interaction', () => {
     it('emits update:modelValue when sv pad is clicked', async () => {
         wrapper = mount(ColorPickerPanel, {
@@ -754,6 +758,7 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const svSlider = wrapper.find('[aria-label="Saturation"]')
+        mockSliderLayout(svSlider.element)
         expect(svSlider.exists()).toBe(true)
 
         await svSlider.trigger('pointerdown', {
@@ -777,6 +782,7 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const hueSlider = wrapper.find('[aria-label="Hue"]')
+        mockSliderLayout(hueSlider.element)
         expect(hueSlider.exists()).toBe(true)
 
         await hueSlider.trigger('pointerdown', {
@@ -800,6 +806,7 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const alphaSlider = wrapper.find('[aria-label="Alpha"]')
+        mockSliderLayout(alphaSlider.element)
         expect(alphaSlider.exists()).toBe(true)
 
         await alphaSlider.trigger('pointerdown', {
@@ -823,6 +830,7 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const svSlider = wrapper.find('[aria-label="Saturation"]')
+        mockSliderLayout(svSlider.element)
         await svSlider.trigger('pointerdown', {
             pointerId: 1,
             pointerType: 'mouse',
@@ -850,8 +858,10 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const svSlider = wrapper.find('[aria-label="Saturation"]')
+        mockSliderLayout(svSlider.element)
         const hueSlider = wrapper.find('[aria-label="Hue"]')
-        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0 })
+        mockSliderLayout(hueSlider.element)
+        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 100, clientY: 0 })
         await hueSlider.trigger('pointerdown', { pointerId: 2, pointerType: 'touch', clientX: 50, clientY: 0 })
         const count = wrapper.emitted('update:modelValue')?.length ?? 0
         // 释放 sv 会话（id1），hue（id2）仍在拖拽，其 move 继续生效
@@ -869,8 +879,10 @@ describe('ColorPickerPanel pointer interaction', () => {
         await nextTick()
 
         const svSlider = wrapper.find('[aria-label="Saturation"]')
+        mockSliderLayout(svSlider.element)
         const hueSlider = wrapper.find('[aria-label="Hue"]')
-        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0 })
+        mockSliderLayout(hueSlider.element)
+        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 100, clientY: 0 })
         await hueSlider.trigger('pointerdown', { pointerId: 2, pointerType: 'touch', clientX: 50, clientY: 0 })
 
         // 释放第一个会话（sv）：hue 仍在拖拽，手势未结束，不应提前 confirm 中间态颜色

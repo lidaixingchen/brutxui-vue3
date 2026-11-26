@@ -204,7 +204,7 @@ const {
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `modelValue` | `MaybeRefOrGetter<string \| null>` | `null` | 当前选中颜色（支持 v-model） |
+| `modelValue` | `MaybeRefOrGetter<string \| null \| undefined>` | `null` | 当前选中颜色（支持 v-model） |
 | `format` | `MaybeRefOrGetter<'hex' \| 'rgb' \| 'hsl'>` | `'hex'` | 颜色格式 |
 | `showAlpha` | `MaybeRefOrGetter<boolean>` | `false` | 是否支持透明度通道 |
 | `disabled` | `MaybeRefOrGetter<boolean>` | `false` | 是否禁用 |
@@ -219,7 +219,7 @@ const {
 | `normalizedDisplay` | `ComputedRef<string \| null>` | 按 `format` 归一化后的展示字符串（无法解析时为 `null`） |
 | `swatchStyle` | `ComputedRef<{ backgroundColor: string }>` | 触发器色块的内联样式 |
 | `handlePanelUpdate(value)` | `(value: string \| null) => void` | 面板值更新时调用，同步 `displayValue` 并触发 `update:modelValue` |
-| `handlePanelConfirm(value)` | `(value: string \| null) => void` | 面板确认时调用，触发 `update:modelValue` / `change` 并关闭面板 |
+| `handlePanelConfirm(value)` | `(value: string \| null) => void` | 面板确认时调用，发布尚未预览的值，触发 `change` 并关闭面板 |
 | `handlePanelClear()` | `() => void` | 面板清除时调用，触发 `update:modelValue(null)` / `change(null)` |
 | `handleClearClick(event)` | `(event: MouseEvent) => void` | 触发器清除按钮点击回调，阻止事件冒泡并清除 |
 | `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | 触发器键盘事件回调，`Enter` / `Space` 打开面板（禁用时不响应） |
@@ -264,6 +264,8 @@ const color = ref(null)
 | `Enter` / `Space` | 打开面板（禁用时不响应） |
 | `Escape` | 关闭面板 |
 
+面板内输入有效颜色时，`update:modelValue` 会实时发出预览值。在输入框或滑块上按 `Enter`、点击确认或选择色块会提交当前操作，发出一次 `change`。清除会提交 `null`。面板内失焦只整理输入文本，按 `Escape` 关闭面板时不会发出 `change` 或写入历史。已通过 `v-model` 接收的预览值仍由父组件持有。
+
 ### 饱和度/亮度区域
 
 | 按键 | 操作 |
@@ -295,8 +297,8 @@ A: 组件内部会自动将已有的颜色值归一化为当前 `format` 对应�
 
 **Q: 颜色历史记录存储在哪里？如何清除？**
 
-A: 颜色历史记录默认存储在浏览器的 `localStorage` 中，键名由 `historyStorageKey` 属性控制（默认为 `'brutx-color-history'`）。可以通过浏览器开发者工具的 Application 面板清除，或在代码中调用 `localStorage.removeItem('brutx-color-history')` 清除。设置不同的 `historyStorageKey` 可以为不同的使用场景维护独立的历史记录。
+A: 颜色历史记录默认存储在浏览器的 `localStorage` 中，键名由 `historyStorageKey` 属性控制（默认为 `'brutx-color-history'`）。可以通过浏览器开发者工具的 Application 面板清除，或在代码中调用 `localStorage.removeItem('brutx-color-history')` 清除。修改 `historyStorageKey` 或 `historyMax` 时，面板即时更新历史列表。关闭 `showHistory` 会暂停历史的显示和写入。
 
 **Q: 启用 `showAlpha` 后输出的值格式有什么变化？**
 
-A: 启用透明度通道后，输出值会包含 alpha 信息。`hex` 格式变为 8 位（如 `#FF6B6B80`），`rgb` 格式变为 `rgba()`，`hsl` 格式变为 `hsla()`。关闭 `showAlpha` 后输出值恢复为不含透明度的标准格式。
+A: 启用透明度通道后，输出值会包含 alpha 信息。`hex` 格式变为 8 位（如 `#FF6B6B80`），`rgb` 格式变为 `rgba()`，`hsl` 格式变为 `hsla()`。关闭 `showAlpha` 后，输出与色块都使用不透明颜色，预设和历史的选中态也按不透明颜色比较。
