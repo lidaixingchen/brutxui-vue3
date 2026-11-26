@@ -6,6 +6,7 @@ import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { CHANGE_SCOPE_FIELDS, classifyCiChangeScope, classifyGitChangePaths, normalizeGitChangePaths } from './change-scope.mjs'
+import { selectCiChecks } from './evaluate-gate.mjs'
 
 const SCRIPT_PATH = fileURLToPath(new URL('./change-scope.mjs', import.meta.url))
 const CI_WORKFLOW_PATH = fileURLToPath(new URL('../../.github/workflows/ci.yml', import.meta.url))
@@ -34,15 +35,104 @@ test('internal reports and guides select only documentation checks', () => {
 
 test('site pages and API data select documentation and site checks', () => {
     assert.deepEqual(classifyGitChangePaths(['apps/docs/guide/installation.md']), expectedFlags('docs', 'site'))
-    assert.deepEqual(classifyGitChangePaths(['apps/docs/components/button.md']), expectedFlags('docs', 'site', 'generated'))
+    assert.deepEqual(classifyGitChangePaths(['apps/docs/components/button.md']), expectedFlags('docs', 'site', 'generated', 'registry'))
     assert.deepEqual(
         classifyGitChangePaths(['apps/docs/.vitepress/api-generated/button.en.json']),
-        expectedFlags('docs', 'site', 'generated'),
+        expectedFlags('docs', 'site', 'generated', 'browser'),
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/components/button/Button.vue']),
         expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'docs', 'site', 'cost'),
     )
+})
+
+test('browser configuration, fixtures and cross-package imports select the browser suite', () => {
+    for (const file of [
+        'packages/ui/vitest.browser.config.ts',
+        'packages/ui/src/vitest.browser.setup.ts',
+        'packages/ui/src/test/browser-mount.ts',
+        'packages/ui/src/test/component-api-primitives.ts',
+        'packages/ui/src/test/fixtures/OverlayLayerTestFixture.vue',
+        'packages/ui/src/test/vitepress-stub.ts',
+        'packages/cli/src/styles/brutalist.css',
+        'apps/docs/package.json',
+        'apps/docs/.vitepress/api-types.ts',
+        'apps/docs/.vitepress/theme/style.css',
+        'apps/docs/.vitepress/theme/components/InstallationTabs.vue',
+        'apps/docs/.vitepress/theme/components/CopyButton.vue',
+        'apps/docs/.vitepress/theme/components/ComponentApiDescription.vue',
+        'apps/docs/.vitepress/theme/components/component-api-view.ts',
+        'apps/docs/.vitepress/theme/lib/i18n.ts',
+    ]) {
+        const flags = classifyGitChangePaths([file])
+        assert.equal(flags.browser, true, file)
+        assert.equal(flags.cost, false, file)
+        assert.ok(selectCiChecks(flags).includes('browser'), file)
+    }
+    assert.deepEqual(classifyGitChangePaths(['packages/ui/src/test/ssr-render.ts']), expectedFlags('ui'))
+    assert.deepEqual(
+        selectCiChecks(classifyGitChangePaths(['apps/docs/.vitepress/theme/components/InstallationTabs.vue'])),
+        ['tooling', 'browser', 'site'],
+    )
+})
+
+test('registry page and demo inputs select registry validation while other site changes stay scoped', () => {
+    for (const section of ['components', 'blocks', 'en/components', 'en/blocks']) {
+        const flags = classifyGitChangePaths([`apps/docs/${section}/example.md`])
+        assert.deepEqual(flags, expectedFlags('docs', 'site', 'generated', 'registry'))
+        assert.ok(selectCiChecks(flags).includes('quality'))
+    }
+    assert.deepEqual(
+        classifyGitChangePaths(['apps/docs/.vitepress/theme/components/demos/ButtonDemo.vue']),
+        expectedFlags('docs', 'site', 'registry'),
+    )
+    for (const file of ['apps/docs/blocks/index.md', 'apps/docs/en/components/guide/example.md']) {
+        assert.deepEqual(classifyGitChangePaths([file]), expectedFlags('docs', 'site', 'generated'))
+    }
+    for (const file of ['apps/docs/en/guide/installation.md', 'apps/docs/public/example.svg']) {
+        assert.deepEqual(selectCiChecks(classifyGitChangePaths([file])), ['tooling', 'site'])
+    }
+})
+
+test('deleted registry demos and renamed browser fixtures select their checks in pull requests', () => {
+    const repository = mkdtempSync(path.join(os.tmpdir(), 'brutx-docs-change-scope-'))
+    try {
+        function git(...args) {
+            return execFileSync('git', args, { cwd: repository, encoding: 'utf8' }).trim()
+        }
+
+        git('init', '--quiet')
+        git('config', 'user.name', 'Scope Test')
+        git('config', 'user.email', 'scope@example.test')
+
+        const demo = 'apps/docs/.vitepress/theme/components/demos/ButtonDemo.vue'
+        const fixture = 'apps/docs/.vitepress/theme/components/InstallationTabs.vue'
+        const guide = 'apps/docs/guide/installation.md'
+        for (const file of [demo, fixture, guide]) mkdirSync(path.dirname(path.join(repository, file)), { recursive: true })
+        writeFileSync(path.join(repository, demo), '<template>Button</template>\n')
+        writeFileSync(path.join(repository, fixture), '<template>Installation</template>\n')
+        git('add', '.')
+        git('commit', '--quiet', '-m', 'base')
+        const base = git('rev-parse', 'HEAD')
+
+        git('rm', demo)
+        git('commit', '--quiet', '-m', 'delete demo')
+        const deleted = git('rev-parse', 'HEAD')
+        assert.deepEqual(
+            selectCiChecks(classifyCiChangeScope({ eventName: 'pull_request', base, head: deleted, cwd: repository })),
+            ['tooling', 'quality', 'test', 'site'],
+        )
+
+        git('mv', fixture, guide)
+        git('commit', '--quiet', '-m', 'rename browser fixture')
+        const renamed = git('rev-parse', 'HEAD')
+        assert.deepEqual(
+            selectCiChecks(classifyCiChangeScope({ eventName: 'pull_request', base: deleted, head: renamed, cwd: repository })),
+            ['tooling', 'browser', 'site'],
+        )
+    } finally {
+        rmSync(repository, { recursive: true, force: true })
+    }
 })
 
 test('UI changes and Button cost inputs follow their actual dependency scopes', () => {

@@ -90,6 +90,29 @@ const UI_API_GENERATOR_PATHS = new Set([
     'packages/ui/scripts/api-docs/merge.ts',
 ])
 
+const SITE_COMPONENT_SECTION_PATTERN = /^apps\/docs\/(?:en\/)?(?:components|blocks)(?:\/|$)/u
+const SITE_REGISTRY_PAGE_PATTERN = /^apps\/docs\/(?:en\/)?(?:components|blocks)\/[^/]+\.md$/u
+const SITE_REGISTRY_DEMO_PATTERN = /^apps\/docs\/\.vitepress\/theme\/components\/demos\/[^/]+\.vue$/u
+const SITE_BROWSER_COMPONENT_PATTERN = /^apps\/docs\/\.vitepress\/theme\/components\/(?:InstallationTabs|CopyButton|ComponentApi[^/]*)\.vue$/u
+
+const SITE_API_DATA_DIR = 'apps/docs/.vitepress/api-generated'
+const SITE_API_TYPES_PATH = 'apps/docs/.vitepress/api-types.ts'
+const SITE_PACKAGE_PATH = 'apps/docs/package.json'
+const SITE_BROWSER_PATHS = new Set([
+    SITE_API_TYPES_PATH,
+    SITE_PACKAGE_PATH,
+    'apps/docs/.vitepress/theme/components/component-api-view.ts',
+    'apps/docs/.vitepress/theme/lib/i18n.ts',
+    'apps/docs/.vitepress/theme/lib/utils.ts',
+    'apps/docs/.vitepress/theme/style.css',
+])
+
+const UI_BROWSER_CONFIG_PATHS = new Set([
+    'packages/ui/playwright.config.ts',
+    'packages/ui/vitest.browser.config.ts',
+    'packages/ui/vitest.config.ts',
+])
+
 const GITHUB_WORKFLOW_SCOPES = new Map([
     ['.github/workflows/bench.yml', ['tooling']],
     ['.github/workflows/deploy-docs.yml', ['docs', 'site', 'tooling']],
@@ -170,7 +193,10 @@ function classifyUiPath(file, flags) {
 
     if (isWithin(file, 'packages/ui/src')) {
         if (isTestPath(file)) {
-            if (/\.browser\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(file)) mark(flags, 'browser')
+            if (
+                /\.browser\.(?:test|spec)\.[cm]?[jt]sx?$/u.test(file)
+                || (isWithin(file, 'packages/ui/src/test') && file !== 'packages/ui/src/test/ssr-render.ts')
+            ) mark(flags, 'browser')
             return
         }
 
@@ -220,7 +246,7 @@ function classifyUiPath(file, flags) {
         return
     }
 
-    if (file === 'packages/ui/vitest.config.ts' || file === 'packages/ui/playwright.config.ts') {
+    if (UI_BROWSER_CONFIG_PATHS.has(file)) {
         mark(flags, 'tooling', 'browser')
         return
     }
@@ -259,6 +285,7 @@ function classifyCliPath(file, flags) {
     if (GENERATED_OUTPUT_PATHS.has(file) || file === 'packages/cli/scripts/generate-tokens.ts') {
         mark(flags, 'generated', 'consumers')
     }
+    if (file === 'packages/cli/src/styles/brutalist.css') mark(flags, 'browser')
 }
 
 function classifyRegistryPath(file, flags) {
@@ -324,6 +351,23 @@ function classifyScriptPath(file, flags) {
     }
 }
 
+function classifySitePath(file, flags) {
+    mark(flags, 'docs', 'site')
+
+    const isApiData = isWithin(file, SITE_API_DATA_DIR)
+    if (
+        isApiData
+        || isWithin(file, 'apps/docs/.vitepress/api-content')
+        || SITE_COMPONENT_SECTION_PATTERN.test(file)
+        || [SITE_API_TYPES_PATH, SITE_PACKAGE_PATH, 'apps/docs/.vitepress/config.ts', 'apps/docs/tsconfig.json'].includes(file)
+    ) mark(flags, 'generated')
+
+    if (isApiData || SITE_BROWSER_PATHS.has(file) || SITE_BROWSER_COMPONENT_PATTERN.test(file)) mark(flags, 'browser')
+
+    const isRegistryPage = SITE_REGISTRY_PAGE_PATTERN.test(file) && !file.endsWith('/index.md')
+    if (isRegistryPage || SITE_REGISTRY_DEMO_PATTERN.test(file)) mark(flags, 'registry')
+}
+
 function classifyPath(file, flags) {
     if (ROOT_FULL_PATHS.has(file)) {
         markFull(flags)
@@ -386,8 +430,7 @@ function classifyPath(file, flags) {
     }
 
     if (isWithin(file, 'apps/docs')) {
-        mark(flags, 'docs', 'site')
-        if (isWithin(file, 'apps/docs/.vitepress/api-generated') || isWithin(file, 'apps/docs/.vitepress/api-content') || isWithin(file, 'apps/docs/components') || isWithin(file, 'apps/docs/en/components') || isWithin(file, 'apps/docs/blocks') || isWithin(file, 'apps/docs/en/blocks') || ['apps/docs/.vitepress/api-types.ts', 'apps/docs/.vitepress/config.ts', 'apps/docs/package.json', 'apps/docs/tsconfig.json'].includes(file)) mark(flags, 'generated')
+        classifySitePath(file, flags)
         return true
     }
 
