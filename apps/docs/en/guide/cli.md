@@ -364,7 +364,7 @@ Pass these IDs to `--fix-only <fixId>`:
 | `add-schema` | Missing `$schema` in `components.json` | Writes official Schema validation URL |
 | `add-config-version` | Missing or outdated `$version` in configuration | Updates to current configuration version |
 | `set-style` | Missing `style` field | Sets style to `brutalism` |
-| `inject-css-tokens` | Global CSS missing BrutxUI token marker block | Injects design token block into stylesheet |
+| `inject-css-tokens` | BrutxUI design tokens are missing or the separate token file is outside the global CSS import graph | Injects tokens according to `tailwind.tokensFile` and updates the global CSS entry |
 | `create-components-dir` | Components directory does not exist | Creates components target directory |
 | `create-utils-file` | `src/lib/utils.ts` missing | Generates utility file with `cn()` |
 | `add-cn-function` | Missing `cn()` export in utils file | Appends `cn()` export to utils file |
@@ -372,7 +372,8 @@ Pass these IDs to `--fix-only <fixId>`:
 | `remove-orphans` | Orphaned shared files with zero references | Safely removes unused orphan files |
 
 #### Dry-Run Repair Plan Preview (`--fix --dry-run`)
-Preview planned changes and unified file diffs before applying repairs:
+
+A dry run previews the affected files and their unified diffs while preserving the files on disk. Repairs for `$schema`, `$version`, and `style` use the `components.json` on disk and are combined into a single patch.
 
 ```bash
 npx brutx-vue@latest doctor --fix --dry-run
@@ -476,7 +477,7 @@ Running `init` generates `components.json` in your project root:
 | `style` | `string` | Theme style, currently locked to `brutalism` |
 | `tailwind.config` | `string` | Tailwind configuration file path (empty string for Tailwind v4) |
 | `tailwind.css` | `string` | Global CSS entry file path |
-| `tailwind.tokensFile` | `string` | *(Optional)* Independent design tokens file path |
+| `tailwind.tokensFile` | `string` | *(Optional)* Path to a separate design token stylesheet. When set, the global CSS entry must load it through `@import` |
 | `aliases.components` | `string` | Component import alias (default: `@/components`) |
 | `aliases.utils` | `string` | Utility functions import alias (default: `@/lib/utils`) |
 | `aliases.composables`| `string` | Composables import alias (default: `@/composables`) |

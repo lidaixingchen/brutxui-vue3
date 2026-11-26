@@ -1,6 +1,7 @@
 import path from 'path';
 import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult } from '../types.js';
 import { FixId } from '../types.js';
+import { DEFAULT_CONFIG_STYLE } from '../../config.js';
 import { CONFIG_FILES, CURRENT_CONFIG_VERSION, SCHEMA_URL } from '../../constants.js';
 
 export const configExistsRule: DiagnosticRule = {
@@ -34,7 +35,7 @@ export const configSchemaRule: DiagnosticRule = {
     name: '$schema field present',
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult> {
-        if (!ctx.config?.$schema) {
+        if (!ctx.rawConfig?.$schema) {
             return {
                 ruleId: 'config.schema',
                 category: 'config',
@@ -78,7 +79,8 @@ export const configVersionRule: DiagnosticRule = {
     name: 'config version',
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult> {
-        if (ctx.config?.$version === undefined) {
+        const version = ctx.rawConfig?.$version;
+        if (typeof version !== 'number') {
             return {
                 ruleId: 'config.version',
                 category: 'config',
@@ -89,13 +91,13 @@ export const configVersionRule: DiagnosticRule = {
                 fixDescription: 'Add $version field',
             };
         }
-        if (ctx.config.$version < CURRENT_CONFIG_VERSION) {
+        if (version < CURRENT_CONFIG_VERSION) {
             return {
                 ruleId: 'config.version',
                 category: 'config',
                 name: 'config version',
                 status: 'warn',
-                message: `Configuration version ${ctx.config.$version} is outdated (current: ${CURRENT_CONFIG_VERSION}). Migration may be needed.`,
+                message: `Configuration version ${version} is outdated (current: ${CURRENT_CONFIG_VERSION}). Migration may be needed.`,
                 fixId: FixId.AddConfigVersion,
                 fixDescription: `Update $version to ${CURRENT_CONFIG_VERSION}`,
             };
@@ -105,7 +107,7 @@ export const configVersionRule: DiagnosticRule = {
             category: 'config',
             name: 'config version',
             status: 'pass',
-            message: `Configuration version is ${ctx.config.$version}.`,
+            message: `Configuration version is ${version}.`,
         };
     },
     async planFix(): Promise<PlanFixResult> {
@@ -133,7 +135,8 @@ export const configStyleRule: DiagnosticRule = {
     name: 'style field present',
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult> {
-        if (!ctx.config?.style) {
+        const style = ctx.rawConfig?.style;
+        if (!style) {
             return {
                 ruleId: 'config.style',
                 category: 'config',
@@ -141,7 +144,7 @@ export const configStyleRule: DiagnosticRule = {
                 status: 'warn',
                 message: 'style field is missing.',
                 fixId: FixId.SetStyle,
-                fixDescription: 'Set style to "brutalism"',
+                fixDescription: `Set style to "${DEFAULT_CONFIG_STYLE}"`,
             };
         }
         return {
@@ -149,7 +152,7 @@ export const configStyleRule: DiagnosticRule = {
             category: 'config',
             name: 'style field present',
             status: 'pass',
-            message: `style is "${ctx.config.style}".`,
+            message: `style is "${style}".`,
         };
     },
     async planFix(): Promise<PlanFixResult> {
@@ -158,12 +161,12 @@ export const configStyleRule: DiagnosticRule = {
             plan: {
                 fixId: FixId.SetStyle,
                 ruleId: 'config.style',
-                description: 'Set style to "brutalism"',
+                description: `Set style to "${DEFAULT_CONFIG_STYLE}"`,
                 actions: [
                     {
                         type: 'patch-config',
-                        patch: { style: 'brutalism' },
-                        description: 'Set style to "brutalism"',
+                        patch: { style: DEFAULT_CONFIG_STYLE },
+                        description: `Set style to "${DEFAULT_CONFIG_STYLE}"`,
                     },
                 ],
             },

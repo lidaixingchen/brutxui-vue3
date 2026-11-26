@@ -57,14 +57,20 @@ export const tailwindTokensRule: DiagnosticRule = {
             };
         }
 
-        const graph = await scanCssGraph(cssPath, {
+        const graphOptions = {
             cwd: ctx.projectContext.cwd,
             fs: ctx.fs,
             resolveAlias: (specifier: string) => ctx.projectContext.resolveAliasPath(specifier),
-        });
+            tsConfig: ctx.projectContext.tsConfig,
+        };
+        const graph = await scanCssGraph(cssPath, graphOptions);
 
+        const tokensPath = tokensAlias ? await ctx.projectContext.resolveAliasPath(tokensAlias) : null;
         if (graph.missingImports.length > 0) {
             const missing = graph.missingImports[0];
+            const isTokensImport = tokensPath !== null && graph.nodes.get(missing.from)?.imports.some(
+                item => item.line === missing.line && item.specifier === missing.specifier && item.resolvedPath === tokensPath
+            );
             const relFrom = path.relative(ctx.projectContext.cwd, missing.from).replace(/\\/g, '/');
             return {
                 ruleId: 'tailwind.tokens',
@@ -72,6 +78,10 @@ export const tailwindTokensRule: DiagnosticRule = {
                 name: 'tailwind.css contains BrutxUI tokens',
                 status: 'error',
                 message: `Missing CSS import target "${missing.specifier}" referenced at ${relFrom}:${missing.line}`,
+                ...(isTokensImport ? {
+                    fixId: FixId.InjectCssTokens,
+                    fixDescription: 'Inject BrutxUI CSS tokens into decoupled tokens file',
+                } : {}),
             };
         }
 
@@ -88,59 +98,65 @@ export const tailwindTokensRule: DiagnosticRule = {
             };
         }
 
-        if (tokensAlias) {
-            const tokensPath = await ctx.projectContext.resolveAliasPath(tokensAlias);
-            if (tokensPath !== cssPath) {
-                if (!(await ctx.fs.pathExists(tokensPath))) {
-                    return {
-                        ruleId: 'tailwind.tokens',
-                        category: 'tailwind',
-                        name: 'tailwind.css contains BrutxUI tokens',
-                        status: 'error',
-                        message: `Tokens file does not exist: ${tokensAlias}`,
-                        fixId: FixId.InjectCssTokens,
-                        fixDescription: 'Inject BrutxUI CSS tokens into decoupled tokens file and import it',
-                    };
-                }
-
-                const tokensGraph = await scanCssGraph(tokensPath, {
-                    cwd: ctx.projectContext.cwd,
-                    fs: ctx.fs,
-                    resolveAlias: (specifier: string) => ctx.projectContext.resolveAliasPath(specifier),
-                });
-
-                if (!tokensGraph.hasBrutxTokens) {
-                    return {
-                        ruleId: 'tailwind.tokens',
-                        category: 'tailwind',
-                        name: 'tailwind.css contains BrutxUI tokens',
-                        status: 'error',
-                        message: `Tokens file exists but missing BrutxUI tokens: ${tokensAlias}`,
-                        fixId: FixId.InjectCssTokens,
-                        fixDescription: 'Inject BrutxUI CSS tokens',
-                    };
-                }
-
-                if (!graph.hasBrutxTokens) {
-                    return {
-                        ruleId: 'tailwind.tokens',
-                        category: 'tailwind',
-                        name: 'tailwind.css contains BrutxUI tokens',
-                        status: 'error',
-                        message: `Tokens file contains tokens but main CSS does not import it: ${cssAlias} -> ${tokensAlias}`,
-                        fixId: FixId.InjectCssTokens,
-                        fixDescription: 'Inject BrutxUI CSS tokens',
-                    };
-                }
-
+        const resolveRealPath = (filePath: string) => ctx.fs.realpath(filePath).catch(() => filePath);
+        if (tokensPath && tokensPath !== cssPath && await resolveRealPath(tokensPath) !== await resolveRealPath(cssPath)) {
+            if (!(await ctx.fs.pathExists(tokensPath))) {
                 return {
                     ruleId: 'tailwind.tokens',
                     category: 'tailwind',
                     name: 'tailwind.css contains BrutxUI tokens',
-                    status: 'pass',
-                    message: 'CSS file contains BrutxUI tokens.',
+                    status: 'error',
+                    message: `Tokens file does not exist: ${tokensAlias}`,
+                    fixId: FixId.InjectCssTokens,
+                    fixDescription: 'Inject BrutxUI CSS tokens into decoupled tokens file and import it',
                 };
             }
+
+            const tokensGraph = await scanCssGraph(tokensPath, graphOptions);
+
+            if (!tokensGraph.hasBrutxTokens) {
+                return {
+                    ruleId: 'tailwind.tokens',
+                    category: 'tailwind',
+                    name: 'tailwind.css contains BrutxUI tokens',
+                    status: 'error',
+                    message: `Tokens file exists but missing BrutxUI tokens: ${tokensAlias}`,
+                    fixId: FixId.InjectCssTokens,
+                    fixDescription: 'Inject BrutxUI CSS tokens',
+                };
+            }
+
+            if (!graph.nodes.has(tokensGraph.rootNode.absolutePath)) {
+                return {
+                    ruleId: 'tailwind.tokens',
+                    category: 'tailwind',
+                    name: 'tailwind.css contains BrutxUI tokens',
+                    status: 'error',
+                    message: `Tokens file contains tokens but main CSS does not import it: ${cssAlias} -> ${tokensAlias}`,
+                    fixId: FixId.InjectCssTokens,
+                    fixDescription: 'Inject BrutxUI CSS tokens',
+                };
+            }
+
+            if (graph.rootNode.hasTokensBlock) {
+                return {
+                    ruleId: 'tailwind.tokens',
+                    category: 'tailwind',
+                    name: 'tailwind.css contains BrutxUI tokens',
+                    status: 'error',
+                    message: `Main CSS still contains inline BrutxUI tokens: ${cssAlias}`,
+                    fixId: FixId.InjectCssTokens,
+                    fixDescription: 'Keep BrutxUI CSS tokens in the decoupled tokens file',
+                };
+            }
+
+            return {
+                ruleId: 'tailwind.tokens',
+                category: 'tailwind',
+                name: 'tailwind.css contains BrutxUI tokens',
+                status: 'pass',
+                message: 'CSS file contains BrutxUI tokens.',
+            };
         }
 
         if (!graph.hasBrutxTokens) {
@@ -170,6 +186,7 @@ export const tailwindTokensRule: DiagnosticRule = {
                 tailwind: ctx.config!.tailwind,
                 fs: ctx.fs,
                 resolveAlias: (alias) => ctx.projectContext.resolveAliasPath(alias),
+                tsConfig: ctx.projectContext.tsConfig,
             });
 
             if (!plan.hasChanges) {

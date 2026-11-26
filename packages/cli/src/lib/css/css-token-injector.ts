@@ -3,6 +3,7 @@ import type { FileSystemAdapter } from '../fs/index.js';
 import type { TailwindConfig } from '../types.js';
 import type { RepairAction } from '../diagnostics/types.js';
 import type { FileTransaction } from '../file-transaction.js';
+import type { ResolvedTsConfig } from '../env-detector.js';
 import {
     BRUTX_CSS_END_MARKER,
     BRUTX_CSS_START_MARKER,
@@ -13,6 +14,7 @@ import {
 import {
     computeRelativeImportSpecifier,
     injectImportStatement,
+    scanCssGraph,
 } from './css-dependency-graph.js';
 import { isSafePath } from '../security.js';
 
@@ -22,6 +24,7 @@ export interface CssTokenPlanContext {
     fs: FileSystemAdapter;
     tokensCss?: string;
     resolveAlias?: (specifier: string) => Promise<string> | string;
+    tsConfig?: ResolvedTsConfig | null;
 }
 
 export interface CssTokenPlan {
@@ -124,10 +127,17 @@ export async function planCssTokenInjection(
             } else {
                 mainContent = mainContent
                     .replaceAll(BRUTX_CSS_START_MARKER, '')
-                    .replaceAll(BRUTX_CSS_END_MARKER, '')
-                    .trimEnd();
+                    .replaceAll(BRUTX_CSS_END_MARKER, '');
             }
-            mainContent = injectImportStatement(mainContent, importSpecifier);
+            const graph = await scanCssGraph(fullMainPath, {
+                cwd,
+                fs,
+                resolveAlias: context.resolveAlias,
+                tsConfig: context.tsConfig,
+            }, mainContent);
+            if (!graph.nodes.has(path.resolve(cwd, fullTokensPath))) {
+                mainContent = injectImportStatement(mainContent, importSpecifier);
+            }
         } else {
             mainContent = `@import "tailwindcss";\n@import "${importSpecifier}";\n`;
         }

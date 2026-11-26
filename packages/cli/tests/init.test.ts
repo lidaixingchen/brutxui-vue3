@@ -208,7 +208,7 @@ describe('init', { timeout: 25000 }, () => {
     });
 
     it('should retain decoupled mode when re-initializing an existing split project', async () => {
-        const existingConfig: BrutalistConfig = {
+        const existingConfig = {
             $schema: 'https://example.com/schema.json',
             $version: 1,
             style: 'brutalism',
@@ -216,12 +216,15 @@ describe('init', { timeout: 25000 }, () => {
                 config: '',
                 css: 'src/index.css',
                 tokensFile: 'src/styles/brutx-tokens.css',
+                custom: true,
             },
             aliases: {
                 components: '@/components',
                 utils: '@/lib/utils',
                 composables: '@/composables',
+                locales: '@/locales',
             },
+            extension: { enabled: true },
         };
 
         const cwd = await setupProject({
@@ -233,7 +236,10 @@ describe('init', { timeout: 25000 }, () => {
             const { init } = await import('../src/commands/init.js');
             await init({ cwd, yes: true, force: true, silent: true });
 
-            const config: BrutalistConfig = await fs.readJson(path.join(cwd, 'components.json'));
+            const config = await fs.readJson(path.join(cwd, 'components.json'));
+            expect(config.extension).toEqual(existingConfig.extension);
+            expect(config.tailwind.custom).toBe(true);
+            expect(config.aliases.locales).toBe(existingConfig.aliases.locales);
             expect(config.tailwind.tokensFile).toBe('src/styles/brutx-tokens.css');
 
             const mainCss = await fs.readFile(path.join(cwd, 'src', 'index.css'), 'utf-8');

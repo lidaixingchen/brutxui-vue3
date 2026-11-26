@@ -3,6 +3,7 @@ import { input, confirm } from '@inquirer/prompts';
 import { DiskFileSystemAdapter } from '../lib/fs/index.js';
 const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
+import { CONFIG_FILE_NAME, readConfigFile } from '../lib/config.js';
 
 import {
     type InitOptions,
@@ -37,6 +38,7 @@ interface LoadSettingsResult {
     settings: ProjectInitializationSettings;
     isExistingProject: boolean;
     existingHasTokensFile: boolean;
+    existingConfig?: Partial<BrutalistConfig>;
 }
 
 async function detectSettings(cwd: string, projectType?: ProjectType): Promise<DetectedSettings> {
@@ -63,15 +65,15 @@ async function detectSettings(cwd: string, projectType?: ProjectType): Promise<D
 }
 
 async function loadOrDetectSettings(configTarget: string, projectType: ProjectType): Promise<LoadSettingsResult> {
-    const configPath = path.join(configTarget, 'components.json');
+    const configPath = path.join(configTarget, CONFIG_FILE_NAME);
     const configExists = await defaultDiskFs.pathExists(configPath);
 
-    let existingConfig: BrutalistConfig | null = null;
+    let existingConfig: Partial<BrutalistConfig> | null = null;
     let existingHasTokensFile = false;
 
     if (configExists) {
         try {
-            existingConfig = await defaultDiskFs.readJson<BrutalistConfig>(configPath);
+            existingConfig = await readConfigFile(configTarget, defaultDiskFs) as Partial<BrutalistConfig>;
         } catch (error) {
             throw new CliError(
                 `Failed to parse existing components.json in "${configTarget}": ${error instanceof Error ? error.message : String(error)}`,
@@ -178,6 +180,7 @@ async function loadOrDetectSettings(configTarget: string, projectType: ProjectTy
         },
         isExistingProject: true,
         existingHasTokensFile,
+        existingConfig,
     };
 }
 
@@ -247,7 +250,7 @@ async function promptForConfig(
 }
 
 async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean> {
-    const configPath = path.join(cwd, 'components.json');
+    const configPath = path.join(cwd, CONFIG_FILE_NAME);
 
     if (!(await defaultDiskFs.pathExists(configPath))) {
         return true;
@@ -383,7 +386,7 @@ export async function init(options: InitOptions): Promise<void> {
         return;
     }
 
-    const { settings: initialSettings, isExistingProject, existingHasTokensFile } =
+    const { settings: initialSettings, isExistingProject, existingHasTokensFile, existingConfig } =
         await loadOrDetectSettings(configTarget, projectType);
 
     let settings = initialSettings;
@@ -402,6 +405,7 @@ export async function init(options: InitOptions): Promise<void> {
             cwd: configTarget,
             projectType,
             settings,
+            existingConfig,
             callbacks: {
                 onUtilityHelper: result => {
                     if (result.created) {

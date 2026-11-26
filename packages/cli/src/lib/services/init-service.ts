@@ -8,6 +8,7 @@ import {
     SCHEMA_URL,
     UTILS_TEMPLATE,
 } from '../constants.js';
+import { CONFIG_FILE_NAME, DEFAULT_CONFIG_STYLE } from '../config.js';
 import { FileTransaction } from '../file-transaction.js';
 import { CliError } from '../error.js';
 import { ProjectContext } from '../project-context.js';
@@ -59,6 +60,7 @@ export interface ProjectInitializationOptions {
     cwd: string;
     projectType: ProjectType;
     settings: ProjectInitializationSettings;
+    existingConfig?: Partial<BrutalistConfig>;
     callbacks?: ProjectInitializationCallbacks;
     context?: ProjectContext;
     fs?: FileSystemAdapter;
@@ -69,27 +71,32 @@ async function createConfigFile(
     cwd: string,
     settings: ProjectInitializationSettings,
     isSplitMode: boolean,
-    transaction: FileTransaction
+    transaction: FileTransaction,
+    existingConfig?: Partial<BrutalistConfig>,
 ): Promise<BrutalistConfig> {
     const tailwind: TailwindConfig = {
+        ...existingConfig?.tailwind,
         config: settings.tailwind.config,
         css: settings.tailwind.css,
     };
     const trimmedTokens = settings.tailwind.tokensFile?.trim();
     if (isSplitMode && trimmedTokens) {
         tailwind.tokensFile = trimmedTokens;
+    } else {
+        delete tailwind.tokensFile;
     }
 
     const config: BrutalistConfig = {
+        ...existingConfig,
         $schema: SCHEMA_URL,
         $version: CURRENT_CONFIG_VERSION,
-        style: 'brutalism',
+        style: DEFAULT_CONFIG_STYLE,
         tailwind,
-        aliases: settings.aliases,
-        ...(settings.sharedBase ? { sharedBase: settings.sharedBase } : {}),
+        aliases: { ...existingConfig?.aliases, ...settings.aliases },
+        sharedBase: settings.sharedBase || undefined,
     };
 
-    await transaction.writeJson(path.join(cwd, 'components.json'), config, { spaces: 2 });
+    await transaction.writeJson(path.join(cwd, CONFIG_FILE_NAME), config, { spaces: 2 });
     return config;
 }
 
@@ -175,7 +182,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
         const fallbackConfig: BrutalistConfig = {
             $schema: SCHEMA_URL,
             $version: CURRENT_CONFIG_VERSION,
-            style: 'brutalism',
+            style: DEFAULT_CONFIG_STYLE,
             tailwind: settings.tailwind,
             aliases: settings.aliases,
             ...(settings.sharedBase ? { sharedBase: settings.sharedBase } : {}),
@@ -208,10 +215,11 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
             tailwind: settings.tailwind,
             fs: context.fs,
             resolveAlias: (s) => context.resolveAliasPath(s),
+            tsConfig: context.tsConfig,
         });
 
         const isSplitMode = plan.tokensPath !== null;
-        const config = await createConfigFile(cwd, settings, isSplitMode, transaction);
+        const config = await createConfigFile(cwd, settings, isSplitMode, transaction, options.existingConfig);
         context.bindConfig(config);
 
         const utilsPath = await context.resolveUtilsFilePath();

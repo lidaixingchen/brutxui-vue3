@@ -9,6 +9,8 @@ import {
 } from './constants.js';
 
 const defaultDiskFs = new DiskFileSystemAdapter();
+export const CONFIG_FILE_NAME = 'components.json';
+export const DEFAULT_CONFIG_STYLE = 'brutalism';
 
 /**
  * 校验原始 components.json 数据格式是否合法。
@@ -146,28 +148,52 @@ export async function readConfigSafe(
     }
 }
 
-/**
- * 读取并校验 components.json 配置（纯函数，无隐式全局副作用）。
- */
-export async function readConfig(
+export function readConfigFile(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<unknown> {
+    return fsAdapter.readJson(path.join(cwd, CONFIG_FILE_NAME));
+}
+
+interface ConfigSnapshot {
+    raw: Record<string, unknown>;
+    config: BrutalistConfig;
+}
+
+async function readConfigSnapshot(
     cwd: string,
     fsAdapter: FileSystemAdapter = defaultDiskFs,
-): Promise<BrutalistConfig> {
-    const configPath = path.join(cwd, 'components.json');
+): Promise<ConfigSnapshot> {
+    const configPath = path.join(cwd, CONFIG_FILE_NAME);
     if (!(await fsAdapter.pathExists(configPath))) {
         throw new Error('components.json not found. Run `brutx-vue init` first.');
     }
 
-    let config: unknown;
+    let raw: unknown;
     try {
-        config = await fsAdapter.readJson(configPath);
+        raw = await readConfigFile(cwd, fsAdapter);
     } catch (error) {
         throw new Error(`Failed to parse components.json: invalid JSON. ${error instanceof Error ? error.message : ''}`, { cause: error });
     }
 
-    validateBrutalistConfig(config);
+    validateBrutalistConfig(raw);
+    return { raw, config: await resolveConfig(raw) };
+}
 
-    const raw = await migrateConfig(config);
+export async function readConfigSnapshotSafe(cwd: string, fsAdapter?: FileSystemAdapter): Promise<ConfigSnapshot | null> {
+    try {
+        return await readConfigSnapshot(cwd, fsAdapter);
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * 读取并校验 components.json 配置（纯函数，无隐式全局副作用）。
+ */
+export async function readConfig(cwd: string, fsAdapter?: FileSystemAdapter): Promise<BrutalistConfig> {
+    return (await readConfigSnapshot(cwd, fsAdapter)).config;
+}
+
+export async function resolveConfig(input: Record<string, unknown>): Promise<BrutalistConfig> {
+    const raw = await migrateConfig(input);
     const rawTailwind = raw.tailwind;
     const rawAliases = raw.aliases;
 
@@ -181,10 +207,11 @@ export async function readConfig(
     const parsed: BrutalistConfig = {
         $schema: (typeof raw.$schema === 'string' ? raw.$schema : undefined) ?? SCHEMA_URL,
         $version: typeof raw.$version === 'number' ? raw.$version : undefined,
-        style: (typeof raw.style === 'string' ? raw.style : undefined) ?? 'brutalism',
+        style: (typeof raw.style === 'string' ? raw.style : undefined) ?? DEFAULT_CONFIG_STYLE,
         tailwind: {
             config: (typeof tailwind?.config === 'string' ? tailwind.config : undefined) ?? DEFAULT_TAILWIND_CONFIG,
-            css: (typeof tailwind?.css === 'string' ? tailwind?.css : undefined) ?? '@/styles/globals.css',
+            css: (typeof tailwind?.css === 'string' ? tailwind.css : undefined) ?? '@/styles/globals.css',
+            ...(typeof tailwind?.tokensFile === 'string' ? { tokensFile: tailwind.tokensFile } : {}),
         },
         aliases: {
             components: (typeof aliases?.components === 'string' ? aliases.components : undefined) ?? DEFAULT_ALIASES.components,

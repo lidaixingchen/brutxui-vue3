@@ -58,6 +58,8 @@ export interface DiagnosticContext {
     readonly fs: FileSystemAdapter;
     /** 解析到的项目配置；未初始化或无效时为 null */
     readonly config: BrutalistConfig | null;
+    /** components.json 中实际保存的字段 */
+    readonly rawConfig?: Readonly<Record<string, unknown>> | null;
     /** 解析到的组件清单；无清单时为 null */
     readonly manifest: BrutxManifest | null;
     /** 是否处于离线模式 */
@@ -186,8 +188,8 @@ export interface RepairPreviewReport {
     readonly failed: ReadonlyArray<{ readonly ruleId: string; readonly reason: string }>;
     readonly fileDiffs: readonly FileDiffPreview[];
     readonly configChanges?: {
-        readonly before: BrutalistConfig | null;
-        readonly after: BrutalistConfig;
+        readonly before: Readonly<Record<string, unknown>> | null;
+        readonly after: Readonly<Record<string, unknown>>;
     };
 }
 

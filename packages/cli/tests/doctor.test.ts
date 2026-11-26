@@ -6,11 +6,6 @@ import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, Instal
 import { FixId } from '../src/lib/types.js';
 import { computeInstalledContentHash } from '../src/lib/manifest.js';
 
-vi.mock('../src/lib/config.js', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('../src/lib/config.js')>();
-    return { ...actual, readConfigSafe: vi.fn() };
-});
-
 vi.mock('../src/lib/constants.js', async (importOriginal) => {
     const actual = await importOriginal<typeof import('../src/lib/constants.js')>();
     return {
@@ -24,12 +19,10 @@ vi.mock('../src/lib/project.js', async (importOriginal) => {
     return { ...actual, resolveAliasPath: vi.fn() };
 });
 
-import * as configLib from '../src/lib/config.js';
 import * as constants from '../src/lib/constants.js';
 import * as project from '../src/lib/project.js';
 import { doctor } from '../src/commands/doctor.js';
 
-const mockedReadConfigSafe = vi.mocked(configLib.readConfigSafe);
 const mockedGetBrutalistCssStyles = vi.mocked(constants.getBrutalistCssStyles);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 
@@ -137,7 +130,7 @@ describe('checkConfigExists', () => {
     it('should pass when components.json exists', async () => {
         const cwd = await createTempProject();
         try {
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const nodeCheck = results.find((r) => r.name === 'Node.js version');
             expect(nodeCheck?.status).toBe('pass');
@@ -153,7 +146,6 @@ describe('checkConfigExists', () => {
     it('should error when components.json does not exist', async () => {
         const cwd = await createTempProject();
         try {
-            mockedReadConfigSafe.mockResolvedValue(null);
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'components.json exists');
             expect(check?.status).toBe('error');
@@ -166,7 +158,6 @@ describe('checkConfigExists', () => {
     it('should skip all other checks when config is null', async () => {
         const cwd = await createTempProject();
         try {
-            mockedReadConfigSafe.mockResolvedValue(null);
             const results = await runDoctor(cwd, { silent: true });
             expect(results).toHaveLength(2);
             expect(results[0].name).toBe('Node.js version');
@@ -185,7 +176,6 @@ describe('checkSchema', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ $schema: 'https://example.com/schema.json' }));
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === '$schema field present');
             expect(check?.status).toBe('pass');
@@ -200,7 +190,7 @@ describe('checkSchema', () => {
             await setupHealthyProject(cwd);
             const config = makeConfig();
             delete config.$schema;
-            mockedReadConfigSafe.mockResolvedValue(config);
+            await fs.writeJson(path.join(cwd, 'components.json'), config);
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === '$schema field present');
             expect(check?.status).toBe('warn');
@@ -219,7 +209,6 @@ describe('checkStyle', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ style: 'brutalism' }));
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'style field present');
             expect(check?.status).toBe('pass');
@@ -233,7 +222,7 @@ describe('checkStyle', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ style: '' }));
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig({ style: '' }));
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'style field present');
             expect(check?.status).toBe('warn');
@@ -252,7 +241,6 @@ describe('checkTailwindCss', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'tailwind.css contains BrutxUI tokens');
             expect(check?.status).toBe('pass');
@@ -266,7 +254,6 @@ describe('checkTailwindCss', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'styles', 'globals.css'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'tailwind.css points to real file');
             expect(check?.status).toBe('error');
@@ -284,7 +271,6 @@ describe('checkTailwindCss', () => {
                 path.join(cwd, 'src', 'styles', 'globals.css'),
                 'body { margin: 0; }',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'tailwind.css contains BrutxUI tokens');
             expect(check?.status).toBe('error');
@@ -302,7 +288,6 @@ describe('checkTailwindCss', () => {
                 path.join(cwd, 'src', 'styles', 'globals.css'),
                 ':root { --color-brutal-bg: #fff; }\n.bg-brutal-primary { color: red; }\n.animate-in { animation: fade-in; }',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'tailwind.css contains BrutxUI tokens');
             expect(check?.status).toBe('error');
@@ -321,7 +306,6 @@ describe('checkTailwindCss', () => {
                 `const brutalism = require('brutx-ui-vue/brutalism-plugin');
 export default { plugins: [brutalism] };`,
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
             const check = results.find((r) => r.name === 'deprecated brutalism plugin');
@@ -341,7 +325,6 @@ describe('checkAliases', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const componentsCheck = results.find((r) => r.name.includes('aliases.components'));
             const utilsCheck = results.find((r) => r.name.includes('aliases.utils'));
@@ -357,7 +340,6 @@ describe('checkAliases', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'components'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name.includes('aliases.components'));
             expect(check?.status).toBe('warn');
@@ -372,7 +354,6 @@ describe('checkAliases', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'lib', 'utils.ts'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name.includes('aliases.utils'));
             expect(check?.status).toBe('error');
@@ -391,7 +372,6 @@ describe('checkDependencies', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const depChecks = results.filter((r) => r.name.includes('installed'));
             expect(depChecks.length).toBeGreaterThan(0);
@@ -413,7 +393,6 @@ describe('checkDependencies', () => {
                     '@lucide/vue': '^0.400.0',
                 },
             });
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const cvaCheck = results.find((r) => r.name.includes('class-variance-authority'));
             expect(cvaCheck?.status).toBe('error');
@@ -439,7 +418,6 @@ describe('checkDependencies', () => {
                     'reka-ui': '^2.9.0',
                 },
             });
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const optionalCheck = results.find((r) => r.name.includes('@lucide/vue'));
             expect(optionalCheck?.status).toBe('warn');
@@ -458,7 +436,6 @@ describe('checkWorkspaceHint', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const hint = results.find((r) => r.name === 'workspace hint');
             expect(hint).toBeUndefined();
@@ -472,7 +449,6 @@ describe('checkWorkspaceHint', () => {
         try {
             await setupHealthyProject(root);
             await fs.writeFile(path.join(root, 'pnpm-workspace.yaml'), 'packages:\n  - packages/*\n');
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(root, { silent: true });
             const hint = results.find((r) => r.name === 'workspace hint');
             expect(hint).toBeUndefined();
@@ -488,7 +464,6 @@ describe('checkWorkspaceHint', () => {
             const subpkg = path.join(root, 'apps', 'web');
             await fs.ensureDir(subpkg);
             await setupHealthyProject(subpkg);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(subpkg, { silent: true });
             const hint = results.find((r) => r.name === 'workspace hint');
             expect(hint).toBeDefined();
@@ -509,7 +484,6 @@ describe('checkUtilsFunction', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('pass');
@@ -523,7 +497,6 @@ describe('checkUtilsFunction', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'lib', 'utils.ts'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('error');
@@ -542,7 +515,6 @@ describe('checkUtilsFunction', () => {
                 path.join(cwd, 'src', 'lib', 'utils.ts'),
                 'export function helper() { return 42; }',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('error');
@@ -562,7 +534,6 @@ describe('checkConfigVersion', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ $version: 1 }));
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'config version');
             expect(check?.status).toBe('pass');
@@ -578,7 +549,7 @@ describe('checkConfigVersion', () => {
             await setupHealthyProject(cwd);
             const config = makeConfig();
             delete config.$version;
-            mockedReadConfigSafe.mockResolvedValue(config);
+            await fs.writeJson(path.join(cwd, 'components.json'), config);
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'config version');
             expect(check?.status).toBe('warn');
@@ -593,7 +564,7 @@ describe('checkConfigVersion', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ $version: 0 }));
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig({ $version: 0 }));
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'config version');
             expect(check?.status).toBe('warn');
@@ -617,7 +588,6 @@ describe('fixes', () => {
             const config = makeConfig();
             delete config.$schema;
             await fs.writeJson(path.join(cwd, 'components.json'), config);
-            mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.AddSchema });
 
@@ -635,7 +605,6 @@ describe('fixes', () => {
             await setupHealthyProject(cwd);
             const config = makeConfig({ style: '' });
             await fs.writeJson(path.join(cwd, 'components.json'), config);
-            mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.SetStyle });
 
@@ -655,7 +624,6 @@ describe('fixes', () => {
                 path.join(cwd, 'src', 'styles', 'globals.css'),
                 'body { margin: 0; }',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.InjectCssTokens });
 
@@ -673,7 +641,6 @@ describe('fixes', () => {
             suppressConsole();
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'components'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             expect(await fs.pathExists(path.join(cwd, 'src', 'components'))).toBe(false);
 
@@ -691,7 +658,6 @@ describe('fixes', () => {
             suppressConsole();
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'lib', 'utils.ts'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             expect(await fs.pathExists(path.join(cwd, 'src', 'lib', 'utils.ts'))).toBe(false);
 
@@ -715,7 +681,6 @@ describe('fixes', () => {
                 path.join(cwd, 'src', 'lib', 'utils.ts'),
                 'export function helper() { return 42; }',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.AddCnFunction });
 
@@ -735,7 +700,6 @@ describe('fixes', () => {
             const config = makeConfig();
             delete config.$version;
             await fs.writeJson(path.join(cwd, 'components.json'), config);
-            mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.AddConfigVersion });
 
@@ -755,7 +719,6 @@ describe('edge cases', () => {
         const cwd = await createTempProject();
         try {
             await fs.writeFile(path.join(cwd, 'components.json'), '{ this is not valid JSON }}}');
-            mockedReadConfigSafe.mockResolvedValue(null);
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'components.json exists');
             expect(check?.status).toBe('error');
@@ -771,7 +734,6 @@ describe('edge cases', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'src', 'styles'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'tailwind.css points to real file');
             expect(check?.status).toBe('error');
@@ -789,7 +751,6 @@ describe('edge cases', () => {
                 path.join(cwd, 'src', 'lib', 'utils.ts'),
                 '// corrupted file\nexport const FOO = "bar";',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
             const cnCheck = results.find((r) => r.ruleId === 'structure.utils-cn');
@@ -805,7 +766,6 @@ describe('edge cases', () => {
         try {
             suppressConsole();
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { fix: true, yes: true });
             const errors = results.filter((r) => r.status === 'error');
@@ -822,7 +782,6 @@ describe('edge cases', () => {
         try {
             await setupHealthyProject(cwd);
             await fs.remove(path.join(cwd, 'package.json'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
             const depChecks = results.filter((r) => r.name.includes('installed'));
@@ -840,7 +799,6 @@ describe('edge cases', () => {
                 path.join(cwd, 'src', 'lib', 'utils.ts'),
                 'export const FOCUS_RING_CLASSES = "focus-visible:ring-2";\nexport const cn = (...inputs: any[]) => inputs.join(" ");\n// BRUTAL_COLOR_NAMES extendTailwindMerge',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
             const cnCheck = results.find((r) => r.ruleId === 'structure.utils-cn');
@@ -925,7 +883,6 @@ describe('manifest-driven integrity checks', () => {
                     ],
                 },
             });
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             const filesCheck = results.find((r) => r.name === 'component button files present');
@@ -957,7 +914,6 @@ describe('manifest-driven integrity checks', () => {
                 '<template><button class="modified" /></template>',
                 'utf-8',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             const integrityCheck = results.find((r) => r.name === 'component button integrity');
@@ -984,7 +940,6 @@ describe('manifest-driven integrity checks', () => {
             });
             // 删除 manifest 记录的文件
             await fs.remove(path.join(cwd, 'src/components/ui/button/button-variants.ts'));
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             const filesCheck = results.find((r) => r.name === 'component button files present');
@@ -1014,7 +969,6 @@ describe('manifest-driven integrity checks', () => {
                 '<template><old-button /></template>',
                 'utf-8',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             const orphansCheck = results.find((r) => r.name === 'component button no orphans');
@@ -1039,7 +993,6 @@ describe('manifest-driven integrity checks', () => {
                     registryDeps: ['primitive'],
                 },
             });
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             const depsCheck = results.find((r) => r.name === 'component button registry deps closed');
@@ -1063,7 +1016,6 @@ describe('manifest-driven integrity checks', () => {
                 '<template><button /></template>',
                 'utf-8',
             );
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { silent: true });
             // legacy scan 输出应包含 "legacy scan"
@@ -1088,7 +1040,6 @@ describe('manifest-driven integrity checks', () => {
                     ],
                 },
             });
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             // 再次运行 doctor，文件未改动
             const results = await runDoctor(cwd, { silent: true });
@@ -1112,7 +1063,6 @@ describe('manifest-driven integrity checks', () => {
             });
             const orphanPath = path.join(cwd, 'src/components/ui/button/old-Button.vue');
             await fs.writeFile(orphanPath, '<template><old /></template>', 'utf-8');
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.RemoveOrphans });
 
@@ -1131,7 +1081,6 @@ describe('checkRegistryReachability', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
                 new Response('{}', { status: 200, statusText: 'OK' }),
             );
@@ -1154,7 +1103,6 @@ describe('checkRegistryReachability', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             vi.spyOn(global, 'fetch').mockResolvedValue(
                 new Response('Not Found', { status: 404, statusText: 'Not Found' }),
             );
@@ -1173,7 +1121,6 @@ describe('checkRegistryReachability', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig());
             vi.spyOn(global, 'fetch').mockRejectedValue(new Error('connect ECONNREFUSED'));
 
             const results = await runDoctor(cwd, { silent: true });
@@ -1190,7 +1137,7 @@ describe('checkRegistryReachability', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig({
                 registries: [
                     'https://primary.example.com',
                     'https://mirror.example.com',
@@ -1220,7 +1167,7 @@ describe('checkRegistryReachability', () => {
         const cwd = await createTempProject();
         try {
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig({
                 registries: ['https://primary.example.com'],
             }));
             const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
@@ -1244,7 +1191,7 @@ describe('checkRegistryReachability', () => {
             await setupHealthyProject(cwd);
             const existingDir = path.join(cwd, 'local-registry');
             await fs.ensureDir(existingDir);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+            await fs.writeJson(path.join(cwd, 'components.json'), makeConfig({
                 registries: [existingDir, path.join(cwd, 'missing-registry')],
             }));
             // 本地路径源不应触发 fetch

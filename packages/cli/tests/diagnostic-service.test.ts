@@ -3,6 +3,7 @@ import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import { diagnose, repair, DiagnosticEngine } from '../src/lib/services/diagnostic-service.js';
 import { isNodeVersionSupported, nodeVersionRule, workspaceHintRule } from '../src/lib/diagnostics/rules/env-rules.js';
 import type { DiagnosticRule } from '../src/lib/diagnostics/types.js';
+import { BRUTX_CSS_END_MARKER, BRUTX_CSS_START_MARKER, CURRENT_CONFIG_VERSION, SCHEMA_URL } from '../src/lib/constants.js';
 
 describe('DiagnosticEngine & Env Rules', () => {
     describe('isNodeVersionSupported', () => {
@@ -121,18 +122,16 @@ describe('DiagnosticEngine & Env Rules', () => {
         it('detects and fixes missing schema, version and style', async () => {
             const fs = new MemoryFileSystemAdapter();
             await fs.ensureDir('/app');
-            // 初始化一个不完整的配置
+            const configPath = '/app/components.json';
             const initialConfig = {
-                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
-                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+                tailwind: { css: 'src/index.css', extra: 'keep-nested' },
+                extension: { enabled: true },
             };
-            await fs.writeJson('/app/components.json', initialConfig);
+            await fs.writeJson(configPath, initialConfig);
+            const options = { cwd: '/app', fs, ruleIds: ['config.exists', 'config.schema', 'config.version', 'config.style'] };
+            const expectedConfig = { ...initialConfig, $schema: SCHEMA_URL, $version: CURRENT_CONFIG_VERSION, style: 'brutalism' };
 
-            const initialReport = await diagnose({
-                cwd: '/app',
-                fs,
-                categories: ['config'],
-            });
+            const initialReport = await diagnose(options);
 
             expect(initialReport.getByRuleId('config.exists')[0].status).toBe('pass');
             expect(initialReport.getByRuleId('config.schema')[0].status).toBe('warn');
@@ -140,22 +139,17 @@ describe('DiagnosticEngine & Env Rules', () => {
             expect(initialReport.getByRuleId('config.style')[0].status).toBe('warn');
             expect(initialReport.fixableCount).toBe(3);
 
-            // 执行自愈
-            const repairReport = await repair({
-                cwd: '/app',
-                fs,
-                categories: ['config'],
-            });
+            const preview = await repair({ ...options, dryRun: true });
+            expect(preview.preview?.configChanges).toEqual({ before: initialConfig, after: expectedConfig });
+            expect(await fs.readJson(configPath)).toEqual(initialConfig);
+
+            const repairReport = await repair(options);
 
             expect(repairReport.applied).toHaveLength(3);
             expect(repairReport.failed).toHaveLength(0);
             expect(repairReport.configUpdated).toBe(true);
 
-            // 检查写回后的内存文件
-            const updatedConfig = await fs.readJson<any>('/app/components.json');
-            expect(updatedConfig.$schema).toBeDefined();
-            expect(updatedConfig.$version).toBe(1);
-            expect(updatedConfig.style).toBe('brutalism');
+            expect(await fs.readJson(configPath)).toEqual(expectedConfig);
 
             // 验证最新报告中已全部 pass
             expect(repairReport.freshReport.getByRuleId('config.schema')[0].status).toBe('pass');
@@ -163,6 +157,7 @@ describe('DiagnosticEngine & Env Rules', () => {
             expect(repairReport.freshReport.getByRuleId('config.style')[0].status).toBe('pass');
             expect(repairReport.freshReport.hasErrors).toBe(false);
             expect(repairReport.freshReport.hasWarnings).toBe(false);
+            expect((await repair(options)).totalAttempted).toBe(0);
         });
 
         it('respects dryRun option and rolls back changes', async () => {
@@ -220,6 +215,55 @@ describe('DiagnosticEngine & Env Rules', () => {
     });
 
     describe('Tailwind & Structure Rules with Topological Repair', () => {
+        it.each(['moved', 'detached', 'deleted'] as const)('repairs %s split tokens and preserves custom CSS', async (scenario) => {
+            const fs = new MemoryFileSystemAdapter();
+            const cwd = '/app';
+            const mainPath = '/app/src/index.css';
+            const tokensPath = '/app/src/theme/custom.css';
+            const tokensImport = '@import "./theme/custom.css";';
+            const userCss = 'body { margin: 0; }';
+            const customTokensCss = ':root { --project-accent: red; }';
+            const markers = `${BRUTX_CSS_START_MARKER}\n:root { --color-brutal-bg: white; }\n${BRUTX_CSS_END_MARKER}`;
+            const initialCss = `@import "tailwindcss";\n${scenario === 'deleted' ? `${tokensImport}\n` : ''}${userCss}\n${markers}\n`;
+            const initialTokens = scenario === 'detached' ? `${customTokensCss}\n${markers}` : customTokensCss;
+            await fs.ensureDir('/app/src/theme');
+            await fs.writeJson('/app/components.json', { tailwind: { css: 'src/index.css', tokensFile: 'src/theme/custom.css' } });
+            await fs.writeFile(mainPath, initialCss);
+            if (scenario !== 'deleted') {
+                await fs.writeFile(tokensPath, initialTokens);
+            }
+
+            const options = { cwd, fs, ruleIds: ['tailwind.tokens'], offline: true };
+            const before = await diagnose(options);
+            expect(before.checks).toHaveLength(1);
+            expect(before.checks[0]).toMatchObject({ status: 'error', fixId: 'inject-css-tokens' });
+
+            const preview = await repair({ ...options, dryRun: true });
+            expect(preview.preview?.fileDiffs.map(diff => diff.filePath)).toEqual(['src/theme/custom.css', 'src/index.css']);
+            expect(await fs.readFile(mainPath, 'utf-8')).toBe(initialCss);
+            if (scenario === 'deleted') {
+                expect(await fs.pathExists(tokensPath)).toBe(false);
+            } else {
+                expect(await fs.readFile(tokensPath, 'utf-8')).toBe(initialTokens);
+            }
+
+            const result = await repair(options);
+            expect(result.applied).toHaveLength(1);
+            expect(result.freshReport.checks[0].status).toBe('pass');
+            const mainCss = await fs.readFile(mainPath, 'utf-8');
+            const tokensCss = await fs.readFile(tokensPath, 'utf-8');
+            expect(mainCss.split(tokensImport)).toHaveLength(2);
+            expect(mainCss).toContain(userCss);
+            expect(mainCss).not.toContain(BRUTX_CSS_START_MARKER);
+            expect(tokensCss).toContain(BRUTX_CSS_START_MARKER);
+            if (scenario !== 'deleted') {
+                expect(tokensCss).toContain(customTokensCss);
+            }
+            expect((await repair(options)).totalAttempted).toBe(0);
+            expect(await fs.readFile(mainPath, 'utf-8')).toBe(mainCss);
+            expect(await fs.readFile(tokensPath, 'utf-8')).toBe(tokensCss);
+        });
+
         it('diagnoses and fixes tailwind tokens missing in existing css file', async () => {
             const fs = new MemoryFileSystemAdapter();
             await fs.ensureDir('/app/src');

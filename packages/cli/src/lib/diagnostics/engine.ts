@@ -1,6 +1,5 @@
 import path from 'path';
 import { createTwoFilesPatch } from 'diff';
-import type { BrutalistConfig } from '../types.js';
 import type {
     CheckResult,
     CheckStatus,
@@ -21,12 +20,12 @@ import type {
 import { BUILTIN_RULES } from './rules/index.js';
 import { ProjectContext } from '../project-context.js';
 import { readManifest } from '../manifest.js';
-import { readConfigSafe } from '../config.js';
+import { CONFIG_FILE_NAME, readConfigSnapshotSafe, resolveConfig } from '../config.js';
 import { CliError } from '../error.js';
 import { assertSafePath } from '../security.js';
 import { CustomRuleLoader } from './custom-rule-loader.js';
+import { withRegistryOperationCache } from '../storage/cache-storage.js';
 
-const CONFIG_FILE_NAME = 'components.json';
 const JSON_INDENT_SPACES = 2;
 
 function normalizePathKey(filePath: string, cwd: string): string {
@@ -41,10 +40,9 @@ function normalizeNewlines(content: string): string {
 }
 
 interface PlannedRepairState {
-    readonly cwd: string;
     readonly initialReport: DiagnosticReport;
     readonly fixableChecks: CheckResult[];
-    readonly projectContext: ProjectContext;
+    readonly ctx: DiagnosticContext;
     readonly plannedItems: Array<{ check: CheckResult; plan: RepairPlan }>;
     readonly plans: RepairPlan[];
     readonly skipped: Array<{ ruleId: string; checkName: string; fixId: string; reason: string }>;
@@ -153,42 +151,34 @@ export class DiagnosticEngine {
         }
     }
 
-    async diagnose(options: DiagnoseOptions = {}): Promise<DiagnosticReport> {
-        const cwd = path.resolve(options.cwd ?? process.cwd());
-        const fsAdapter = options.fs;
-
-        let configOverride = options.context?.config;
-        if (!configOverride) {
-            try {
-                const safe = await readConfigSafe(cwd);
-                if (safe) {
-                    configOverride = safe;
-                }
-            } catch {
-                // Ignore parse errors, loadUninitialized handles null config
-            }
-        }
-
+    private async createContext(options: DiagnoseOptions): Promise<DiagnosticContext> {
+        const cwd = path.resolve(options.cwd ?? options.context?.cwd ?? process.cwd());
+        const fs = options.context?.fs ?? options.fs;
+        const snapshot = await readConfigSnapshotSafe(cwd, fs);
         const projectContext = options.context ?? await ProjectContext.loadUninitialized(cwd, {
-            fs: fsAdapter,
-            configOverride,
+            fs,
+            configOverride: snapshot?.config,
             optionalConfig: true,
         });
 
-        const manifest = await readManifest(cwd, projectContext.fs);
-        const offline = options.offline ?? false;
-
-        const ctx: DiagnosticContext = {
+        return {
             cwd,
             projectContext,
             fs: projectContext.fs,
-            config: projectContext.config ?? null,
-            manifest,
-            offline,
+            config: options.context?.config ?? snapshot?.config ?? null,
+            rawConfig: snapshot?.raw ?? null,
+            manifest: await readManifest(cwd, projectContext.fs),
+            offline: options.offline ?? false,
         };
+    }
 
+    async diagnose(options: DiagnoseOptions = {}): Promise<DiagnosticReport> {
+        return await this.checkRules(await this.createContext(options), options);
+    }
+
+    private async checkRules(ctx: DiagnosticContext, options: DiagnoseOptions): Promise<DiagnosticReport> {
         if (ctx.config?.plugins && ctx.config.plugins.length > 0) {
-            await this.loadPlugins(ctx.config.plugins, cwd);
+            await this.loadPlugins(ctx.config.plugins, ctx.cwd);
         }
 
         const checks: CheckResult[] = [];
@@ -244,30 +234,13 @@ export class DiagnosticEngine {
     }
 
     private async collectRepairPlans(options: RepairOptions): Promise<PlannedRepairState> {
-        const cwd = path.resolve(options.cwd ?? process.cwd());
-        const initialReport = await this.diagnose(options);
+        const ctx = await this.createContext(options);
+        const initialReport = await this.checkRules(ctx, options);
 
         let fixableChecks = initialReport.checks.filter(c => c.status !== 'pass' && c.fixId);
         if (options.fixOnly) {
             fixableChecks = fixableChecks.filter(c => c.fixId === options.fixOnly);
         }
-
-        const projectContext = options.context ?? await ProjectContext.loadUninitialized(cwd, {
-            fs: options.fs,
-            optionalConfig: true,
-        });
-
-        const manifest = await readManifest(cwd, projectContext.fs);
-        const offline = options.offline ?? false;
-
-        const ctx: DiagnosticContext = {
-            cwd,
-            projectContext,
-            fs: projectContext.fs,
-            config: projectContext.config ?? null,
-            manifest,
-            offline,
-        };
 
         const plannedItems: Array<{ check: CheckResult; plan: RepairPlan }> = [];
         const plans: RepairPlan[] = [];
@@ -318,10 +291,9 @@ export class DiagnosticEngine {
         }
 
         return {
-            cwd,
             initialReport,
             fixableChecks,
-            projectContext,
+            ctx,
             plannedItems,
             plans,
             skipped,
@@ -330,7 +302,7 @@ export class DiagnosticEngine {
     }
 
     private async buildPreview(state: PlannedRepairState): Promise<RepairPreviewReport> {
-        const { cwd, projectContext, plans, skipped, failed } = state;
+        const { ctx: { cwd, projectContext, rawConfig }, plans, skipped, failed } = state;
 
         // 碰撞校验门禁（Pre-flight collision & path traversal gate）
         const writeActionMap = new Map<string, { content: string; filePath: string }>();
@@ -380,24 +352,19 @@ export class DiagnosticEngine {
 
         // 差异全景生成（Unified Diff Generation）
         const fileDiffs: FileDiffPreview[] = [];
-        const originalConfig = projectContext.config;
-        let patchedConfig: BrutalistConfig | null = null;
-        let hasConfigChanges = false;
+        const originalConfig = rawConfig ?? null;
+        let patchedConfig: Record<string, unknown> | undefined;
 
         const configActions = plans.flatMap(p =>
             p.actions.filter((a): a is Extract<RepairAction, { type: 'patch-config' }> => a.type === 'patch-config')
         );
 
         if (configActions.length > 0) {
-            hasConfigChanges = true;
-            let currentConfigRecord: Record<string, unknown> = originalConfig
-                ? (JSON.parse(JSON.stringify(originalConfig)) as Record<string, unknown>)
-                : {};
+            patchedConfig = originalConfig ?? {};
 
             for (const action of configActions) {
-                currentConfigRecord = deepMerge(currentConfigRecord, action.patch) as Record<string, unknown>;
+                patchedConfig = deepMerge(patchedConfig, action.patch) as Record<string, unknown>;
             }
-            patchedConfig = currentConfigRecord as unknown as BrutalistConfig;
 
             const configPath = path.join(cwd, CONFIG_FILE_NAME);
             const relConfigPath = path.relative(cwd, configPath).replace(/\\/g, '/');
@@ -500,21 +467,23 @@ export class DiagnosticEngine {
             skipped: skipped.map(s => ({ ruleId: s.ruleId, reason: s.reason })),
             failed: failed.map(f => ({ ruleId: f.ruleId, reason: f.reason })),
             fileDiffs,
-            configChanges: hasConfigChanges && patchedConfig ? {
-                before: originalConfig ?? null,
+            configChanges: patchedConfig ? {
+                before: originalConfig,
                 after: patchedConfig,
             } : undefined,
         };
     }
 
     async previewRepair(options: RepairOptions = {}): Promise<RepairPreviewReport> {
-        const state = await this.collectRepairPlans(options);
+        const state = await withRegistryOperationCache(true, () => this.collectRepairPlans(options));
         return await this.buildPreview(state);
     }
 
     async repair(options: RepairOptions = {}): Promise<RepairReport> {
-        const state = await this.collectRepairPlans(options);
-        const { cwd, initialReport, fixableChecks, projectContext, plannedItems, skipped, failed } = state;
+        const state = options.dryRun
+            ? await withRegistryOperationCache(true, () => this.collectRepairPlans(options))
+            : await this.collectRepairPlans(options);
+        const { initialReport, fixableChecks, ctx: { cwd, projectContext }, plannedItems, skipped, failed } = state;
 
         const appliedReports: RepairItemReport[] = [];
         const skippedReports: RepairItemReport[] = skipped.map(s => ({
@@ -604,11 +573,13 @@ export class DiagnosticEngine {
             if (preview.configChanges) {
                 const configPath = path.join(cwd, CONFIG_FILE_NAME);
                 await transaction.writeJson(configPath, preview.configChanges.after, { spaces: JSON_INDENT_SPACES });
-                projectContext.bindConfig(preview.configChanges.after);
                 configUpdated = true;
             }
 
             await transaction.commit();
+            if (preview.configChanges) {
+                projectContext.bindConfig(await resolveConfig(preview.configChanges.after));
+            }
 
             for (const { check, plan } of plannedItems) {
                 appliedReports.push({

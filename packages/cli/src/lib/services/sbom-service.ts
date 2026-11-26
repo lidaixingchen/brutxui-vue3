@@ -9,6 +9,7 @@ import { CliError } from '../error.js';
 export interface ProjectSbomOptions {
     cwd?: string;
     outputPath?: string;
+    dryRun?: boolean;
     context?: ProjectContext;
     fs?: FileSystemAdapter;
 }
@@ -125,8 +126,10 @@ export async function generateProjectSbom(options: ProjectSbomOptions = {}): Pro
     const targetPath: string = options.outputPath
         ? resolvePortablePath(cwd, options.outputPath, { allowAbsolute: true })
         : path.resolve(cwd, 'brutx-sbom.json');
-    await projectContext.fs.ensureDir(path.dirname(targetPath));
-    await projectContext.fs.writeJson(targetPath, sbom, { spaces: 2 });
+    if (!options.dryRun) {
+        await projectContext.fs.ensureDir(path.dirname(targetPath));
+        await projectContext.fs.writeJson(targetPath, sbom, { spaces: 2 });
+    }
 
     return {
         targetPath,

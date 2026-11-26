@@ -8,6 +8,7 @@ import {
     stripCssComments,
 } from '../src/lib/css/index.js';
 import { BRUTX_CSS_END_MARKER, BRUTX_CSS_START_MARKER } from '../src/lib/constants.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 
 describe('CssDependencyGraphEngine', () => {
     const cwd = path.resolve('/workspace');
@@ -60,6 +61,13 @@ describe('CssDependencyGraphEngine', () => {
             const original = '@import "tailwindcss";\nbody { color: red; }';
             const injected = injectImportStatement(original, './tokens.css');
             expect(injected).toBe('@import "tailwindcss";\n@import "./tokens.css";\nbody { color: red; }');
+        });
+
+        it('忽略注释中的导入并定位实际插入位置', () => {
+            const comment = '/* @import "tailwindcss"; @import "./tokens.css"; */';
+            const original = `${comment}\n@import "tailwindcss";\nbody { color: red; }`;
+            const injected = injectImportStatement(original, './tokens.css');
+            expect(injected).toBe(`${comment}\n@import "tailwindcss";\n@import "./tokens.css";\nbody { color: red; }`);
         });
 
         it('若存在 @charset，应插入在 @charset 之后', () => {
@@ -203,6 +211,40 @@ describe('CssDependencyGraphEngine', () => {
             expect(graph.hasBrutxTokens).toBe(true);
             expect(graph.tokenNodePaths).toEqual([tokensPath]);
             expect(graph.missingImports).toHaveLength(0);
+        });
+
+        it('解析显式 TS 别名，同时保留包、URL 及相对导入的原有语义', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            const mainPath = path.resolve(cwd, 'src/main.css');
+            const tokensPath = path.resolve(cwd, 'src/styles/tokens.css');
+            const relativePath = path.resolve(cwd, 'src/local.css');
+            await fs.writeJson(path.resolve(cwd, 'tsconfig.json'), {
+                compilerOptions: {
+                    paths: { '@styles/*': ['./src/styles/*'], '*': ['./src/*'] },
+                },
+            });
+            await fs.writeFile(mainPath, [
+                '@import "@styles/tokens.css";',
+                '@import "./local.css";',
+                '@import "@scope/package";',
+                '@import "tailwindcss";',
+                '@import "https://example.test/theme.css";',
+                '@import "//example.test/theme.css";',
+            ].join('\n'));
+            await fs.writeFile(tokensPath, '');
+            await fs.writeFile(relativePath, '');
+            const context = await ProjectContext.loadUninitialized(cwd, { fs });
+
+            const graph = await scanCssGraph(mainPath, {
+                cwd,
+                fs,
+                tsConfig: context.tsConfig,
+                resolveAlias: specifier => context.resolveAliasPath(specifier),
+            });
+
+            expect(graph.missingImports).toEqual([]);
+            expect([...graph.nodes.keys()]).toEqual([mainPath, tokensPath, relativePath]);
+            expect(graph.rootNode.imports.map(entry => entry.isExternal)).toEqual([false, false, true, true, true, true]);
         });
     });
 });

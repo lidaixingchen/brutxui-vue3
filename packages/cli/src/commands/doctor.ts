@@ -6,7 +6,9 @@ import {
     generateProjectSbom,
     isOfflineRequested,
     logger,
+    mergeDryRun,
     previewRepair,
+    printDryRunAction,
     repair,
     withOfflineScope,
 } from '../lib/index.js';
@@ -150,6 +152,7 @@ function renderDryRunPreview(preview: RepairPreviewReport): void {
 
 export async function doctor(options: DoctorOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
+    const dryRun = mergeDryRun(options.dryRun);
 
     if (options.silent) {
         logger.setSilent(true);
@@ -157,8 +160,12 @@ export async function doctor(options: DoctorOptions): Promise<void> {
 
     // 1. SBOM 模式分流
     if (options.sbom) {
-        const result = await generateProjectSbom({ cwd, outputPath: options.sbomOutput });
-        logger.success(`Generated SBOM: ${result.targetPath} (${result.componentCount} components)`);
+        const result = await generateProjectSbom({ cwd, outputPath: options.sbomOutput, dryRun });
+        if (dryRun) {
+            printDryRunAction('write SBOM', result.targetPath);
+        } else {
+            logger.success(`Generated SBOM: ${result.targetPath} (${result.componentCount} components)`);
+        }
         logger.info(`Format: CycloneDX ${result.specVersion}`);
         return;
     }
@@ -179,7 +186,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
 
         // 2. 自愈修复流程与 CI 安全防御
         if (options.fix || options.fixOnly) {
-            if (options.dryRun) {
+            if (dryRun) {
                 const previewReport = await previewRepair({
                     cwd,
                     fixOnly: options.fixOnly,
@@ -216,7 +223,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
             cwd,
             failOn: options.failOn,
             silent: options.silent,
-            outputFile: options.outputFile,
+            outputFile: dryRun ? undefined : options.outputFile,
         });
 
         // 4. 细粒度退出码判定

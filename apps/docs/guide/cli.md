@@ -363,7 +363,7 @@ npx brutx-vue@latest doctor [options]
 | `add-schema` | `components.json` 缺少 `$schema` | 写入官方 Schema 校验 URL |
 | `add-config-version` | 配置文件版本过期或缺失 | 升级为当前最新配置版本 `$version` |
 | `set-style` | `style` 字段缺失 | 自动设置为 `brutalism` |
-| `inject-css-tokens` | 全局 CSS 缺失 BrutxUI 令牌标记块 | 自动向目标 CSS 注入设计令牌 |
+| `inject-css-tokens` | BrutxUI 设计令牌缺失或独立令牌文件未接入全局 CSS | 按 `tailwind.tokensFile` 设置注入令牌并更新全局 CSS 入口 |
 | `create-components-dir` | 组件存放目录不存在 | 自动创建目标目录 |
 | `create-utils-file` | `src/lib/utils.ts` 工具文件缺失 | 创建包含 `cn()` 的工具文件 |
 | `add-cn-function` | 工具文件中未定义 `cn()` 函数 | 向 utils 文件追加 `cn()` 导出 |
@@ -371,7 +371,8 @@ npx brutx-vue@latest doctor [options]
 | `remove-orphans` | 存在已无任何组件引用的孤儿共享文件 | 自动清理冗余的孤儿文件 |
 
 #### 修复计划演练预览（`--fix --dry-run`）
-在执行修复之前，可以通过演练模式查看将被修改的文件与差异补丁：
+
+演练会预览将被修改的文件与统一差异补丁，保留磁盘上的原文件。`$schema`、`$version` 和 `style` 的修复依据磁盘上的 `components.json`，并合并到同一份配置补丁。
 
 ```bash
 npx brutx-vue@latest doctor --fix --dry-run
@@ -475,7 +476,7 @@ npx brutx-vue@latest registry remove https://mirror.example.com/registry
 | `style` | `string` | 预设视觉风格，当前固定为 `brutalism` |
 | `tailwind.config` | `string` | Tailwind 配置文件路径（Tailwind v4 项目中保持为空字符串） |
 | `tailwind.css` | `string` | 全局 CSS 入口文件路径 |
-| `tailwind.tokensFile` | `string` | *(可选)* 独立设计令牌样式文件路径 |
+| `tailwind.tokensFile` | `string` | *(可选)* 设计令牌的独立 CSS 路径。配置后，全局 CSS 入口须通过 `@import` 加载该文件 |
 | `aliases.components` | `string` | UI 组件导入别名（默认 `@/components`） |
 | `aliases.utils` | `string` | 工具函数导入别名（默认 `@/lib/utils`） |
 | `aliases.composables`| `string` | 组合式函数导入别名（默认 `@/composables`） |
