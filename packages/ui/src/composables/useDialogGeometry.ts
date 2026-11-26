@@ -42,6 +42,20 @@ export interface ResizableDialogOptions {
 
 export interface UseDialogGeometryOptions extends DraggableDialogOptions, ResizableDialogOptions {}
 
+interface DialogSize {
+    width: number
+    height: number
+}
+
+interface ResizeStart extends DialogSize {
+    x: number
+    y: number
+    anchorX: number
+    anchorY: number
+    directionX: 1 | -1
+    directionY: 1 | -1
+}
+
 export interface UseDialogGeometryReturn {
     contentRef: Ref<HTMLElement | null>
     isDragging: Readonly<Ref<boolean>>
@@ -88,10 +102,12 @@ export function useDialogGeometry(
     const contentRef = ref<HTMLElement | null>(null)
     const isDragging = ref(false)
     const isResizing = ref(false)
-    const position = ref({ x: 0, y: 0 })
-    const size = ref({ width: 0, height: 0 })
+    const position = ref(opt.initialPosition ? { ...opt.initialPosition } : { x: 0, y: 0 })
+    const measuredSize = ref({ width: 0, height: 0 })
+    const appliedSize = ref<DialogSize | null>(null)
+    const size = computed(() => appliedSize.value ?? measuredSize.value)
     const dragStart = ref({ x: 0, y: 0 })
-    const resizeStart = ref({ x: 0, y: 0, width: 0, height: 0, corner: 'se', startX: 0, startY: 0 })
+    let resizeStart: ResizeStart | undefined
     let dragStartSize: { width: number; height: number } | null = null
 
     // ── Content Style ──────────────────────────────────────────────
@@ -99,7 +115,7 @@ export function useDialogGeometry(
     const contentStyle = computed<CSSProperties>(() => {
         const style: CSSProperties = {}
 
-        if (opt.draggable) {
+        if (opt.draggable || (opt.resizable && (appliedSize.value || opt.initialPosition))) {
             style.transform = `translate(calc(-50% + ${position.value.x}px), calc(-50% + ${position.value.y}px))`
             style.position = 'fixed'
             style.top = '50%'
@@ -107,9 +123,9 @@ export function useDialogGeometry(
             style.margin = '0'
         }
 
-        if (opt.resizable && size.value.width > 0 && size.value.height > 0) {
-            style.width = `${size.value.width}px`
-            style.height = `${size.value.height}px`
+        if (opt.resizable && appliedSize.value && appliedSize.value.width > 0 && appliedSize.value.height > 0) {
+            style.width = `${appliedSize.value.width}px`
+            style.height = `${appliedSize.value.height}px`
         }
 
         return style
@@ -130,6 +146,16 @@ export function useDialogGeometry(
 
     // ── Position Constraints ───────────────────────────────────────
 
+    function getPositionBounds(viewport: DialogSize) {
+        if (opt.bounds === 'viewport') {
+            return { top: 0, left: 0, right: viewport.width, bottom: viewport.height }
+        }
+        if (opt.bounds === 'parent') {
+            return contentRef.value?.parentElement?.getBoundingClientRect()
+        }
+        return opt.bounds
+    }
+
     function constrainPosition(
         newX: number,
         newY: number,
@@ -145,52 +171,31 @@ export function useDialogGeometry(
         const clampAxis = (value: number, lower: number, upper: number): number =>
             lower <= upper ? Math.max(lower, Math.min(value, upper)) : 0
 
-        if (opt.bounds === 'viewport') {
-            const { width: vw, height: vh } = getViewportSize()
-            return {
-                x: clampAxis(newX, width / 2 - vw / 2, vw / 2 - width / 2),
-                y: clampAxis(newY, height / 2 - vh / 2, vh / 2 - height / 2),
-            }
-        } else if (opt.bounds === 'parent') {
-            const parentRect = contentRef.value?.parentElement?.getBoundingClientRect()
-            if (parentRect) {
-                const { width: vw, height: vh } = getViewportSize()
-                return {
-                    x: clampAxis(newX, parentRect.left - vw / 2 + width / 2, parentRect.right - vw / 2 - width / 2),
-                    y: clampAxis(newY, parentRect.top - vh / 2 + height / 2, parentRect.bottom - vh / 2 - height / 2),
-                }
-            }
-        } else if (typeof opt.bounds === 'object') {
-            const { width: vw, height: vh } = getViewportSize()
-            return {
-                x: clampAxis(newX, opt.bounds.left - vw / 2 + width / 2, opt.bounds.right - vw / 2 - width / 2),
-                y: clampAxis(newY, opt.bounds.top - vh / 2 + height / 2, opt.bounds.bottom - vh / 2 - height / 2),
-            }
+        const viewport = getViewportSize()
+        const bounds = getPositionBounds(viewport)
+        if (!bounds) return { x: newX, y: newY }
+        return {
+            x: clampAxis(newX, bounds.left - viewport.width / 2 + width / 2, bounds.right - viewport.width / 2 - width / 2),
+            y: clampAxis(newY, bounds.top - viewport.height / 2 + height / 2, bounds.bottom - viewport.height / 2 - height / 2),
         }
-
-        return { x: newX, y: newY }
     }
 
     // ── Size Constraints ──────────────────────────────────────────
 
-    function constrainSize(width: number, height: number): { width: number; height: number } {
-        let newWidth = width
-        let newHeight = height
-        if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
-        if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
-        if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
-        if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
-
-        if (opt.aspectRatio) {
-            newHeight = newWidth / opt.aspectRatio
-            if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
-            if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
-            newWidth = newHeight * opt.aspectRatio
-            if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
-            if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
-            newHeight = newWidth / opt.aspectRatio
+    function constrainSize(width: number, height: number, space: DialogSize): DialogSize {
+        const maxWidth = Math.min(space.width, opt.maxWidth || Infinity)
+        const maxHeight = Math.min(space.height, opt.maxHeight || Infinity)
+        const ratio = opt.aspectRatio
+        if (ratio) {
+            const min = Math.max(opt.minWidth, opt.minHeight * ratio)
+            const max = Math.min(maxWidth, maxHeight * ratio)
+            const adjustedWidth = Math.min(max, Math.max(min, width))
+            return { width: adjustedWidth, height: adjustedWidth / ratio }
         }
-        return { width: newWidth, height: newHeight }
+        return {
+            width: Math.min(maxWidth, Math.max(opt.minWidth, width)),
+            height: Math.min(maxHeight, Math.max(opt.minHeight, height)),
+        }
     }
 
     // ── Programmatic Setters ──────────────────────────────────────
@@ -202,7 +207,7 @@ export function useDialogGeometry(
 
     function setSize(next: { width: number; height: number }): void {
         if (!Number.isFinite(next.width) || !Number.isFinite(next.height)) return
-        size.value = { width: next.width, height: next.height }
+        appliedSize.value = { width: next.width, height: next.height }
     }
 
     // ── Drag Handlers ──────────────────────────────────────────────
@@ -258,18 +263,26 @@ export function useDialogGeometry(
 
     function onResizeStart(e: MouseEvent, corner: ResizeCorner) {
         const doc = getDocument()
-        if (!doc) return
-        if (!opt.resizable) return
+        if (!doc || !opt.resizable || e.button !== 0) return
 
+        const rect = contentRef.value?.getBoundingClientRect()
+        const viewport = getViewportSize()
+        const width = rect?.width || size.value.width
+        const height = rect?.height || size.value.height
+        const centerX = rect?.width ? rect.left + width / 2 : viewport.width / 2 + position.value.x
+        const centerY = rect?.height ? rect.top + height / 2 : viewport.height / 2 + position.value.y
+        const directionX = corner.endsWith('e') ? 1 : -1
+        const directionY = corner.startsWith('s') ? 1 : -1
         isResizing.value = true
-        resizeStart.value = {
+        resizeStart = {
             x: e.clientX,
             y: e.clientY,
-            width: size.value.width,
-            height: size.value.height,
-            corner,
-            startX: position.value.x,
-            startY: position.value.y,
+            width,
+            height,
+            anchorX: centerX - directionX * width / 2,
+            anchorY: centerY - directionY * height / 2,
+            directionX,
+            directionY,
         }
 
         doc.addEventListener('pointermove', onResizeMove)
@@ -280,67 +293,35 @@ export function useDialogGeometry(
     }
 
     function onResizeMove(e: MouseEvent) {
-        if (!isResizing.value) return
+        if (!resizeStart) return
+        const { x, y, width, height, anchorX, anchorY, directionX, directionY } = resizeStart
+        const deltaX = e.clientX - x
+        const deltaY = e.clientY - y
+        if (!appliedSize.value && deltaX === 0 && deltaY === 0) return
 
-        const deltaX = e.clientX - resizeStart.value.x
-        const deltaY = e.clientY - resizeStart.value.y
+        const viewport = getViewportSize()
+        const bounds = getPositionBounds(viewport)
+        // 以固定对角到边界的距离限制尺寸，使活动边碰到边界时对角保持原位。
+        const space = bounds ? {
+            width: directionX > 0 ? bounds.right - anchorX : anchorX - bounds.left,
+            height: directionY > 0 ? bounds.bottom - anchorY : anchorY - bounds.top,
+        } : { width: Infinity, height: Infinity }
+        const next = constrainSize(width + directionX * deltaX, height + directionY * deltaY, space)
+        if (next.width <= 0 || next.height <= 0) return
+        if (!appliedSize.value && next.width === width && next.height === height) return
 
-        let newWidth = resizeStart.value.width
-        let newHeight = resizeStart.value.height
-
-        switch (resizeStart.value.corner) {
-            case 'se':
-                newWidth += deltaX
-                newHeight += deltaY
-                break
-            case 'sw':
-                newWidth -= deltaX
-                newHeight += deltaY
-                break
-            case 'ne':
-                newWidth += deltaX
-                newHeight -= deltaY
-                break
-            case 'nw':
-                newWidth -= deltaX
-                newHeight -= deltaY
-                break
+        setSize(next)
+        position.value = {
+            x: anchorX + directionX * next.width / 2 - viewport.width / 2,
+            y: anchorY + directionY * next.height / 2 - viewport.height / 2,
         }
-
-        const constrained = constrainSize(newWidth, newHeight)
-        newWidth = constrained.width
-        newHeight = constrained.height
-
-        const deltaW = newWidth - resizeStart.value.width
-        const deltaH = newHeight - resizeStart.value.height
-        let newX = resizeStart.value.startX
-        let newY = resizeStart.value.startY
-        switch (resizeStart.value.corner) {
-            case 'se':
-                newX += deltaW / 2
-                newY += deltaH / 2
-                break
-            case 'sw':
-                newX -= deltaW / 2
-                newY += deltaH / 2
-                break
-            case 'ne':
-                newX += deltaW / 2
-                newY -= deltaH / 2
-                break
-            case 'nw':
-                newX -= deltaW / 2
-                newY -= deltaH / 2
-                break
-        }
-        position.value = constrainPosition(newX, newY, newWidth, newHeight)
-        size.value = { width: newWidth, height: newHeight }
     }
 
     function onResizeEnd() {
         const doc = getDocument()
         if (!doc) return
         isResizing.value = false
+        resizeStart = undefined
         doc.removeEventListener('pointermove', onResizeMove)
         doc.removeEventListener('pointerup', onResizeEnd)
         doc.removeEventListener('pointercancel', onResizeEnd)
@@ -369,26 +350,23 @@ export function useDialogGeometry(
                 sizeRafId = null
                 const rect = contentRef.value?.getBoundingClientRect()
                 if (rect && rect.width > 0 && rect.height > 0) {
-                    size.value = { width: rect.width, height: rect.height }
+                    measuredSize.value = { width: rect.width, height: rect.height }
                 }
             })
         }
     }
 
-    function setupSizeObserver(): void {
-        resizeObserver?.disconnect()
-        resizeObserver = null
+    function setupSizeObserver(el: HTMLElement): void {
         const Ctor = getResizeObserverCtor()
-        const el = contentRef.value
-        if (!Ctor || !el) return
+        if (!Ctor) return
         resizeObserver = new Ctor((entries) => {
-            if (isResizing.value) return
+            if (contentRef.value !== el || isResizing.value) return
             for (const entry of entries) {
                 const borderBox = entry.borderBoxSize?.[0]
                 const width = borderBox ? borderBox.inlineSize : entry.contentRect.width
                 const height = borderBox ? borderBox.blockSize : entry.contentRect.height
                 if (width > 0 && height > 0) {
-                    size.value = { width, height }
+                    measuredSize.value = { width, height }
                 }
             }
         })
@@ -397,8 +375,15 @@ export function useDialogGeometry(
 
     // ── Watchers & Lifecycle ───────────────────────────────────────
 
-    watch(contentRef, (el) => {
-        if (el) setupSizeObserver()
+    watch(contentRef, (el, previous) => {
+        if (previous) {
+            onDragEnd()
+            onResizeEnd()
+        }
+        resizeObserver?.disconnect()
+        resizeObserver = null
+        initSize()
+        if (el) setupSizeObserver(el)
     })
 
     watch(
@@ -411,26 +396,17 @@ export function useDialogGeometry(
     )
 
     if (getCurrentInstance()) {
-        onMounted(() => {
-            initPosition()
-            initSize()
-            setupSizeObserver()
-        })
+        onMounted(initPosition)
 
         onBeforeUnmount(() => {
             if (sizeRafId !== null) {
                 cancelAnimationFrame(sizeRafId)
+                sizeRafId = null
             }
             resizeObserver?.disconnect()
             resizeObserver = null
-            const doc = getDocument()
-            if (!doc) return
-            doc.removeEventListener('pointermove', onDragMove)
-            doc.removeEventListener('pointerup', onDragEnd)
-            doc.removeEventListener('pointercancel', onDragEnd)
-            doc.removeEventListener('pointermove', onResizeMove)
-            doc.removeEventListener('pointerup', onResizeEnd)
-            doc.removeEventListener('pointercancel', onResizeEnd)
+            onDragEnd()
+            onResizeEnd()
         })
     }
 

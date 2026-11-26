@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { defineComponent, h, ref, nextTick } from 'vue'
+import { cloneVNode, defineComponent, nextTick } from 'vue'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import DialogOverlay from './DialogOverlay.vue'
 import DialogContent from './DialogContent.vue'
@@ -279,51 +279,13 @@ describe('DialogDescription', () => {
 /*  DialogEnhanced                                                     */
 /* ------------------------------------------------------------------ */
 
-/**
- * Stub for reka-ui's DialogContent primitive.
- *
- * The real primitive exposes its root DOM element via `expose()` so that
- * a parent template-ref yields an HTMLElement.  We replicate that with a
- * Proxy that lazily forwards to the rendered <div>.
- */
 const ContentStub = defineComponent({
     inheritAttrs: false,
-    setup(_, { slots, attrs, expose }) {
-        const el = ref<HTMLElement>()
-
-        const proxy = new Proxy({} as HTMLElement, {
-            get(_target, prop) {
-                if (el.value) {
-                    const value = Reflect.get(el.value, prop, el.value)
-                    return typeof value === 'function' ? value.bind(el.value) : value
-                }
-                return undefined
-            },
-            has(_target, prop) {
-                return el.value ? prop in el.value : false
-            },
-        })
-
-        expose(proxy)
-
-        return () =>
-            h(
-                'div',
-                { ...attrs, 'data-testid': 'content-primitive', ref: el },
-                slots.default?.(),
-            )
-    },
-})
-
-const CloseStub = defineComponent({
-    inheritAttrs: false,
     setup(_, { slots, attrs }) {
-        return () =>
-            h(
-                'button',
-                { ...attrs, 'data-testid': 'close-button' },
-                slots.default?.(),
-            )
+        return () => cloneVNode(slots.default!()[0]!, {
+            ...attrs,
+            'data-testid': 'content-primitive',
+        })
     },
 })
 
@@ -331,7 +293,6 @@ const enhancedStubs = {
     DialogPortal: { template: '<slot />' },
     DialogOverlay: { template: '<div />' },
     DialogContent: ContentStub,
-    DialogClose: CloseStub,
     X: { template: '<svg />' },
 }
 
@@ -376,12 +337,12 @@ describe('DialogEnhanced', () => {
 
         it('renders close button by default', () => {
             const wrapper = mountDialog()
-            expect(wrapper.find('[data-testid="close-button"]').exists()).toBe(true)
+            expect(wrapper.find('button').exists()).toBe(true)
         })
 
         it('hides close button when showCloseButton is false', () => {
             const wrapper = mountDialog({ showCloseButton: false })
-            expect(wrapper.find('[data-testid="close-button"]').exists()).toBe(false)
+            expect(wrapper.find('button').exists()).toBe(false)
         })
 
         it('applies custom class to content', () => {
@@ -750,7 +711,7 @@ describe('DialogEnhanced', () => {
     describe('beforeClose', () => {
         it('closes directly when no beforeClose is provided', async () => {
             const wrapper = mountDialog()
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await nextTick()
 
             expect(wrapper.emitted('close')).toBeTruthy()
@@ -762,7 +723,7 @@ describe('DialogEnhanced', () => {
             const beforeClose = vi.fn(() => true)
             const wrapper = mountDialog({ beforeClose })
 
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await flushPromises()
 
             expect(beforeClose).toHaveBeenCalledTimes(1)
@@ -774,7 +735,7 @@ describe('DialogEnhanced', () => {
             const beforeClose = vi.fn(() => false)
             const wrapper = mountDialog({ beforeClose })
 
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await flushPromises()
 
             expect(beforeClose).toHaveBeenCalledTimes(1)
@@ -786,7 +747,7 @@ describe('DialogEnhanced', () => {
             const beforeClose = vi.fn(() => Promise.resolve(true))
             const wrapper = mountDialog({ beforeClose })
 
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await flushPromises()
 
             expect(beforeClose).toHaveBeenCalledTimes(1)
@@ -798,7 +759,7 @@ describe('DialogEnhanced', () => {
             const beforeClose = vi.fn(() => Promise.resolve(false))
             const wrapper = mountDialog({ beforeClose })
 
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await flushPromises()
 
             expect(beforeClose).toHaveBeenCalledTimes(1)
@@ -810,7 +771,7 @@ describe('DialogEnhanced', () => {
             const beforeClose = vi.fn(() => undefined as unknown as boolean)
             const wrapper = mountDialog({ beforeClose })
 
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await flushPromises()
 
             expect(beforeClose).toHaveBeenCalledTimes(1)
@@ -1005,7 +966,7 @@ describe('DialogEnhanced', () => {
     describe('performClose', () => {
         it('emits close then update:open with false', async () => {
             const wrapper = mountDialog()
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
+            await wrapper.find('button').trigger('click')
             await nextTick()
 
             const closeEvents = wrapper.emitted('close')
@@ -1040,7 +1001,7 @@ describe('DialogEnhanced', () => {
     /* ======== initSize with real rAF ======== */
 
     describe('initSize', () => {
-        it('initialises size when requestAnimationFrame fires and element has dimensions', async () => {
+        it('measures the content while leaving its CSS size until the first resize', async () => {
             // Restore real rAF for this test
             rafSpy.mockRestore()
 
@@ -1055,14 +1016,20 @@ describe('DialogEnhanced', () => {
                 x: 0, y: 0, toJSON: () => ({}),
             }))
 
-            // Advance timers to fire the rAF callback
+            await nextTick()
             vi.advanceTimersByTime(16)
             await nextTick()
 
-            // After initSize, resizable content should have width/height style
-            // (if size was set)
-            expect(el.style.width).toBeTruthy()
-            expect(el.style.height).toBeTruthy()
+            expect(el.style.width).toBe('')
+            expect(el.style.height).toBe('')
+
+            const handle = wrapper.get('.cursor-se-resize')
+            await handle.trigger('pointerdown', { clientX: 500, clientY: 400 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 520, clientY: 410 }))
+            document.dispatchEvent(new PointerEvent('pointerup'))
+            await nextTick()
+            expect(el.style.width).toBe('520px')
+            expect(el.style.height).toBe('410px')
 
             vi.useRealTimers()
 
@@ -1082,6 +1049,7 @@ describe('DialogEnhanced', () => {
                 x: 0, y: 0, toJSON: () => ({}),
             }))
 
+            await nextTick()
             vi.advanceTimersByTime(16)
             await nextTick()
 

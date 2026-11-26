@@ -129,6 +129,8 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 </template>
 ```
 
+The built-in close button, `Escape`, and clicks on the overlay all run `beforeClose` first. The dialog stays open if the hook returns or resolves to `false`. When `v-model:open` on `DialogRoot` controls the dialog, the parent accepts the close request by updating that state.
+
 ## API Reference
 
 <span id="dialog-root-component"></span>
@@ -194,9 +196,10 @@ const instance = showDialog({
 | `resizable` | `boolean` | `false` | Enable resize functionality |
 | `fullscreen` | `boolean` | `false` | Fullscreen display |
 | `zIndex` | `number` | — | Custom overlay layer z-index |
-| `onCancel` | `() => void` | — | Close callback hook |
+| `beforeClose` | `() => boolean \| Promise<boolean>` | — | Return `false` to prevent a built-in dismissal |
+| `onCancel` | `() => void` | — | Runs once for an approved built-in dismissal |
 
-**Return value:** `OverlayInstanceHandle<void>` — contains `close()`, `destroy()` methods and `promise` handle.
+`showDialog()` returns a `DialogInstance<T>` with `close()`, `destroy()`, and a `promise` that resolves to `DialogResult<T>`. An approved built-in dismissal resolves the promise with `{ action: 'cancel' }`.
 
 ### useDialog (Composable)
 

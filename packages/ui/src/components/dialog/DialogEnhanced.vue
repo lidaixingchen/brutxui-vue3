@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { computed, nextTick, ref, watch, onMounted, onBeforeUnmount, type ComponentPublicInstance } from 'vue'
 import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
-    DialogClose as DialogClosePrimitive,
+    Primitive,
     injectDialogRootContext,
 } from 'reka-ui'
 import { X } from '@lucide/vue'
@@ -90,29 +90,40 @@ const {
     aspectRatio: props.aspectRatio,
 }))
 
-void contentRef
+function setContentElement(element: Element | ComponentPublicInstance | null): void {
+    contentRef.value = element instanceof HTMLElement ? element : null
+}
 
-let isClosing = false
+let pendingClose: symbol | undefined
+
+watch(
+    () => dialogContext?.open.value,
+    () => { pendingClose = undefined },
+    { flush: 'sync' },
+)
 
 async function handleClose(): Promise<void> {
-    if (isClosing) return
-    if (!props.beforeClose) {
-        emit('close')
-        emit('update:open', false)
-        return
-    }
+    if (pendingClose || dialogContext?.open.value === false) return
 
-    isClosing = true
+    const request = Symbol()
+    pendingClose = request
     try {
-        const result = await props.beforeClose()
-        if (result !== false) {
-            emit('close')
-            emit('update:open', false)
+        if (props.beforeClose) {
+            const result = await props.beforeClose()
+            if (result === false) return
+            // 等待受控 Root 接收校验期间父级提交的状态。
+            await nextTick()
         }
+
+        if (pendingClose !== request) return
+        emit('close')
+        dialogContext?.onOpenChange(false)
+        emit('update:open', false)
+        await nextTick()
     } catch (error) {
         console.error('[DialogEnhanced] beforeClose 执行失败:', error)
     } finally {
-        isClosing = false
+        if (pendingClose === request) pendingClose = undefined
     }
 }
 
@@ -124,8 +135,9 @@ const contentClasses = computed(() =>
         // 触发 pointercancel 打断 pointer 事件流（拖拽/缩放均依赖 pointer 事件）
         (props.draggable || props.resizable) && 'touch-none',
         props.resizable && 'overflow-hidden',
-        props.fullscreen && 'w-screen h-screen max-w-none max-h-none rounded-none inset-0',
-        props.class
+        props.class,
+        props.resizable && composableContentStyle.value.width !== undefined && 'max-w-none',
+        props.fullscreen && 'w-screen h-screen max-w-none max-h-none rounded-none inset-0'
     )
 )
 
@@ -137,13 +149,13 @@ const contentStyle = computed(() => {
     const style: Record<string, string> = {}
 
     if (props.fullscreen) {
-        // Position/size in fullscreen comes from Tailwind classes (w-screen h-screen inset-0);
-        // only strip the composable's fixed-center transform so the dialog snaps to edges.
         style.position = 'fixed'
         style.inset = '0'
         style.margin = '0'
+        style.translate = 'none'
     } else {
         Object.assign(style, composableContentStyle.value)
+        if (composableContentStyle.value.transform) style.translate = 'none'
     }
 
     if (props.zIndex !== undefined) {
@@ -153,14 +165,9 @@ const contentStyle = computed(() => {
     return style
 })
 
-function handleEscapeKeyDown(event: KeyboardEvent) {
+function handleDismiss(event: Event) {
     event.preventDefault()
-    handleClose()
-}
-
-function handlePointerDownOutside(event: Event) {
-    event.preventDefault()
-    handleClose()
+    void handleClose()
 }
 
 // forceMount 优先于 destroyOnClose：forceMount 旨在保持内容挂载（如保留输入状态），
@@ -210,6 +217,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    pendingClose = undefined
     clearDestroySlotTimer()
 })
 </script>
@@ -218,43 +226,46 @@ onBeforeUnmount(() => {
     <DialogPortalPrimitive>
         <DialogOverlay :force-mount="props.forceMount" />
         <DialogContentPrimitive
-            ref="contentRef"
+            as-child
             :class="contentClasses"
             :style="contentStyle"
             :force-mount="props.forceMount"
             @pointerdown="onDragStart"
-            @escape-key-down="handleEscapeKeyDown"
-            @pointer-down-outside="handlePointerDownOutside"
+            @escape-key-down="handleDismiss"
+            @pointer-down-outside="handleDismiss"
         >
-            <slot v-if="!destroyOnClose || isSlotPresent" />
-            <DialogClosePrimitive
-                v-if="showCloseButton"
-                :class="closeClasses"
-                @click.prevent="handleClose"
-            >
-                <X :class="closeIconClasses" aria-hidden="true" />
-                <span class="sr-only">{{ t('dialog.close') }}</span>
-            </DialogClosePrimitive>
+            <div :ref="setContentElement">
+                <slot v-if="!destroyOnClose || isSlotPresent" />
+                <Primitive
+                    v-if="showCloseButton"
+                    as="button"
+                    type="button"
+                    :class="closeClasses"
+                    @click="handleClose"
+                >
+                    <X :class="closeIconClasses" aria-hidden="true" />
+                    <span class="sr-only">{{ t('dialog.close') }}</span>
+                </Primitive>
 
-            <!-- Resize Handles（全屏模式下缩放无效，隐藏手柄） -->
-            <template v-if="resizable && !fullscreen">
-                <div
-                    class="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
-                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'se' as ResizeCorner)"
-                />
-                <div
-                    class="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize"
-                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'sw' as ResizeCorner)"
-                />
-                <div
-                    class="absolute top-0 right-0 w-4 h-4 cursor-ne-resize"
-                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'ne' as ResizeCorner)"
-                />
-                <div
-                    class="absolute top-0 left-0 w-4 h-4 cursor-nw-resize"
-                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'nw' as ResizeCorner)"
-                />
-            </template>
+                <template v-if="resizable && !fullscreen">
+                    <div
+                        class="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
+                        @pointerdown="(e: PointerEvent) => onResizeStart(e, 'se' as ResizeCorner)"
+                    />
+                    <div
+                        class="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize"
+                        @pointerdown="(e: PointerEvent) => onResizeStart(e, 'sw' as ResizeCorner)"
+                    />
+                    <div
+                        class="absolute top-0 right-0 w-4 h-4 cursor-ne-resize"
+                        @pointerdown="(e: PointerEvent) => onResizeStart(e, 'ne' as ResizeCorner)"
+                    />
+                    <div
+                        class="absolute top-0 left-0 w-4 h-4 cursor-nw-resize"
+                        @pointerdown="(e: PointerEvent) => onResizeStart(e, 'nw' as ResizeCorner)"
+                    />
+                </template>
+            </div>
         </DialogContentPrimitive>
     </DialogPortalPrimitive>
 </template>

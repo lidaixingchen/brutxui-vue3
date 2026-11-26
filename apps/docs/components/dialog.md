@@ -128,6 +128,8 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 </template>
 ```
 
+内置关闭按钮、`Escape` 和点击遮罩都会先执行 `beforeClose`。回调返回或异步解析为 `false` 时，对话框保持打开。通过 `DialogRoot` 的 `v-model:open` 控制对话框时，由父组件确认关闭并更新状态。
+
 ## API 参考
 
 <span id="dialog-根组件"></span>
@@ -195,9 +197,10 @@ const instance = showDialog({
 | `resizable` | `boolean` | `false` | 是否开启缩放 |
 | `fullscreen` | `boolean` | `false` | 是否全屏展示 |
 | `zIndex` | `number` | — | 自定义弹层层级 |
-| `onCancel` | `() => void` | — | 关闭时的回调钩子 |
+| `beforeClose` | `() => boolean \| Promise<boolean>` | — | 返回 `false` 可阻止内置关闭操作 |
+| `onCancel` | `() => void` | — | 内置关闭操作获准后调用一次 |
 
-**返回值：** `OverlayInstanceHandle<void>` — 包含 `close()`、`destroy()` 方法及 `promise` 句柄。
+`showDialog()` 返回 `DialogInstance<T>`，包含 `close()`、`destroy()` 方法及返回 `DialogResult<T>` 的 `promise`。内置关闭操作获准后，`promise` 解析为 `{ action: 'cancel' }`。
 
 ### useDialog（Composable）
 

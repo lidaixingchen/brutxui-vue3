@@ -154,9 +154,6 @@ export function showDialog<T = unknown>(options: ShowDialogOptions<T> = {}): Dia
                                 {
                                     ...getDialogEnhancedProps(options),
                                     zIndex: props.zIndex ?? options.zIndex,
-                                    'onUpdate:open': (val: boolean) => {
-                                        emit('update:open', val)
-                                    },
                                 },
                                 {
                                     default: () => [
