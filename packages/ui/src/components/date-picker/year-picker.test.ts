@@ -460,6 +460,72 @@ describe('YearPicker', () => {
         const dialog = document.body.querySelector('[role="dialog"]')
         expect(dialog).not.toBeNull()
     })
+
+    it.each([
+        {
+            label: 'minimum time on the last day of a year',
+            modelValue: new Date(2027, 0, 15, 10),
+            minDate: new Date(2026, 11, 31, 14, 30),
+            maxDate: new Date(2027, 7, 15),
+            year: 2026,
+            disabledYear: 2025,
+            expected: new Date(2026, 11, 31, 14, 30),
+        },
+        {
+            label: 'maximum time on a partial year',
+            modelValue: new Date(2026, 6, 15, 10),
+            minDate: new Date(2026, 5, 15),
+            maxDate: new Date(2027, 1, 15, 16, 30),
+            year: 2027,
+            disabledYear: 2028,
+            expected: new Date(2027, 1, 15, 16, 30),
+        },
+        {
+            label: 'month and day within the selected year',
+            modelValue: new Date(2026, 6, 15, 10),
+            minDate: new Date(2026, 5, 15),
+            maxDate: new Date(2027, 7, 15),
+            year: 2027,
+            disabledYear: 2028,
+            expected: new Date(2027, 6, 15),
+        },
+    ])('selects and confirms the $label', async ({ modelValue, minDate, maxDate, year, disabledYear, expected }) => {
+        const picker = mount(YearPicker, {
+            ...localeProvide,
+            props: { modelValue, minDate, maxDate, clearable: true },
+            attachTo: document.body,
+        })
+        wrapper = picker
+        await openPanel(picker)
+
+        const cells = Array.from(document.body.querySelectorAll<HTMLButtonElement>('button[role="gridcell"]'))
+        const disabled = cells.find((cell) => cell.textContent?.trim() === String(disabledYear))!
+        expect(disabled.disabled).toBe(true)
+        disabled.click()
+        expect(picker.emitted('update:modelValue')).toBeUndefined()
+
+        const option = cells.find((cell) => cell.textContent?.trim() === String(year))!
+        expect(option.disabled).toBe(false)
+        option.click()
+        await nextTick()
+        expect(picker.emitted('update:modelValue')).toEqual([[expected]])
+        expect(picker.emitted('change')).toBeUndefined()
+
+        const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>('[role="dialog"] button'))
+        buttons.find((button) => button.textContent?.trim() === 'Confirm')!.click()
+        await nextTick()
+        expect(picker.emitted('update:modelValue')).toEqual([[expected], [expected]])
+        expect(picker.emitted('change')).toEqual([[expected]])
+
+        const boundsBeforeMutation = [minDate.getTime(), maxDate.getTime()]
+        const updates = picker.emitted<[Date]>('update:modelValue')!
+        for (const [value] of updates) {
+            expect(value).not.toBe(minDate)
+            expect(value).not.toBe(maxDate)
+            value.setDate(value.getDate() + 1)
+        }
+        expect([minDate.getTime(), maxDate.getTime()]).toEqual(boundsBeforeMutation)
+    })
 })
 
 describe('YearPickerPanel', () => {
@@ -540,10 +606,14 @@ describe('YearPickerPanel', () => {
     })
 
     it('emits confirm with modelValue when confirm clicked', async () => {
-        const value = new Date(2026, 0, 1)
+        const value = new Date(2026, 0, 1, 12, 30)
         wrapper = mount(YearPickerPanel, {
             ...localeProvide,
-            props: { modelValue: value, clearable: true },
+            props: {
+                modelValue: value,
+                minDate: new Date(2026, 0, 1, 10),
+                maxDate: new Date(2026, 0, 1, 14),
+            },
             attachTo: document.body,
         })
         const buttons = wrapper.findAll('button')
@@ -552,6 +622,37 @@ describe('YearPickerPanel', () => {
         const emitted = wrapper.emitted('confirm')
         expect(emitted).toBeTruthy()
         expect(emitted![0]).toEqual([value])
+    })
+
+    it('confirms the first available year after navigating into a partial page', async () => {
+        const minDate = new Date(2024, 7, 20, 14)
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2035, 5, 15), minDate, yearRange: 10 },
+            attachTo: document.body,
+        })
+
+        await wrapper.get('button[aria-label="Previous decade"]').trigger('click')
+        const confirm = wrapper.findAll('button').find((button) => button.text() === 'Confirm')!
+        await confirm.trigger('click')
+        expect(wrapper.emitted('confirm')).toEqual([[minDate]])
+
+        await wrapper.get('button[aria-label="Previous decade"]').trigger('click')
+        await confirm.trigger('click')
+        expect(wrapper.emitted('confirm')).toEqual([[minDate]])
+    })
+
+    it('clamps an existing boundary-year value on confirmation', async () => {
+        const maxDate = new Date(2026, 5, 15, 14)
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 5, 15, 16), maxDate },
+            attachTo: document.body,
+        })
+
+        const confirm = wrapper.findAll('button').find((button) => button.text() === 'Confirm')!
+        await confirm.trigger('click')
+        expect(wrapper.emitted('confirm')).toEqual([[maxDate]])
     })
 
     it('emits clear and update:modelValue null when clear clicked', async () => {

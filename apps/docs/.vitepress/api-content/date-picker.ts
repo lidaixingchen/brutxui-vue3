@@ -159,12 +159,12 @@ const rangeBounds = {
 
 const dateTimeBounds = {
     minDate: {
-        zh: '日历选择下界，同时限制日期、时间和快捷项更新后的完整时间；早于下界的更新值会收敛到该 Date。',
-        en: 'The lower calendar bound, also applied to the complete datetime after date, time, or shortcut updates. Earlier updates are clamped to this Date.',
+        zh: '最早可选的本地日期，早于该日的快捷项会被忽略。更新后的完整时间早于该下界时，收敛到该 Date。',
+        en: 'The earliest selectable local date. Shortcuts before this day are ignored. Updates earlier than this bound are clamped to this Date.',
     },
     maxDate: {
-        zh: '日历选择上界，同时限制日期、时间和快捷项更新后的完整时间；当边界的时、分、秒均为零时，允许该边界日内的其他时间。',
-        en: 'The upper calendar bound, also applied after date, time, or shortcut updates. When the boundary hours, minutes, and seconds are all zero, other times on that same calendar day remain allowed.',
+        zh: '最晚可选的本地日期，晚于该日的快捷项会被忽略。更新后的完整时间收敛到该上界，当边界的时、分、秒均为零时，允许该边界日内的其他时间。',
+        en: 'The latest selectable local date. Shortcuts after this day are ignored. Updates are clamped to this bound. When its hours, minutes, and seconds are all zero, other times on the boundary day remain allowed.',
     },
 } satisfies Record<string, ApiSemantic>
 
@@ -192,12 +192,12 @@ const monthBounds = {
 
 const yearBounds = {
     minDate: {
-        zh: '用于禁用年份按钮的下界；某年 12 月 31 日早于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。',
-        en: 'The lower bound used to disable year buttons. A year is disabled when its December 31 precedes this value. Selection retains the base month and day instead of clamping the full date to the bound.',
+        zh: '年份选择下界。早于该日期所在年份的选项会禁用，边界年份中早于该值的结果会收敛到该日期时间。',
+        en: 'The lower year-selection bound. Earlier years are disabled. A result in the boundary year that precedes this value is clamped to this datetime.',
     },
     maxDate: {
-        zh: '用于禁用年份按钮的上界；某年 1 月 1 日晚于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。',
-        en: 'The upper bound used to disable year buttons. A year is disabled when its January 1 follows this value. Selection retains the base month and day instead of clamping the full date to the bound.',
+        zh: '年份选择上界。晚于该日期所在年份的选项会禁用，边界年份中晚于该值的结果会收敛到该日期时间。',
+        en: 'The upper year-selection bound. Later years are disabled. A result in the boundary year that follows this value is clamped to this datetime.',
     },
 } satisfies Record<string, ApiSemantic>
 
@@ -305,7 +305,7 @@ const content = {
                 showSeconds: { zh: '显示秒选择器，同时决定默认显示格式和隐藏表单字段是否包含秒；关闭后仍保留 Date 中已有的秒值。', en: 'Shows the seconds selector and determines whether the default display format and hidden form value include seconds. Hiding it preserves seconds already present in the Date.' },
                 timeStep,
                 placeholder: { zh: '没有可显示日期时间时呈现在触发按钮中的占位文本。', en: 'Placeholder text in the trigger when there is no datetime to display.', fallback: dateTimeLabelFallback },
-                shortcuts: { zh: '日期时间面板的日期快捷项；已有选中值时保留其时分秒，否则使用快捷值的时间，并将更新结果按日期时间边界收敛。', en: 'Date shortcuts in the datetime panel. An existing selection keeps its time; otherwise the shortcut time is used. Updates are clamped according to the datetime bounds.' },
+                shortcuts: { zh: '日期时间面板的日期快捷项。忽略日期范围外的快捷项；可用项保留已有值的时间，空值时使用快捷值的时间，并按日期时间边界收敛。', en: 'Date shortcuts in the datetime panel. Shortcuts outside the allowed calendar dates are ignored. Allowed shortcuts keep the existing time or use the shortcut time when empty, subject to the datetime bounds.' },
                 displayFormat: { ...triggerProps.displayFormat, fallback: { 'zh-CN': '为 undefined 或 null 时，showSeconds 为真使用 YYYY-MM-DD HH:mm:ss，否则使用 YYYY-MM-DD HH:mm。', en: 'When undefined or null, uses YYYY-MM-DD HH:mm:ss when showSeconds is true, or YYYY-MM-DD HH:mm otherwise.' } },
                 clearable: { zh: '显示面板清除按钮；有值且未禁用、未只读时也显示触发器清除按钮。面板确认按钮始终显示。', en: 'Shows the panel Clear button and, when a value exists and the trigger is neither disabled nor read-only, its clear button. The panel Confirm button is always shown.' },
                 name: { zh: '原生隐藏表单字段名；按 showSeconds 提交 YYYY-MM-DD HH:mm 或 YYYY-MM-DD HH:mm:ss，与 displayFormat 独立。空值提交空字符串，禁用时不提交。', en: 'The native hidden form field name. It submits YYYY-MM-DD HH:mm or YYYY-MM-DD HH:mm:ss according to showSeconds, independently of displayFormat. Empty values submit an empty string; disabled fields are omitted.' },
@@ -319,7 +319,7 @@ const content = {
             props: {
                 ...dateTimeBounds,
                 modelValue: { zh: '独立日期时间面板的当前值，同时驱动日历和时间选择器，通过 v-model 同步。', en: 'The current standalone datetime-panel value, driving both calendar and time selectors and synchronized with v-model.' },
-                shortcuts: { zh: '带标签的日期快捷项；已有值时合并其时分秒，否则保留快捷值的时间，更新结果按日期时间边界收敛。', en: 'Labeled date shortcuts. They merge the time of an existing value or keep the shortcut time when empty, then clamp the update according to the datetime bounds.' },
+                shortcuts: { zh: '带标签的日期快捷项。忽略日期范围外的快捷项；可用项保留已有值的时间，空值时使用快捷值的时间，并按日期时间边界收敛。', en: 'Labeled date shortcuts. Shortcuts outside the allowed calendar dates are ignored. Allowed shortcuts keep the existing time or use the shortcut time when empty, subject to the datetime bounds.' },
                 clearable: { zh: '控制面板清除按钮的显示，确认按钮始终显示。', en: 'Controls visibility of the panel Clear button. The Confirm button is always shown.' },
                 showSeconds: { zh: '在内嵌时间选择器中显示秒选择项，隐藏时保留已有 Date 中的秒值。', en: 'Shows a seconds selector in the embedded time picker. Hiding it preserves seconds already present in the Date.' },
                 timeStep,
@@ -425,8 +425,8 @@ const content = {
             },
             events: {
                 ...panelEvents,
-                'update:modelValue': { zh: '选择可用年份时触发，以已有日期或当天的月日生成本地零点日期；2 月 29 日切换到平年时收敛为 2 月 28 日。清除时传入 null。', en: 'Emitted when an available year is selected, using the existing or current month and day at local midnight. February 29 becomes February 28 in a non-leap year. Clearing emits null.' },
-                confirm: { zh: '确认当前年份。若已有值不在当前页面的年份范围中，则改用该页起始年份并保留月日，闰日会收敛至有效日期；空值传入 null。', en: 'Confirms the current year. If the existing value is outside the visible year range, it uses the first visible year while preserving month and day and adjusting leap days. An empty value emits null.' },
+                'update:modelValue': { zh: '选择可用年份时触发。以已有日期或当天的月日生成本地零点日期，平年将 2 月 29 日调整为 2 月 28 日，再按边界收敛。清除时传入 null。', en: 'Emitted when an available year is selected. Uses the existing or current month and day at local midnight, adjusts February 29 to February 28 in a non-leap year, and clamps the result to the bounds. Clearing emits null.' },
+                confirm: { zh: '确认当前页面中已有值的可选年份，并将值限制在边界内。若该年份不在当前页面或不可选，则用页面内第一个可选年份生成日期；页面没有可选年份时保留当前值，空值传入 null。', en: 'Confirms the existing value in an available year on the current page, clamped to the bounds. Otherwise, it uses the first available year on the page. A page with no available years leaves the current value in place. An empty value emits null.' },
             },
         },
     },

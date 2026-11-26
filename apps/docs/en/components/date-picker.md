@@ -226,6 +226,10 @@ const maxDate = new Date(2026, 11, 31)
 </template>
 ```
 
+`DatePicker` and `DateTimePicker` compare shortcuts by local calendar date and ignore dates outside the allowed range. For an allowed shortcut, `DateTimePicker` keeps the time of the current value or uses the shortcut time when the value is empty. Times on boundary days follow `minDate` and `maxDate`, with the entire final day available when `maxDate` is midnight.
+
+`YearPicker` makes a year selectable when it contains a time within the allowed range. Selection starts at local midnight on the existing month and day, or on today's month and day if the value is empty. February 29 becomes February 28 in a non-leap year, and the result is clamped to the part of the selected year within the allowed range.
+
 ### Custom Display Format
 
 Supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` (ISO week number) tokens:

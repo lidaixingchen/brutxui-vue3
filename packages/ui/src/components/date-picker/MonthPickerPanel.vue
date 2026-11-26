@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
+import { clampDateToBounds } from './date-picker-utils'
 import { datePickerPanelVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
@@ -66,12 +67,8 @@ function isMonthDisabled(monthIndex: number): boolean {
 
 function handleMonthSelect(monthIndex: number) {
     if (isMonthDisabled(monthIndex)) return
-    let date = new Date(viewYear.value, monthIndex, 1)
-    // 收敛到 [minDate, maxDate] 区间：月份面板的边界判断基于整月，
-    // 选中值本身可能落在区间外（如 minDate 为月中）
-    if (props.minDate && date < props.minDate) date = props.minDate
-    if (props.maxDate && date > props.maxDate) date = props.maxDate
-    emit('update:modelValue', date)
+    const date = new Date(viewYear.value, monthIndex, 1)
+    emit('update:modelValue', clampDateToBounds(date, props.minDate, props.maxDate))
 }
 
 const canGoPrevYear = computed(() => {
@@ -105,10 +102,8 @@ function handleConfirm() {
         emit('confirm', props.modelValue)
         return
     }
-    let nextDate = new Date(viewYear.value, props.modelValue.getMonth(), 1)
-    if (props.minDate && nextDate < props.minDate) nextDate = props.minDate
-    if (props.maxDate && nextDate > props.maxDate) nextDate = props.maxDate
-    emit('confirm', nextDate)
+    const nextDate = new Date(viewYear.value, props.modelValue.getMonth(), 1)
+    emit('confirm', clampDateToBounds(nextDate, props.minDate, props.maxDate))
 }
 
 function handleClear() {

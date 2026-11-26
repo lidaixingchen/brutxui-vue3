@@ -23,7 +23,7 @@ import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { dateTimePickerPanelVariants, datePickerShortcutListVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerShortcut } from './types'
-import { resolveShortcutValue } from './date-picker-utils'
+import { isDateWithinBounds, resolveShortcutValue } from './date-picker-utils'
 import TimePicker from './TimePicker.vue'
 import Button from '../button/Button.vue'
 import './panel-styles.css'
@@ -131,17 +131,8 @@ function handleTimeUpdate(value: Date | null) {
 
 function handleShortcutSelect(shortcut: DatePickerShortcut) {
     const value = resolveShortcutValue(shortcut)
-    if (props.modelValue) {
-        const merged = new Date(value)
-        merged.setHours(
-            props.modelValue.getHours(),
-            props.modelValue.getMinutes(),
-            props.modelValue.getSeconds()
-        )
-        emit('update:modelValue', clampToBounds(merged))
-    } else {
-        emit('update:modelValue', clampToBounds(value))
-    }
+    if (!isDateWithinBounds(value, props.minDate, props.maxDate)) return
+    handleCalendarUpdate(value)
 }
 
 function isShortcutActive(shortcut: DatePickerShortcut): boolean {

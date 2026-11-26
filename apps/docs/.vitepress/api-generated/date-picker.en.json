@@ -2341,7 +2341,7 @@
               }
             ]
           },
-          "description": "Date shortcuts in the datetime panel. An existing selection keeps its time; otherwise the shortcut time is used. Updates are clamped according to the datetime bounds.",
+          "description": "Date shortcuts in the datetime panel. Shortcuts outside the allowed calendar dates are ignored. Allowed shortcuts keep the existing time or use the shortcut time when empty, subject to the datetime bounds.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -2438,7 +2438,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The lower calendar bound, also applied to the complete datetime after date, time, or shortcut updates. Earlier updates are clamped to this Date.",
+          "description": "The earliest selectable local date. Shortcuts before this day are ignored. Updates earlier than this bound are clamped to this Date.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -2470,7 +2470,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The upper calendar bound, also applied after date, time, or shortcut updates. When the boundary hours, minutes, and seconds are all zero, other times on that same calendar day remain allowed.",
+          "description": "The latest selectable local date. Shortcuts after this day are ignored. Updates are clamped to this bound. When its hours, minutes, and seconds are all zero, other times on the boundary day remain allowed.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -2892,7 +2892,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The lower calendar bound, also applied to the complete datetime after date, time, or shortcut updates. Earlier updates are clamped to this Date.",
+          "description": "The earliest selectable local date. Shortcuts before this day are ignored. Updates earlier than this bound are clamped to this Date.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
@@ -2924,7 +2924,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The upper calendar bound, also applied after date, time, or shortcut updates. When the boundary hours, minutes, and seconds are all zero, other times on that same calendar day remain allowed.",
+          "description": "The latest selectable local date. Shortcuts after this day are ignored. Updates are clamped to this bound. When its hours, minutes, and seconds are all zero, other times on the boundary day remain allowed.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
@@ -2962,7 +2962,7 @@
               }
             ]
           },
-          "description": "Labeled date shortcuts. They merge the time of an existing value or keep the shortcut time when empty, then clamp the update according to the datetime bounds.",
+          "description": "Labeled date shortcuts. Shortcuts outside the allowed calendar dates are ignored. Allowed shortcuts keep the existing time or use the shortcut time when empty, subject to the datetime bounds.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
@@ -3829,7 +3829,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -3861,7 +3861,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -3893,7 +3893,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -3928,7 +3928,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -3960,7 +3960,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -5500,7 +5500,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The lower bound used to disable year buttons. A year is disabled when its December 31 precedes this value. Selection retains the base month and day instead of clamping the full date to the bound.",
+          "description": "The lower year-selection bound. Earlier years are disabled. A result in the boundary year that precedes this value is clamped to this datetime.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -5532,7 +5532,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The upper bound used to disable year buttons. A year is disabled when its January 1 follows this value. Selection retains the base month and day instead of clamping the full date to the bound.",
+          "description": "The upper year-selection bound. Later years are disabled. A result in the boundary year that follows this value is clamped to this datetime.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -5926,7 +5926,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -5954,11 +5954,11 @@
             "literals": [],
             "references": []
           },
-          "description": "The lower bound used to disable year buttons. A year is disabled when its December 31 precedes this value. Selection retains the base month and day instead of clamping the full date to the bound.",
+          "description": "The lower year-selection bound. Earlier years are disabled. A result in the boundary year that precedes this value is clamped to this datetime.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -5986,11 +5986,11 @@
             "literals": [],
             "references": []
           },
-          "description": "The upper bound used to disable year buttons. A year is disabled when its January 1 follows this value. Selection retains the base month and day instead of clamping the full date to the bound.",
+          "description": "The upper year-selection bound. Later years are disabled. A result in the boundary year that follows this value is clamped to this datetime.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -6025,7 +6025,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -6057,7 +6057,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -6090,7 +6090,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -6121,7 +6121,7 @@
             ],
             "references": []
           },
-          "description": "Emitted when an available year is selected, using the existing or current month and day at local midnight. February 29 becomes February 28 in a non-leap year. Clearing emits null.",
+          "description": "Emitted when an available year is selected. Uses the existing or current month and day at local midnight, adjusts February 29 to February 28 in a non-leap year, and clamps the result to the bounds. Clearing emits null.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
@@ -6157,7 +6157,7 @@
             ],
             "references": []
           },
-          "description": "Confirms the current year. If the existing value is outside the visible year range, it uses the first visible year while preserving month and day and adjusting leap days. An empty value emits null.",
+          "description": "Confirms the existing value in an available year on the current page, clamped to the bounds. Otherwise, it uses the first available year on the page. A page with no available years leaves the current value in place. An empty value emits null.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"

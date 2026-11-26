@@ -225,6 +225,10 @@ const maxDate = new Date(2026, 11, 31)
 </template>
 ```
 
+`DatePicker` 和 `DateTimePicker` 都按本地日历日期判断快捷项，忽略范围外日期。`DateTimePicker` 选中可用日期后保留已有值的时分秒，空值使用快捷项的时间。边界日的时间受 `minDate` 和 `maxDate` 约束，若 `maxDate` 为午夜，则该日全天可选。
+
+`YearPicker` 中，只要某年有时刻落在允许范围内，该年就可选。选择年份以已有值或当天的月日生成本地零点日期，平年将 2 月 29 日调整为 2 月 28 日，再将结果限制在所选年份与日期范围的交集内。
+
 ### 自定义显示格式
 
 支持 `YYYY`、`YY`、`MM`、`DD`、`HH`、`mm`、`ss`、`WW`（ISO 周数）token：

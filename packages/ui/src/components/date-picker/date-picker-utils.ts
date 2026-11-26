@@ -12,13 +12,20 @@ export function resolveRangeShortcutValue(shortcut: DatePickerRangeShortcut): Da
     return [new Date(value[0].getTime()), new Date(value[1].getTime())]
 }
 
+function localDayStart(date: Date): number {
+    return new Date(date).setHours(0, 0, 0, 0)
+}
+
 export function isDateWithinBounds(value: Date, minDate?: Date, maxDate?: Date): boolean {
-    const valueTime = new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime()
-    const minTime = minDate
-        ? new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()).getTime()
-        : -Infinity
-    const maxTime = maxDate
-        ? new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate()).getTime()
-        : Infinity
+    const valueTime = localDayStart(value)
+    const minTime = minDate ? localDayStart(minDate) : -Infinity
+    const maxTime = maxDate ? localDayStart(maxDate) : Infinity
     return !(valueTime < minTime || valueTime > maxTime)
+}
+
+export function clampDateToBounds(value: Date, minDate?: Date, maxDate?: Date): Date {
+    let date = value
+    if (minDate && date < minDate) date = minDate
+    if (maxDate && date > maxDate) date = maxDate
+    return new Date(date)
 }

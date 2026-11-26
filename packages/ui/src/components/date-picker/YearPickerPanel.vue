@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
+import { clampDateToBounds } from './date-picker-utils'
 import { datePickerPanelVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
@@ -81,30 +82,30 @@ function isYearActive(year: number): boolean {
 }
 
 function isYearDisabled(year: number): boolean {
-    const testDate = new Date(year, 11, 31)
-    if (props.minDate && testDate < props.minDate) return true
-    const startOfYear = new Date(year, 0, 1)
-    if (props.maxDate && startOfYear > props.maxDate) return true
+    const { minDate, maxDate } = props
+    if (minDate && year < minDate.getFullYear()) return true
+    if (maxDate && year > maxDate.getFullYear()) return true
+    if (minDate && maxDate && minDate > maxDate) return true
     return false
+}
+
+function dateForYear(year: number): Date {
+    const base = props.modelValue && Number.isFinite(props.modelValue.getTime())
+        ? props.modelValue
+        : new Date()
+    const date = new Date(base)
+    date.setHours(0, 0, 0, 0)
+    date.setFullYear(year)
+    // 2 月 29 日切换到平年时会滚到 3 月 1 日，取上个月最后一天。
+    if (date.getDate() !== base.getDate()) {
+        date.setDate(0)
+    }
+    return clampDateToBounds(date, props.minDate, props.maxDate)
 }
 
 function handleYearSelect(year: number) {
     if (isYearDisabled(year)) return
-    // 基于原值保留月/日：先用基础值的年月日构造本地零点，再 setFullYear 改年份，
-    // 避免 new Date(0) 的 UTC 纪元时间残留（负时区下 UTC 序列化会跳到次日）；
-    // setFullYear 同时规避 JS 将 0-99 的年份解释为 1900+year；
-    // Invalid Date 的基础值按当天兜底
-    const base = props.modelValue && Number.isFinite(props.modelValue.getTime())
-        ? props.modelValue
-        : new Date()
-    const date = new Date(base.getFullYear(), base.getMonth(), base.getDate())
-    date.setFullYear(year)
-    // 闰日收敛：2/29 落在非闰年时 JS 会滚动到 3/1，回退到 2/28 保持日期稳定
-    // （与 handleConfirm 重建分支的行为一致）
-    if (date.getDate() !== base.getDate()) {
-        date.setDate(0)
-    }
-    emit('update:modelValue', date)
+    emit('update:modelValue', dateForYear(year))
 }
 
 function handlePrevDecade() {
@@ -116,24 +117,20 @@ function handleNextDecade() {
 }
 
 function handleConfirm() {
-    if (!props.modelValue) {
+    const { modelValue, minDate, maxDate } = props
+    if (!modelValue) {
         emit('confirm', null)
         return
     }
-    // 确认时校验 modelValue 与 viewDecadeStart 一致：翻年代未选年份时按当前视图重新生成，
-    // 保证提交值与面板可视状态一致（保留月/日）
-    if (props.modelValue.getFullYear() >= viewDecadeStart.value
-        && props.modelValue.getFullYear() < viewDecadeStart.value + normalizedYearRange.value) {
-        emit('confirm', props.modelValue)
+    const year = modelValue.getFullYear()
+    if (years.value.includes(year) && !isYearDisabled(year)) {
+        emit('confirm', clampDateToBounds(modelValue, minDate, maxDate))
         return
     }
-    const date = new Date(props.modelValue.getFullYear(), props.modelValue.getMonth(), props.modelValue.getDate())
-    date.setFullYear(viewDecadeStart.value)
-    // 闰日收敛：2/29 落在非闰年时 JS 会滚动到 3/1，回退到 2/28 保持日期稳定
-    if (date.getDate() !== props.modelValue.getDate()) {
-        date.setDate(0)
+    const firstAvailableYear = years.value.find((visibleYear) => !isYearDisabled(visibleYear))
+    if (firstAvailableYear !== undefined) {
+        emit('confirm', dateForYear(firstAvailableYear))
     }
-    emit('confirm', date)
 }
 
 function handleClear() {

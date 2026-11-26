@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { computeAccessibleName } from 'dom-accessibility-api'
 import { renderToString } from '@vue/server-renderer'
 import { createSSRApp, h, nextTick } from 'vue'
@@ -25,6 +25,12 @@ async function openPanel(w: ReturnType<typeof mount>) {
     await trigger.trigger('click')
     await nextTick()
     await nextTick()
+}
+
+function historicalDate(year: number, month: number, day: number, hour = 0): Date {
+    const date = new Date(2000, 0, 1, hour)
+    date.setFullYear(year, month, day)
+    return date
 }
 
 describe('DateTimePicker', () => {
@@ -620,6 +626,148 @@ describe('DateTimePicker', () => {
         await openPanel(wrapper)
         const dialog = document.body.querySelector('[role="dialog"]')
         expect(dialog).not.toBeNull()
+    })
+
+    it('ignores shortcuts on both out-of-range days and confirms the original value', async () => {
+        const modelValue = new Date(2026, 5, 15, 14, 30, 45)
+        const picker = mount(DateTimePicker, {
+            ...localeProvide,
+            props: {
+                modelValue,
+                minDate: new Date(2026, 5, 10, 12),
+                maxDate: new Date(2026, 5, 20),
+                shortcuts: [
+                    { label: 'Too early', value: new Date(2026, 5, 9, 23, 59) },
+                    { label: 'Too late', value: () => new Date(2026, 5, 21) },
+                ],
+            },
+            attachTo: document.body,
+        })
+        wrapper = picker
+        await openPanel(picker)
+        await flushPromises()
+
+        const options = Array.from(document.body.querySelectorAll<HTMLButtonElement>('button[role="option"]'))
+        expect(options.map((option) => option.textContent?.trim())).toEqual(['Too early', 'Too late'])
+        for (const option of options) {
+            option.click()
+            await nextTick()
+            expect(picker.emitted('update:modelValue')).toBeUndefined()
+            expect(picker.emitted('change')).toBeUndefined()
+        }
+
+        const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>('[role="dialog"] button'))
+        buttons.find((button) => button.textContent?.trim() === 'Confirm')!.click()
+        await nextTick()
+        expect(picker.emitted('update:modelValue')).toEqual([[modelValue]])
+        expect(picker.emitted('change')).toEqual([[modelValue]])
+    })
+
+    it('ignores a shortcut after the leap-day maximum in year zero', async () => {
+        const picker = mount(DateTimePicker, {
+            ...localeProvide,
+            props: {
+                minDate: historicalDate(-1, 11, 31),
+                maxDate: historicalDate(0, 1, 29),
+                shortcuts: [{ label: 'After leap day', value: historicalDate(0, 2, 1) }],
+            },
+            attachTo: document.body,
+        })
+        wrapper = picker
+        await openPanel(picker)
+        await flushPromises()
+
+        document.body.querySelector<HTMLButtonElement>('button[role="option"]')!.click()
+        await nextTick()
+        expect(picker.emitted('update:modelValue')).toBeUndefined()
+        expect(picker.emitted('change')).toBeUndefined()
+    })
+
+    it.each([
+        {
+            label: 'minimum boundary time',
+            modelValue: new Date(2026, 5, 15, 8),
+            minDate: new Date(2026, 5, 10, 12, 30),
+            maxDate: new Date(2026, 5, 20, 16),
+            shortcut: new Date(2026, 5, 10),
+            expected: new Date(2026, 5, 10, 12, 30),
+        },
+        {
+            label: 'maximum boundary time',
+            modelValue: new Date(2026, 5, 15, 18),
+            minDate: new Date(2026, 5, 10),
+            maxDate: new Date(2026, 5, 20, 16, 30),
+            shortcut: new Date(2026, 5, 20, 23, 59),
+            expected: new Date(2026, 5, 20, 16, 30),
+        },
+        {
+            label: 'existing time on a midnight maximum day',
+            modelValue: new Date(2026, 5, 15, 18, 30, 45),
+            minDate: new Date(2026, 5, 10),
+            maxDate: new Date(2026, 5, 20),
+            shortcut: new Date(2026, 5, 20),
+            expected: new Date(2026, 5, 20, 18, 30, 45),
+        },
+        {
+            label: 'shortcut time on a midnight minimum day without a value',
+            modelValue: null,
+            minDate: new Date(2026, 5, 10),
+            maxDate: new Date(2026, 5, 20),
+            shortcut: new Date(2026, 5, 10, 13, 30, 45),
+            expected: new Date(2026, 5, 10, 13, 30, 45),
+        },
+        {
+            label: 'existing time on an interior day',
+            modelValue: new Date(2026, 5, 15, 14, 30, 45),
+            minDate: new Date(2026, 5, 10, 12),
+            maxDate: new Date(2026, 5, 20, 16),
+            shortcut: new Date(2026, 5, 18),
+            expected: new Date(2026, 5, 18, 14, 30, 45),
+        },
+        {
+            label: 'leap day in year 60 between years 50 and 120',
+            modelValue: null,
+            minDate: historicalDate(50, 0, 1),
+            maxDate: historicalDate(120, 11, 31),
+            shortcut: historicalDate(60, 1, 29, 18),
+            expected: historicalDate(60, 1, 29, 18),
+        },
+        {
+            label: 'leap day at a midnight maximum in year zero',
+            modelValue: null,
+            minDate: historicalDate(-1, 11, 31),
+            maxDate: historicalDate(0, 1, 29),
+            shortcut: historicalDate(0, 1, 29, 18),
+            expected: historicalDate(0, 1, 29, 18),
+        },
+    ])('selects and confirms the $label', async ({ modelValue, minDate, maxDate, shortcut, expected }) => {
+        const picker = mount(DateTimePicker, {
+            ...localeProvide,
+            props: {
+                modelValue,
+                minDate,
+                maxDate,
+                shortcuts: [{ label: 'Use date', value: () => shortcut }],
+            },
+            attachTo: document.body,
+        })
+        wrapper = picker
+        await openPanel(picker)
+        await flushPromises()
+
+        document.body.querySelector<HTMLButtonElement>('button[role="option"]')!.click()
+        await nextTick()
+        const updates = picker.emitted('update:modelValue') ?? []
+        expect(updates.length).toBeGreaterThan(0)
+        expect(updates).toEqual(updates.map(() => [expected]))
+        const updateCount = updates.length
+        expect(picker.emitted('change')).toBeUndefined()
+
+        const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>('[role="dialog"] button'))
+        buttons.find((button) => button.textContent?.trim() === 'Confirm')!.click()
+        await nextTick()
+        expect(picker.emitted('update:modelValue')?.slice(updateCount)).toEqual([[expected]])
+        expect(picker.emitted('change')).toEqual([[expected]])
     })
 })
 
