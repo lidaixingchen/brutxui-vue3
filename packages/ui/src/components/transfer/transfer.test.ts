@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Transfer from './Transfer.vue'
 import Button from '../button/Button.vue'
+import Card from '../card/Card.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 
 const mockData = [
@@ -171,7 +172,7 @@ describe('Transfer', () => {
         expect(changeEvents![0]).toEqual([[5], 'left', [4]])
     })
 
-    it('moves selected items hidden by search from their current panel', async () => {
+    it('shows panel totals and moves all checked items while filtering either panel', async () => {
         const wrapper = mount(Transfer, {
             props: {
                 data: mockData,
@@ -181,34 +182,48 @@ describe('Transfer', () => {
             attachTo: document.body
         })
 
-        // 查找 input
-        const inputs = wrapper.findAll('input')
-        expect(inputs.length).toBeGreaterThanOrEqual(2)
+        const [leftPanel, rightPanel] = wrapper.findAllComponents(Card)
+        const rows = (panel: typeof leftPanel) => panel.findAll('[data-slot="transfer-item"]')
+        const rowLabels = (panel: typeof leftPanel) => rows(panel).map(row => row.get(':scope > span').text())
+        const totals = () => wrapper.findAll('span').map(span => span.text()).filter(text => /^\d+\/\d+$/.test(text))
+        const leftInput = leftPanel.get('input')
+        const rightInput = rightPanel.get('input')
 
-        // 隐藏左侧已选条目后，仍可从左侧移动该条目
-        const item1 = wrapper.findAll('.cursor-pointer').find(w => w.text().includes('Item 1'))
-        await item1!.trigger('click')
-        const leftInput = inputs[0]
-        await leftInput.setValue('Item 3')
+        await rows(leftPanel)[0].trigger('click')
+        await rows(leftPanel)[2].trigger('click')
+        await leftInput.setValue('Item 1')
+        expect(rowLabels(leftPanel)).toEqual(['Item 1'])
+        expect(totals()).toEqual(['2/3', '0/2'])
 
-        expect(wrapper.text()).toContain('Item 3')
-        expect(wrapper.text()).not.toContain('Item 1')
-        const buttons = wrapper.findAllComponents(Button)
-        expect(buttons[0].props('disabled')).toBe(false)
-        await buttons[0].trigger('click')
-        expect(wrapper.emitted('change')?.at(-1)).toEqual([[4, 5, 1], 'right', [1]])
+        await leftInput.setValue('No matches')
+        expect(rowLabels(leftPanel)).toEqual([])
+        expect(totals()).toEqual(['2/3', '0/2'])
+        await leftInput.setValue('')
+        expect(rowLabels(leftPanel)).toEqual(['Item 1', 'Item 2', 'Item 3'])
+        expect(totals()).toEqual(['2/3', '0/2'])
+        await leftInput.setValue('Item 1')
 
-        // 父级接收左移结果后，右侧搜索隐藏的选中项仍属于右侧并可移回
-        await wrapper.setProps({ modelValue: [1, 4, 5] })
-        const item4 = wrapper.findAll('.cursor-pointer').find(w => w.text().includes('Item 4'))
-        await item4!.trigger('click')
-        const rightInput = wrapper.findAll('input')[1]
+        const moveRight = wrapper.get('button[aria-label="Move selected to right"]')
+        expect(moveRight.attributes('disabled')).toBeUndefined()
+        await moveRight.trigger('click')
+        expect(wrapper.emitted('change')?.at(-1)).toEqual([[4, 5, 1, 3], 'right', [1, 3]])
+        await wrapper.setProps({ modelValue: [4, 5, 1, 3] })
+        expect(totals()).toEqual(['0/1', '0/4'])
+
+        await rows(rightPanel)[0].trigger('click')
+        await rows(rightPanel)[1].trigger('click')
         await rightInput.setValue('Item 5')
+        expect(rowLabels(rightPanel)).toEqual(['Item 5'])
+        expect(totals()).toEqual(['0/1', '2/4'])
 
-        expect(wrapper.text()).not.toContain('Item 4')
-        expect(buttons[1].props('disabled')).toBe(false)
-        await buttons[1].trigger('click')
-        expect(wrapper.emitted('change')?.at(-1)).toEqual([[1, 5], 'left', [4]])
+        const moveLeft = wrapper.get('button[aria-label="Move selected to left"]')
+        expect(moveLeft.attributes('disabled')).toBeUndefined()
+        await moveLeft.trigger('click')
+        expect(wrapper.emitted('change')?.at(-1)).toEqual([[1, 3], 'left', [4, 5]])
+        await wrapper.setProps({ modelValue: [1, 3], data: mockData.filter(item => item.key !== 3) })
+        expect(rowLabels(rightPanel)).toEqual([])
+        expect(totals()).toEqual(['0/3', '0/1'])
+        wrapper.unmount()
     })
 
     it('removes a disabled left selection and blocks an empty move', async () => {

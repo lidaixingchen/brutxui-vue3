@@ -49,6 +49,8 @@ const value = ref([1])
 
 通过设置 `filterable` 属性为 `true` 可以开启搜索过滤功能。
 
+面板表头显示「待转移勾选数 / 当前面板总数」，总数包含禁用项。搜索会筛选可见行，表头复选框只操作可见的启用项。被搜索隐藏的勾选项仍计入待转移数，点击转移按钮时会一并移动。
+
 ```vue
 <template>
     <Transfer v-model="value" :data="data" filterable />

@@ -49,6 +49,8 @@ const value = ref([1])
 
 Enable search and filtering functionality by setting the `filterable` property to `true`.
 
+Each panel header shows the number of items checked for transfer out of the panel total, including disabled items in the total. Search filters the visible rows, and the header checkbox acts on visible, enabled items. Checked items hidden by the search still count toward the pending total and move when you press the transfer button.
+
 ```vue
 <template>
     <Transfer v-model="value" :data="data" filterable />

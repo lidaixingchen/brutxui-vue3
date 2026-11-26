@@ -280,7 +280,7 @@ function handleRightFocusOut(item: TransferDataItem, event: FocusEvent) {
                         <span class="min-w-0 wrap-anywhere font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
                     </div>
                     <span class="shrink-0 text-xs font-semibold text-brutal-muted-foreground">
-                        {{ leftMovableKeys.length }}/{{ filteredSourceData.length }}
+                        {{ leftMovableKeys.length }}/{{ sourceData.length }}
                     </span>
                 </div>
 
@@ -374,7 +374,7 @@ function handleRightFocusOut(item: TransferDataItem, event: FocusEvent) {
                         <span class="min-w-0 wrap-anywhere font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
                     </div>
                     <span class="shrink-0 text-xs font-semibold text-brutal-muted-foreground">
-                        {{ rightMovableKeys.length }}/{{ filteredTargetData.length }}
+                        {{ rightMovableKeys.length }}/{{ targetData.length }}
                     </span>
                 </div>
 
