@@ -16,6 +16,8 @@ const content = {
         },
         PopoverContent: {
             props: {
+                as: { zh: '内容面板渲染的 HTML 标签或 Vue 组件，默认为 div。', en: 'The HTML tag or Vue component rendered for the panel. Defaults to div.' },
+                asChild: { zh: '将面板的属性、名称与交互行为绑定到唯一的子元素。', en: 'Applies the panel attributes, accessible name, and interactions to its single child element.' },
                 align: { zh: '内容面板相对于触发器的对齐位置。', en: 'The content panel alignment relative to its trigger.' },
                 sideOffset: { zh: '内容面板与触发器之间的间距，单位为像素。', en: 'The pixel gap between the content panel and its trigger.' },
                 collisionPadding: { zh: '浮层避让边界的内缩量；可传统一数值或按上、右、下、左分别设置。', en: 'The inset used for floating-content collision handling; accepts one number or per-side top/right/bottom/left values.' },

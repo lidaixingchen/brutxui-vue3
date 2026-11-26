@@ -54,7 +54,6 @@ const emit = defineEmits<DatePickerEmits & {
 const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.placeholder'))
-const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
 const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
 const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
     ? undefined
@@ -146,7 +145,6 @@ defineExpose({ open })
             <PopoverTrigger :id="id" as-child>
                 <button
                     ref="triggerRef"
-                    v-bind="triggerIdAttrs"
                     type="button"
                     :name="name"
                     role="combobox"
@@ -193,7 +191,7 @@ defineExpose({ open })
                 <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start" :title="resolvedPanelAriaLabel">
             <div :id="contentId">
             <DatePickerPanel
                 :model-value="displayValue"

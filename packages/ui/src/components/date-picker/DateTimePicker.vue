@@ -60,7 +60,6 @@ const resolvedDisplayFormat = computed(() =>
     props.displayFormat ?? (props.showSeconds ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm')
 )
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.dateTimePlaceholder'))
-const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
 const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
 const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
     ? undefined
@@ -152,7 +151,6 @@ defineExpose({ open })
             <PopoverTrigger :id="id" as-child>
                 <button
                     ref="triggerRef"
-                    v-bind="triggerIdAttrs"
                     type="button"
                     :name="name"
                     role="combobox"
@@ -197,7 +195,7 @@ defineExpose({ open })
                 <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent overflow-visible" align="start" :aria-label="resolvedPanelAriaLabel">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent overflow-visible" align="start" :title="resolvedPanelAriaLabel">
             <DateTimePickerPanel
                 :model-value="displayValue"
                 :min-date="minDate"

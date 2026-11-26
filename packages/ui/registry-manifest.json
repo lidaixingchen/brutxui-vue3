@@ -896,6 +896,7 @@
     "composables": [],
     "directives": [],
     "lib": [
+      "env.ts",
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "overlay-layer.ts"

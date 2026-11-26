@@ -12,6 +12,7 @@ it('保持已打开弹层与动态触发器 ID 的名称引用同步', async () 
     try {
         await flushPromises()
         const dialog = document.body.querySelector('[role="dialog"]')!
+        expect(wrapper.get('button').attributes('id')).toBe('first-trigger')
         expect(dialog.getAttribute('aria-labelledby')).toBe('first-trigger')
         id.value = 'second-trigger'
         await flushPromises()

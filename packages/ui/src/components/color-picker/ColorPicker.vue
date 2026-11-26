@@ -49,12 +49,12 @@ const emit = defineEmits<ColorPickerEmits & {
 const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('colorPicker.placeholder'))
-const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
 const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
 const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
     ? undefined
     : props.ariaLabel?.trim() || undefined
 )
+const resolvedPanelAriaLabel = computed(() => props.ariaLabel?.trim() || t('colorPicker.placeholder'))
 const resolvedTitle = computed(() => resolvedAriaLabel.value || resolvedAriaLabelledby.value
     ? undefined
     : t('colorPicker.placeholder')
@@ -120,7 +120,6 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
         <div :class="controlClasses">
             <PopoverTrigger :id="id" as-child>
                 <button
-                    v-bind="triggerIdAttrs"
                     type="button"
                     role="combobox"
                     :aria-expanded="open"
@@ -177,7 +176,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                 <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto overflow-visible p-0 border-none shadow-none bg-transparent" align="start">
+        <PopoverContent class="w-auto overflow-visible p-0 border-none shadow-none bg-transparent" align="start" :title="resolvedPanelAriaLabel">
             <ColorPickerPanel
                 :id="contentId"
                 :model-value="displayValue"

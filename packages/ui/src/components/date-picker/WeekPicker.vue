@@ -2,7 +2,8 @@
 import { computed, nextTick, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
@@ -122,9 +123,8 @@ defineExpose({ open })
     <PopoverRoot v-model:open="open">
         <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
         <div :class="controlClasses">
-            <PopoverTrigger as-child>
+            <PopoverTrigger :id="id" as-child>
                 <button
-                    :id="id"
                     ref="triggerRef"
                     type="button"
                     :name="name"
@@ -168,7 +168,7 @@ defineExpose({ open })
                 <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start" :title="resolvedAriaLabel">
             <WeekPickerPanel
                 :model-value="displayValue"
                 :week-starts-on="weekStartsOn"

@@ -135,6 +135,83 @@
       },
       "members": [
         {
+          "id": "api-component_3Apopover_2FPopoverContent-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The HTML tag or Vue component rendered for the panel. Defaults to div.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'div'",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"div\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Applies the panel attributes, accessible name, and interactions to its single child element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
           "id": "api-component_3Apopover_2FPopoverContent-props-align",
           "name": "align",
           "kind": "props",
@@ -151,7 +228,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/popover/PopoverContent.vue",
-            "line": 17
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -183,7 +260,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/popover/PopoverContent.vue",
-            "line": 18
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -215,7 +292,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/popover/PopoverContent.vue",
-            "line": 19
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -247,7 +324,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/popover/PopoverContent.vue",
-            "line": 20
+            "line": 24
           },
           "origin": "declared",
           "required": false,
