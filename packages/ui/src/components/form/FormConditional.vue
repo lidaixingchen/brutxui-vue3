@@ -21,7 +21,7 @@ if (!form) {
 
 const shouldShow = computed(() => {
     if (!form) return false
-    return props.when(form.value.values.value ?? {})
+    return props.when(form.value.values)
 })
 
 const classes = computed(() => cn(props.class))

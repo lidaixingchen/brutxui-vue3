@@ -327,7 +327,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/Form.vue",
-            "line": 140
+            "line": 168
           },
           "origin": "declared",
           "nullable": false,
@@ -346,7 +346,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/Form.vue",
-            "line": 141
+            "line": 169
           },
           "origin": "declared",
           "nullable": false,
@@ -365,7 +365,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/Form.vue",
-            "line": 142
+            "line": 170
           },
           "origin": "declared",
           "nullable": false,
@@ -384,7 +384,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/Form.vue",
-            "line": 143
+            "line": 171
           },
           "origin": "declared",
           "nullable": false,
@@ -403,7 +403,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/Form.vue",
-            "line": 144
+            "line": 172
           },
           "origin": "declared",
           "nullable": false,
@@ -637,7 +637,7 @@
           "name": "default",
           "kind": "slots",
           "type": {
-            "text": "{ componentField: { name: string; modelValue: unknown; 'onUpdate:modelValue': (e: unknown, shouldValidate?: boolean | undefined) => void; onFocusout: (event: FocusEvent) => void; }; }",
+            "text": "{ componentField: { name: string; modelValue: unknown; 'onUpdate:modelValue': (value: unknown, shouldValidate?: boolean) => void; onFocusout: (event: FocusEvent) => void; }; }",
             "literals": [],
             "references": []
           },

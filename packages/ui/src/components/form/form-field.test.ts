@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import { nextTick } from 'vue'
 import Form from './Form.vue'
 import FormControl from './FormControl.vue'
 import FormField from './FormField.vue'
@@ -7,7 +8,15 @@ import FormItem from './FormItem.vue'
 import FormMessage from './FormMessage.vue'
 import Input from '../input/Input.vue'
 
-function mountField(initialValue: string, validationSchema?: Record<string, (value: unknown) => true | string>) {
+function deferred<T>() {
+    let resolve!: (value: T) => void
+    const promise = new Promise<T>((fulfill) => {
+        resolve = fulfill
+    })
+    return { promise, resolve }
+}
+
+function mountField(initialValue: string, validationSchema?: Record<string, (value: unknown) => true | string | Promise<string>>) {
     return mount(Form, {
         props: {
             initialValues: { username: initialValue },
@@ -60,5 +69,58 @@ describe('FormField componentField', () => {
         await vi.waitFor(() => expect(wrapper.text()).toContain('Username is required'))
 
         expect(validator).toHaveBeenCalled()
+    })
+
+    it.each(['resetFields', 'validate'] as const)(
+        'ignores an older input schema error after %s',
+        async (action) => {
+            const started = deferred<void>()
+            const pending = deferred<string>()
+            let pause = false
+            const wrapper = mountField('initial', {
+                username(value) {
+                    if (pause && value === 'pending') {
+                        started.resolve()
+                        return pending.promise
+                    }
+                    return true
+                },
+            })
+            expect(await wrapper.vm.validate()).toBe(true)
+            pause = true
+
+            const input = wrapper.get('input')
+            await input.setValue('pending')
+            await started.promise
+            pause = false
+            if (action === 'resetFields') {
+                wrapper.vm.resetFields()
+                await nextTick()
+                expect(input.element.value).toBe('initial')
+            } else {
+                expect(await wrapper.vm.validate()).toBe(true)
+            }
+            pending.resolve('Old input error')
+            await flushPromises()
+
+            expect(wrapper.get('input').element).toBe(input.element)
+            expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+        },
+    )
+
+    it('validates and resets a registered component input without a schema', async () => {
+        const wrapper = mountField('initial')
+        const input = wrapper.get('input')
+        await input.setValue('edited')
+        await input.trigger('focusout')
+        expect(await wrapper.vm.validateField('username')).toBe(true)
+        expect(await wrapper.vm.validate()).toBe(true)
+
+        wrapper.vm.resetFields()
+        await nextTick()
+
+        expect(wrapper.get('input').element).toBe(input.element)
+        expect(input.element.value).toBe('initial')
+        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
     })
 })

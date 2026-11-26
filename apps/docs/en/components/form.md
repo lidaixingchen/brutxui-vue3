@@ -26,6 +26,8 @@ pnpm add vee-validate @vee-validate/zod zod
 
 ## Usage
 
+Changing field values or starting a new form validation invalidates a submission that is awaiting asynchronous validation. A submission emits `submit` only if it passes validation while still current.
+
 ```vue
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
@@ -274,6 +276,8 @@ function handleReset() {
 </template>
 ```
 
+`clearValidate()` and `clearValidate([])` clear all field errors. `clearValidate(['email'])` clears only the named field's error. Field values are preserved.
+
 ## API Reference
 
 <span id="form-1"></span>
@@ -323,4 +327,4 @@ A: Set `optional: true` in the `steps` configuration to mark a step as optional.
 
 **Q: Why isn't the FormConditional condition function working?**
 
-A: The `when` function of `FormConditional` receives the current form's complete value object as its argument. Make sure the field names are spelled correctly and the form values have been properly initialized via `v-model` or `initialValues`. If the condition depends on a field that hasn't been rendered yet or whose value is `undefined`, the condition evaluation may return unexpected results.
+A: The `when` function of `FormConditional` receives the current form's complete value object. A field named `value` can be read as `values.value`. Check the field names and supply initial values via `initialValues`. If the field has yet to render or its value is `undefined`, handle that case in the condition.

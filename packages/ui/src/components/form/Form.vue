@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { provide, computed, ref, watch } from 'vue'
+import { provide, computed, ref, watch, onBeforeUnmount } from 'vue'
 import { useForm } from 'vee-validate'
 import { cn } from '@/lib/utils'
-import { formContextKey } from './form-context'
+import { formContextKey, formSchemaValidationKey } from './form-context'
 
 interface FormProps {
     /** 行内表单布局 */
@@ -43,9 +43,40 @@ const form = useForm({
     validationSchema,
 })
 
-const onSubmit = form.handleSubmit((values) => {
-    emit('submit', values)
-})
+let invalidateValidation: (() => void) | undefined
+
+function beginValidation() {
+    invalidateValidation?.()
+
+    function finish() {
+        if (invalidateValidation !== finish) return
+        invalidateValidation = undefined
+        stopWatchingValues()
+    }
+
+    // 仅在校验等待期间观察值的变动，首次变动立即使本次校验失效。
+    const stopWatchingValues = watch(form.values, finish, { deep: true, flush: 'sync' })
+    invalidateValidation = finish
+
+    return {
+        isCurrent: () => invalidateValidation === finish,
+        finish,
+    }
+}
+
+onBeforeUnmount(() => invalidateValidation?.())
+watch(validationSchema, () => invalidateValidation?.(), { flush: 'sync' })
+
+async function onSubmit(event: Event) {
+    const attempt = beginValidation()
+    try {
+        await form.handleSubmit((values) => {
+            if (attempt.isCurrent()) emit('submit', values)
+        })(event)
+    } finally {
+        attempt.finish()
+    }
+}
 
 // 计算表单根类名
 const rootClasses = computed(() =>
@@ -66,19 +97,14 @@ const formContext = computed(() => ({
 
 // 重置表单字段
 function resetFields() {
+    invalidateValidation?.()
     form.resetForm()
 }
 
 // 清除验证状态
 function clearValidate(fields?: string[]) {
-    if (fields?.length) {
-        fields.forEach(field => {
-            form.setFieldError(field, undefined)
-        })
-    } else {
-        // 无参数或空数组时仅清除全部错误，
-        // 避免 resetForm 把表单值一并重置为挂载时捕获的 initialValues
-        form.setErrors({})
+    for (const field of fields?.length ? fields : Object.keys(form.errors.value)) {
+        form.setFieldError(field, undefined)
     }
 }
 
@@ -110,17 +136,17 @@ function scrollToField(field: string) {
 
 // 验证整个表单
 async function validate(): Promise<boolean> {
-    const { valid, errors } = await form.validate()
-
-    // 滚动到第一个错误字段
-    if (!valid && props.scrollToError) {
-        const firstErrorField = Object.keys(errors)[0]
-        if (firstErrorField) {
-            scrollToField(firstErrorField)
+    const attempt = beginValidation()
+    try {
+        const { valid, errors } = await form.validate()
+        if (attempt.isCurrent() && !valid && props.scrollToError) {
+            const firstErrorField = Object.keys(errors).find(field => form.errors.value[field])
+            if (firstErrorField) scrollToField(firstErrorField)
         }
+        return valid
+    } finally {
+        attempt.finish()
     }
-
-    return valid
 }
 
 // 引用级监听 initialValues：deep 监听会在父组件传入同值新对象或大对象逐字段变化时
@@ -129,12 +155,14 @@ watch(
     () => props.initialValues,
     (newValues) => {
         if (newValues && !form.meta.value.dirty) {
+            invalidateValidation?.()
             form.resetForm({ values: newValues })
         }
     },
 )
 
 provide(formContextKey, formContext)
+provide(formSchemaValidationKey, validationSchema.value ? form : undefined)
 
 defineExpose({
     validate,

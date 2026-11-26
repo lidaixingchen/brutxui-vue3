@@ -25,6 +25,8 @@ pnpm add vee-validate @vee-validate/zod zod
 
 ## 用法
 
+异步校验期间，修改字段值或启动新一轮表单校验会使等待中的提交失效。只有仍有效的提交通过校验后才触发 `submit`。
+
 ```vue
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
@@ -273,6 +275,8 @@ function handleReset() {
 </template>
 ```
 
+`clearValidate()` 或 `clearValidate([])` 清除全部字段错误。`clearValidate(['email'])` 仅清除指定字段的错误，字段值保持原样。
+
 ## API 参考
 
 <span id="form"></span>
@@ -323,4 +327,4 @@ A: 在 `steps` 配置中设置 `optional: true` 可将步骤标记为可选，�
 
 **Q: FormConditional 的条件函数为什么不生效？**
 
-A: `FormConditional` 的 `when` 函数接收的参数是当前表单的完整值对象。请确保字段名拼写正确，且表单值已通过 `v-model` 或 `initialValues` 正确初始化。如果条件依赖的字段尚未渲染或值为 `undefined`，条件判断可能会返回意外结果。
+A: `FormConditional` 的 `when` 函数接收当前表单的完整值对象。名为 `value` 的字段也可通过 `values.value` 读取。请检查字段名，并通过 `initialValues` 提供初值。如果字段尚未渲染或值为 `undefined`，请在条件中处理该情况。

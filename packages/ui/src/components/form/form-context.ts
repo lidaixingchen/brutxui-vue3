@@ -27,7 +27,10 @@ export interface FormLayoutContext {
     size?: 'sm' | 'default' | 'lg'
 }
 
+type FormSchemaValidation = Pick<VeeFormContext, 'setFieldValue' | 'setFieldTouched' | 'validateField'>
+
 export const formContextKey: InjectionKey<ComputedRef<VeeFormContext & FormLayoutContext>> = Symbol('formContext')
+export const formSchemaValidationKey: InjectionKey<FormSchemaValidation | undefined> = Symbol('formSchemaValidation')
 export const formFieldKey: InjectionKey<FormFieldContext> = Symbol('formField')
 export const formItemKey: InjectionKey<FormItemContext> = Symbol('formItem')
 export const formWizardContextKey: InjectionKey<FormWizardContext> = Symbol('formWizardContext')

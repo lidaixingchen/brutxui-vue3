@@ -6,11 +6,20 @@ import FormField from './FormField.vue'
 import FormItem from './FormItem.vue'
 import FormLabel from './FormLabel.vue'
 import FormControl from './FormControl.vue'
+import FormConditional from './FormConditional.vue'
 import FormDescription from './FormDescription.vue'
 import FormMessage from './FormMessage.vue'
 import { formContextKey, formFieldKey, formItemKey } from './form-context'
 import type { FormFieldContext, FormItemContext } from './form-context'
 import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
+
+function deferred<T>() {
+    let resolve!: (value: T) => void
+    const promise = new Promise<T>((fulfill) => {
+        resolve = fulfill
+    })
+    return { promise, resolve }
+}
 
 // Helper component: registers a field with vee-validate via useField
 const RegisteredField = defineComponent({
@@ -129,7 +138,7 @@ function mountFormDescription(options: Record<string, unknown> = {}) {
 // Helper: mount a Form with a registered field for integration testing
 function mountFormWithField(options: {
     initialValues?: Record<string, unknown>
-    validationSchema?: Record<string, (value: unknown) => true | string>
+    validationSchema?: unknown
     scrollToError?: boolean
     formProps?: Record<string, unknown>
 } = {}) {
@@ -269,6 +278,95 @@ describe('Form', () => {
     })
 
     describe('submit', () => {
+        it('keeps schema-transformed output and suppresses invalid submissions', async () => {
+            const wrapper = mountFormWithField({
+                initialValues: { name: ' alice ', ignored: true },
+                validationSchema: {
+                    __type: 'VVTypedSchema',
+                    async parse(values: { name: string }) {
+                        const name = values.name.trim()
+                        return name
+                            ? { errors: [], value: { name: name.toUpperCase() } }
+                            : { errors: [{ path: 'name', errors: ['Name is required'] }] }
+                    },
+                },
+            })
+
+            await wrapper.get('form').trigger('submit')
+            await vi.waitFor(() => expect(wrapper.emitted('submit')).toEqual([[{ name: 'ALICE' }]]))
+            await wrapper.get('input').setValue(' ')
+            await wrapper.get('form').trigger('submit')
+            await vi.waitFor(() => expect(wrapper.get('[data-testid="error"]').text()).toBe('Name is required'))
+            expect(wrapper.emitted('submit')).toHaveLength(1)
+        })
+
+        it('discards a pending submission when the user edits its values', async () => {
+            const pending = deferred<true>()
+            const started = deferred<void>()
+            let pause = false
+            const wrapper = mountFormWithField({
+                initialValues: { name: 'accepted' },
+                validationSchema: {
+                    name(value: unknown) {
+                        if (pause && value === 'accepted') {
+                            started.resolve()
+                            return pending.promise
+                        }
+                        return value === 'accepted' || 'Name is not accepted'
+                    },
+                },
+            })
+            expect(await wrapper.vm.validate()).toBe(true)
+            pause = true
+
+            await wrapper.get('form').trigger('submit')
+            await started.promise
+            await wrapper.get('input').setValue('rejected')
+            await vi.waitFor(() => expect(wrapper.get('[data-testid="error"]').text()).toBe('Name is not accepted'))
+            pending.resolve(true)
+            await flushPromises()
+
+            expect(wrapper.emitted('submit')).toBeUndefined()
+        })
+
+        it.each(['submit', 'validate', 'resetFields', 'unmount'] as const)(
+            'expires a pending submission after %s even when values stay the same',
+            async (action) => {
+                const pending = deferred<true>()
+                const started = deferred<void>()
+                let pause = false
+                const wrapper = mountFormWithField({
+                    initialValues: { name: 'accepted' },
+                    validationSchema: {
+                        name() {
+                            if (pause) {
+                                started.resolve()
+                                return pending.promise
+                            }
+                            return true
+                        },
+                    },
+                })
+                expect(await wrapper.vm.validate()).toBe(true)
+                pause = true
+                await wrapper.get('form').trigger('submit')
+                await started.promise
+                pause = false
+                if (action === 'submit') {
+                    await wrapper.get('form').trigger('submit')
+                    await vi.waitFor(() => expect(wrapper.emitted('submit')).toEqual([[{ name: 'accepted' }]]))
+                } else if (action === 'unmount') {
+                    wrapper.unmount()
+                } else {
+                    await wrapper.vm[action]()
+                }
+                pending.resolve(true)
+                await flushPromises()
+
+                expect(wrapper.emitted('submit')).toEqual(action === 'submit' ? [[{ name: 'accepted' }]] : undefined)
+            },
+        )
+
         it('emits submit event on form submission', async () => {
             const wrapper = mount(Form, {
                 props: {
@@ -320,6 +418,37 @@ describe('Form', () => {
     })
 
     describe('exposed methods', () => {
+        it('returns the old validation result without scrolling after newer validation', async () => {
+            const pending = deferred<string>()
+            const started = deferred<void>()
+            let pause = false
+            const wrapper = mountFormWithField({
+                initialValues: { name: 'unchanged' },
+                scrollToError: true,
+                validationSchema: {
+                    name() {
+                        if (pause) {
+                            started.resolve()
+                            return pending.promise
+                        }
+                        return true
+                    },
+                },
+            })
+            expect(await wrapper.vm.validate()).toBe(true)
+            const scroll = vi.spyOn(wrapper.get('input').element, 'scrollIntoView')
+            pause = true
+            const older = wrapper.vm.validate()
+            await started.promise
+            pause = false
+            expect(await wrapper.vm.validate()).toBe(true)
+            pending.resolve('Outdated error')
+
+            expect(await older).toBe(false)
+            expect(wrapper.get('[data-testid="error"]').text()).toBe('')
+            expect(scroll).not.toHaveBeenCalled()
+        })
+
         it('exposes validate method', () => {
             const wrapper = mount(Form)
             expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).validate).toBe('function')
@@ -478,66 +607,33 @@ describe('Form', () => {
             expect(wrapper.find('form').exists()).toBe(true)
         })
 
-        it('clearValidate clears all field errors when no fields specified', async () => {
-            const wrapper = mount(Form)
-
-            // clearValidate without arguments should only clear errors, not reset values
-            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate()
-            expect(wrapper.find('form').exists()).toBe(true)
-        })
-
-        it('clearValidate without arguments does not reset form values', async () => {
-            const wrapper = mountFormWithField({
-                initialValues: { name: 'original' },
-                validationSchema: {
-                    name: (value: unknown) => {
-                        if (!value) return 'Name is required'
-                        return true
-                    },
+        it.each([
+            { fields: undefined, remaining: ['', ''] },
+            { fields: [], remaining: ['', ''] },
+            { fields: ['name'], remaining: ['', 'Invalid email'] },
+        ])('clearValidate($fields) clears the requested errors and keeps values', async ({ fields, remaining }) => {
+            const wrapper = mount(Form, {
+                props: {
+                    initialValues: { name: 'original', email: 'example' },
+                    validationSchema: { name: () => 'Invalid name', email: () => 'Invalid email' },
+                },
+                slots: {
+                    default: {
+                        components: { RegisteredField },
+                        template: '<RegisteredField name="name" /><RegisteredField name="email" />',
+                    } as any,
                 },
             })
+            await wrapper.get('input[name="name"]').setValue('changed')
+            expect(await wrapper.vm.validate()).toBe(false)
+            const errors = () => wrapper.findAll('[data-testid="error"]').map(error => error.text())
+            expect(errors()).toEqual(['Invalid name', 'Invalid email'])
 
-            // 先产生用户输入
-            await wrapper.find('input').setValue('changed')
-            await flushPromises()
-            expect((wrapper.find('input').element as HTMLInputElement).value).toBe('changed')
+            wrapper.vm.clearValidate(fields)
+            await nextTick()
 
-            // 调用 clearValidate：仅清除验证状态，不应把表单值重置回挂载时的 initialValues
-            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate()
-            await flushPromises()
-
-            // 表单值应保持用户输入，而不是被重置为 'original'
-            expect((wrapper.find('input').element as HTMLInputElement).value).toBe('changed')
-        })
-
-        it('clearValidate clears specific field errors', async () => {
-            const wrapper = mount(Form)
-
-            // clearValidate with specific field names
-            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate(['name', 'email'])
-            expect(wrapper.find('form').exists()).toBe(true)
-        })
-
-        it('clearValidate clears specific field errors on form with registered fields', async () => {
-            const schema = {
-                name: (value: unknown) => {
-                    if (!value) return 'Name is required'
-                    return true
-                },
-            }
-
-            const wrapper = mountFormWithField({
-                initialValues: { name: '' },
-                validationSchema: schema,
-            })
-
-            // First validate to generate errors
-            await ((wrapper.vm as unknown) as Record<string, Function>).validate()
-            await flushPromises()
-
-            // Then clear specific field
-            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate(['name'])
-            expect(wrapper.find('form').exists()).toBe(true)
+            expect(errors()).toEqual(remaining)
+            expect(wrapper.findAll('input').map(input => input.element.value)).toEqual(['changed', 'example'])
         })
 
         it('validateField validates a single field', async () => {
@@ -821,6 +917,36 @@ describe('Form layout contract', () => {
         expect(message.classes()).toContain('col-start-2')
         expect(description.classes()).not.toContain('col-span-2')
         expect(message.classes()).not.toContain('col-span-2')
+    })
+})
+
+describe('FormConditional', () => {
+    it('reads the full reactive values record, including a field named value', async () => {
+        const wrapper = mount(Form, {
+            props: { initialValues: { company: 'Acme', value: 'enabled' } },
+            slots: {
+                default: {
+                    components: { FormConditional, RegisteredField },
+                    setup: () => ({
+                        when: (values: Record<string, unknown>) =>
+                            values.company === 'Acme' && values.value === 'enabled',
+                    }),
+                    template: `
+                        <RegisteredField name="company" />
+                        <RegisteredField name="value" />
+                        <FormConditional :when="when"><p data-conditional>Company details</p></FormConditional>
+                    `,
+                } as any,
+            },
+        })
+
+        expect(wrapper.find('[data-conditional]').exists()).toBe(true)
+        await wrapper.get('input[name="value"]').setValue('disabled')
+        expect(wrapper.find('[data-conditional]').exists()).toBe(false)
+        await wrapper.get('input[name="value"]').setValue('enabled')
+        expect(wrapper.find('[data-conditional]').exists()).toBe(true)
+        await wrapper.get('input[name="company"]').setValue('')
+        expect(wrapper.find('[data-conditional]').exists()).toBe(false)
     })
 })
 
