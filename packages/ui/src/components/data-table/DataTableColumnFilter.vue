@@ -2,7 +2,6 @@
 import { computed, watch, type DeepReadonly } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
-import { createSelectValueMap } from '@/lib/data-table-utils'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -55,14 +54,34 @@ const textVal = computed<string>({
     }
 })
 
-// SelectItem 的 value 经 String() 展示，过滤状态需还原为选项原始类型
-// （string | number），保证 filterState 类型保真、与 multi-select 一致
-const selectValueMap = computed(() => createSelectValueMap(props.column.filterOptions ?? []))
+const SELECT_ALL_KEY = 'all'
 
-const selectVal = computed<string>(() => {
-    const v = props.filterState.columns?.[props.column.id]
-    return String(v ?? '')
+// 选项键保留原始值的类型，并与“全部”使用独立的键。
+function getSelectOptionKey(value: string | number): string {
+    return `${typeof value}:${value}`
+}
+
+const selectOptions = computed(() => (props.column.filterOptions ?? []).map(option => ({
+    ...option,
+    key: getSelectOptionKey(option.value),
+})))
+
+const selectKey = computed(() => {
+    const value = props.filterState.columns?.[props.column.id]
+    if (value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)) {
+        return SELECT_ALL_KEY
+    }
+    return typeof value === 'number' || typeof value === 'string' ? getSelectOptionKey(value) : ''
 })
+
+function handleSelectChange(key: string) {
+    if (key === SELECT_ALL_KEY) {
+        resetColumnFilter()
+        return
+    }
+    const option = selectOptions.value.find(option => option.key === key)
+    if (option) updateFilterValue(option.value)
+}
 
 function isMultiSelectChecked(value: string | number): boolean {
     const vals = props.filterState.columns?.[props.column.id]
@@ -176,18 +195,18 @@ function resetColumnFilter() {
             <!-- Select -->
             <template v-else-if="column.filterType === 'select'">
                 <SelectRoot
-                    :model-value="selectVal"
-                    @update:model-value="val => updateFilterValue(selectValueMap.get(val) ?? val)"
+                    :model-value="selectKey"
+                    @update:model-value="handleSelectChange"
                 >
                     <SelectTrigger size="sm" class="w-full">
                         <SelectValue :placeholder="t('dataTable.filterAll')" />
                     </SelectTrigger>
                     <SelectContent class="z-dropdown">
-                        <SelectItem value="">{{ t('dataTable.filterAll') }}</SelectItem>
+                        <SelectItem :value="SELECT_ALL_KEY">{{ t('dataTable.filterAll') }}</SelectItem>
                         <SelectItem
-                            v-for="opt in column.filterOptions"
-                            :key="opt.value"
-                            :value="String(opt.value)"
+                            v-for="opt in selectOptions"
+                            :key="opt.key"
+                            :value="opt.key"
                         >
                             {{ opt.label }}
                         </SelectItem>

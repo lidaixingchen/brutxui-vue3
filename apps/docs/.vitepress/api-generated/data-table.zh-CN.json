@@ -1611,7 +1611,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
-            "line": 20
+            "line": 19
           },
           "origin": "declared",
           "required": true,
@@ -1635,7 +1635,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
-            "line": 21
+            "line": 20
           },
           "origin": "declared",
           "required": true,
@@ -1659,7 +1659,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
-            "line": 22
+            "line": 21
           },
           "origin": "declared",
           "required": true,
