@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMarkdownRenderer, disposeMdItInstance } from '../../../apps/docs/node_modules/vitepress/dist/node/index.js'
-import { createApiPagePlugin, createApiPageSearchOptions, parseApiPageMarkdown } from '../../../apps/docs/.vitepress/api-page'
+import { createApiPagePlugin, createApiPageSearchOptions, getApiPageInvocations, parseApiPageMarkdown } from '../../../apps/docs/.vitepress/api-page'
 
 interface ApiPageTestEnvironment extends Record<string, unknown> {
     path: string
@@ -195,18 +195,21 @@ describe('VitePress 组件 API 页面编译与搜索', () => {
             .toThrow(/apps\/docs\/components\/button\.md:1:1 \[API_DATA_UNAVAILABLE\]/u)
     })
 
-    it('固定子组件范围只将该成员投影到搜索索引', async () => {
+    it.each(['ButtonGroup', 'button-group'])('将 %s 解析为页面和搜索共用的子组件', async (subcomponent) => {
         const md = await createRenderer()
         const search = createApiPageSearchOptions(pluginOptions)
-        const html = search._render(
-            '<ComponentApi name="button" subcomponent="ButtonGroup" />',
-            createEnvironment('components/button.md'),
-            md,
-        )
+        const source = `<ComponentApi name="button" search subcomponent='${subcomponent}' instance="group" />`
+        const relativePath = 'en/components/button.md'
+        const env = createEnvironment(relativePath)
+        const pageHtml = md.render(source, env)
+        const searchHtml = search._render(source, createEnvironment(relativePath), md)
 
-        expect(html).toContain('groupLabel')
-        expect(html).not.toContain('modelValue')
-        expect(html).toContain('component%3Abutton%2FButtonGroup')
+        expect(getApiPageInvocations(env)[0]?.subcomponent).toBe('ButtonGroup')
+        expect(pageHtml).toMatch(/name="button"\s+subcomponent=(['"])ButtonGroup\1/u)
+        expect(pageHtml).toContain('instance="group"')
+        expect(env.sfcBlocks?.scriptSetup?.content).toContain('button.en.json')
+        expect(searchHtml).toContain('href="#group-api-component%3Abutton%2FButtonGroup-props-groupLabel"')
+        expect(searchHtml).not.toContain('modelValue')
     })
 
     it('不索引 search=false 的 API 调用，也遵循页面级 search:false', async () => {

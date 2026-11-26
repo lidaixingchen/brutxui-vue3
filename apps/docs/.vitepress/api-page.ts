@@ -255,7 +255,7 @@ function rewriteMarkup(
         const invocation = tokenCalls[index]
         const rewritten = env[SEARCH_RENDERING_KEY]
             ? invocation.searchMarker!
-            : `${calls.length === 0 && index === 0 ? LEGACY_ANCHOR_MARKER : ''}${injectApiDataBinding(tag, invocation.importName)}`
+            : `${calls.length === 0 && index === 0 ? LEGACY_ANCHOR_MARKER : ''}${injectApiDataBinding(tag, invocation)}`
         result = `${result.slice(0, tag.start)}${rewritten}${result.slice(tag.end)}`
     }
 

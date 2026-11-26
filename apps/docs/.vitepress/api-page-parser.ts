@@ -228,9 +228,7 @@ export function resolveApiPageInvocation(
     assertValuePresent(attributes, 'defaultTab', position)
     assertValuePresent(attributes, 'instance', position)
     const subcomponent = optionalValue(attributes, 'subcomponent')
-    if (subcomponent && !group.members.some(member => normalizeName(member.name) === normalizeName(subcomponent))) {
-        throw diagnostic(position, 'API_CALL_SUBCOMPONENT_UNKNOWN', `组件组 ${name} 不包含公开子组件 ${subcomponent}`)
-    }
+    const catalogMember = subcomponent ? resolveCatalogMember(group, subcomponent, position) : undefined
 
     const defaultTabValue = optionalValue(attributes, 'defaultTab')
     const allowedTabs = ['all', 'props', 'events', 'slots', 'exposes'] as const
@@ -252,7 +250,7 @@ export function resolveApiPageInvocation(
         name,
         group,
         locale,
-        subcomponent,
+        subcomponent: catalogMember?.name,
         defaultTab: defaultTabValue as ApiPageInvocation['defaultTab'],
         instance,
         search: booleanParameter(attributes.get('search'), position),
@@ -342,6 +340,13 @@ function resolveGroup(name: string, catalog: ApiPageCatalog, position: ApiPagePo
     return matches[0]
 }
 
+function resolveCatalogMember(group: ApiPageCatalogGroup, subcomponent: string, position: ApiPagePosition): ApiPageCatalogMember {
+    const target = normalizeName(subcomponent)
+    const member = group.members.find(candidate => normalizeName(candidate.name) === target)
+    if (!member) throw diagnostic(position, 'API_CALL_SUBCOMPONENT_UNKNOWN', `组件组 ${group.slug} 不包含公开子组件 ${subcomponent}`)
+    return member
+}
+
 export function selectApiComponents(
     group: ApiPageCatalogGroup,
     data: ApiGroup,
@@ -349,29 +354,30 @@ export function selectApiComponents(
     position: ApiPagePosition,
 ): ApiComponent[] {
     if (!subcomponent) return data.components
-    const catalogMember = group.members.find(member => normalizeName(member.name) === normalizeName(subcomponent))
-    if (!catalogMember) throw diagnostic(position, 'API_CALL_SUBCOMPONENT_UNKNOWN', `组件组 ${group.slug} 不包含公开子组件 ${subcomponent}`)
-    const component = data.components.find(item => normalizeName(item.name) === normalizeName(catalogMember.name))
+    const catalogMember = resolveCatalogMember(group, subcomponent, position)
+    const component = data.components.find(item => item.name === catalogMember.name)
     if (!component) throw diagnostic(position, 'API_DATA_MEMBER_MISSING', `生成的 API 数据缺少公开子组件 ${catalogMember.name}`)
     return [component]
 }
 
-export function injectApiDataBinding(tag: RawComponentApiTag, importName: string): string {
+export function injectApiDataBinding(tag: RawComponentApiTag, invocation: ApiPageInvocation): string {
     let source = tag.source
-    const searchAttributes = tag.attributes
-        .filter(attribute => normalizeParameterName(attribute.name.replace(/^(:|v-bind:)/u, '')) === 'search')
-        .sort((left, right) => right.start - left.start)
-    for (const attribute of searchAttributes) {
-        let localStart = attribute.start - tag.start
+    for (const attribute of [...tag.attributes].reverse()) {
+        const name = attribute.name.replace(/^(:|v-bind:)/u, '')
+        let replacement: string
+        if (name === 'search') replacement = ''
+        else if (name === 'subcomponent' && invocation.subcomponent) replacement = `subcomponent="${invocation.subcomponent}"`
+        else continue
+
+        const localStart = attribute.start - tag.start
         const localEnd = attribute.end - tag.start
-        if (/\s/u.test(source[localStart - 1] ?? '')) localStart -= 1
-        source = `${source.slice(0, localStart)}${source.slice(localEnd)}`
+        source = `${source.slice(0, localStart)}${replacement}${source.slice(localEnd)}`
     }
 
     const closing = source.lastIndexOf('>')
     const beforeClose = source.slice(0, closing)
     const insertion = /\/\s*$/u.test(beforeClose) ? beforeClose.lastIndexOf('/') : closing
-    return `${source.slice(0, insertion)} :data="${importName}"${source.slice(insertion)}`
+    return `${source.slice(0, insertion)} :data="${invocation.importName}"${source.slice(insertion)}`
 }
 
 export function createApiPagePosition(file: string, line: number, column: number): ApiPagePosition {
