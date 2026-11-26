@@ -1,14 +1,17 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { EventEmitter } from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getDefaultPaths } from '../src/runner/build-runner.js';
+import { RegistryWatcher } from '../src/runner/watcher.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 导入待测模块（延迟导入以便 mock）
 const buildRegistry = await import('../scripts/build-registry.js');
-const { runPrebuildScan, reloadRegistry, runWatch } = buildRegistry;
+const { runPrebuildScan, reloadRegistry } = buildRegistry;
 
 describe('build-registry watch mode (P2.3)', () => {
     describe('reloadRegistry', () => {
@@ -66,39 +69,111 @@ describe('build-registry watch mode (P2.3)', () => {
             expect(manifest.loading.directives).toContain('loading.ts');
         });
     });
-
-    describe('handleFileChange debounce logic', () => {
-        // 测试 debounce 和防并发的行为通过间接方式：
-        // 由于 handleFileChange 是内部函数不导出，我们通过 runWatch 集成测试覆盖
-        // 这里测试 runWatch 导出的存在性
-        it('runWatch is exported as a function', () => {
-            expect(typeof runWatch).toBe('function');
-        });
-    });
-
-    describe('watch mode entry point', () => {
-        it('runWatch is async (returns Promise)', () => {
-            // 不实际调用 runWatch（它会启动 watcher 并阻塞）
-            // 只验证它是 async 函数
-            const result = runWatch.toString();
-            expect(result).toContain('async');
-        });
-    });
 });
 
 describe('watch mode integration (P2.3)', () => {
-    // 集成测试：验证 runPrebuildScan + reloadRegistry 的链路能协同工作
-    // 不测试 fs.watch 的实际触发（需要真实文件系统事件，不稳定）
-
     it('runPrebuildScan followed by reloadRegistry produces consistent state', () => {
         runPrebuildScan();
         expect(() => reloadRegistry()).not.toThrow();
     });
+});
 
-    it('watch mode constants are defined correctly', () => {
-        // 通过模块导出间接验证常量存在
-        // WATCH_DEBOUNCE_MS 和 WATCHED_EXTENSIONS 是模块内部常量
-        // 这里通过 runWatch 函数的存在验证 watch 模式已实现
-        expect(runWatch).toBeDefined();
+describe('RegistryWatcher', () => {
+    const paths = getDefaultPaths();
+    const uiDirectory = path.dirname(paths.manifestPath);
+    const uiSources = path.dirname(paths.componentsDir);
+    const sharedDirectory = path.resolve(__dirname, '../../shared');
+    const registryDirectory = path.resolve(__dirname, '..');
+    const debounceMs = 10;
+    const emitRename = new Map<string, (filename: string) => void>();
+    const close = vi.fn();
+    const onRebuild = vi.fn<() => Promise<void>>();
+    let watcher: RegistryWatcher;
+
+    beforeEach(() => {
+        vi.useFakeTimers();
+        vi.spyOn(fs, 'watch').mockImplementation((target, _options, listener) => {
+            if (listener) emitRename.set(String(target), filename => listener('rename', filename));
+            return Object.assign(new EventEmitter(), { close }) as fs.FSWatcher;
+        });
+        onRebuild.mockReset().mockResolvedValue(undefined);
+        close.mockClear();
+        watcher = new RegistryWatcher(paths, {
+            debounceMs,
+            onRebuild,
+            additionalInputs: {
+                directories: [path.join(sharedDirectory, 'src'), path.join(registryDirectory, 'src')],
+                files: [],
+            },
+        });
+    });
+
+    afterEach(() => {
+        watcher.stop();
+        emitRename.clear();
+        vi.restoreAllMocks();
+        vi.useRealTimers();
+    });
+
+    it('coalesces shared sources and atomically replaced UI build inputs', async () => {
+        await watcher.start();
+        const emitUiRename = emitRename.get(uiDirectory)!;
+        emitUiRename('exports-manifest.json');
+        emitRename.get(uiSources)!(path.join('components', 'kanban', 'kanban.test.ts'));
+        emitRename.get(registryDirectory)!(path.join('registry', 'index.json'));
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).not.toHaveBeenCalled();
+
+        emitRename.get(sharedDirectory)!(path.join('src', 'components.ts'));
+        emitUiRename('registry-manifest.json');
+        emitUiRename('api-contract.ts');
+        emitUiRename('package.json');
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(1);
+
+        for (const [index, file] of ['registry-manifest.json', 'api-contract.ts', 'package.json'].entries()) {
+            emitUiRename(file);
+            await vi.advanceTimersByTimeAsync(debounceMs);
+            expect(onRebuild).toHaveBeenCalledTimes(index + 2);
+        }
+    });
+
+    it('observes files inside a replaced input directory from its ancestor', async () => {
+        const existsSync = fs.existsSync;
+        vi.spyOn(fs, 'existsSync').mockImplementation(target => target !== paths.typesDir && existsSync(target));
+        await watcher.start();
+        const emitSourceRename = emitRename.get(uiSources)!;
+        emitSourceRename('types');
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(1);
+
+        emitSourceRename(path.join('types', 'example.ts'));
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(2);
+    });
+
+    it('defers changes during the initial build, retries after failure, and cancels pending work on stop', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const initial = Promise.withResolvers<void>();
+        onRebuild.mockReturnValueOnce(initial.promise);
+        const signalListeners = [process.listenerCount('SIGINT'), process.listenerCount('SIGTERM')];
+        const started = watcher.start({ buildInitially: true });
+        const emitSharedRename = emitRename.get(sharedDirectory)!;
+        emitSharedRename(path.join('src', 'components.ts'));
+        emitSharedRename(path.join('src', 'design-tokens.ts'));
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(1);
+
+        initial.reject(new Error('Invalid build input'));
+        await started;
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(2);
+
+        emitSharedRename(path.join('src', 'components.ts'));
+        watcher.stop();
+        await vi.advanceTimersByTimeAsync(debounceMs);
+        expect(onRebuild).toHaveBeenCalledTimes(2);
+        expect(close).toHaveBeenCalledTimes(emitRename.size);
+        expect([process.listenerCount('SIGINT'), process.listenerCount('SIGTERM')]).toEqual(signalListeners);
     });
 });

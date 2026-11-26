@@ -1,12 +1,12 @@
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { RegistryCompiler } from '../compiler/registry-compiler.js';
 import { computeInputDigest } from '../compiler/cache-manager.js';
 import { DiskEmitter } from '../emitters/disk-emitter.js';
 import { signManifestFromEnv } from '../emitters/manifest-signer.js';
 import { BenchmarkTracker } from './benchmark-tracker.js';
-import { RegistryWatcher } from './watcher.js';
+import { getDefaultPaths } from './build-paths.js';
 import type { ApiContract, ComponentExportProjection } from 'brutx-shared-vue/api-contract';
 import type {
     CompiledRegistryResult,
@@ -15,27 +15,13 @@ import type {
     PublicComponentProjectionSet,
 } from '../compiler/types.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export { getDefaultPaths } from './build-paths.js';
+export { runWatch } from './watch-runner.js';
 
 export interface RunnerOptions extends CompilerOptions {
     verbose?: boolean;
     bench?: boolean;
     forceRebuild?: boolean;
-}
-
-export function getDefaultPaths(): CompilerPaths {
-    return {
-        componentsDir: path.resolve(__dirname, '../../../../packages/ui/src/components'),
-        composablesDir: path.resolve(__dirname, '../../../../packages/ui/src/composables'),
-        localesDir: path.resolve(__dirname, '../../../../packages/ui/src/locales'),
-        libDir: path.resolve(__dirname, '../../../../packages/ui/src/lib'),
-        directivesDir: path.resolve(__dirname, '../../../../packages/ui/src/directives'),
-        typesDir: path.resolve(__dirname, '../../../../packages/ui/src/types'),
-        manifestPath: path.resolve(__dirname, '../../../../packages/ui/registry-manifest.json'),
-        outputDir: path.resolve(__dirname, '../../registry'),
-        apiContractPath: path.resolve(__dirname, '../../../../packages/ui/api-contract.ts'),
-    };
 }
 
 interface UiApiContractModule {
@@ -155,20 +141,4 @@ export async function runBuild(options: RunnerOptions = {}): Promise<void> {
         console.error(`❌ Registry build failed: ${message}`);
         throw error;
     }
-}
-
-export async function runWatch(options: RunnerOptions = {}): Promise<void> {
-    const paths = { ...getDefaultPaths(), ...(options.paths ?? {}) };
-    console.log('👀 Starting registry build in watch mode...');
-
-    // 初始执行一次构建
-    await runBuild(options);
-
-    const watcher = new RegistryWatcher(paths, {
-        onRebuild: async () => {
-            await runBuild(options);
-        },
-    });
-
-    watcher.start();
 }

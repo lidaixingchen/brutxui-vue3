@@ -1,41 +1,37 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { scanComponentFiles } from 'brutx-shared-vue/scan';
-import {
-    computeRegistryManifestIntegrity,
-    COMPONENT_METADATA,
-    type MergedRegistryEntry,
-    type RegistryFileType,
-    type RegistryIndex,
-    type RegistryItem,
-} from 'brutx-shared-vue';
-import {
+import type { MergedRegistryEntry, RegistryFileType, RegistryIndex, RegistryItem } from 'brutx-shared-vue';
+import type {
     RegistryCompiler,
-    rewriteImports as coreRewriteImports,
-    extractDeps as coreExtractDeps,
-    extractRegistryDeps as coreExtractRegistryDeps,
-    extractComponentFileDeps as coreExtractComponentFileDeps,
-    extractUnknownRegistryDeps as coreExtractUnknownRegistryDeps,
-    assertKnownRegistryDeps as coreAssertKnownRegistryDeps,
-    getFileType as coreGetFileType,
-    buildRegistrySbom as coreBuildRegistrySbom,
+    RegistryBuildManifest,
+    RegistryBuildManifestOptions,
+    RewriteContext,
     computeSbomIntegrity as coreComputeSbomIntegrity,
     computeSbomSerialNumber as coreComputeSbomSerialNumber,
-    signManifestFromEnv as coreSignManifestFromEnv,
-    computeInputDigest,
     createRegistryCompiler,
-    runBuild,
-    runWatch,
-    type RegistryBuildManifest,
-    type RegistryBuildManifestOptions,
-    type RewriteContext,
 } from '../src/index.js';
-import {
-    findRegistryDependencyCycles,
-    REGISTRY_MANIFEST_SCHEMA_URL,
-    type RegistryReferenceItem,
-} from './validate-utils.js';
+import { runWatch } from '../src/runner/watch-runner.js';
+import type { RegistryReferenceItem } from './validate-utils.js';
+
+const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
+const isMain = !isVitestRuntime && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+const helpers = isMain ? undefined : await loadScriptHelpers();
+
+async function loadScriptHelpers() {
+    const [shared, scan, registry, validation] = await Promise.all([
+        import('brutx-shared-vue'),
+        import('brutx-shared-vue/scan'),
+        import('../src/index.js'),
+        import('./validate-utils.js'),
+    ]);
+    return { shared, scan, registry, validation };
+}
+
+function helperModules() {
+    if (!helpers) throw new Error('Registry helpers require importing the build script');
+    return helpers;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,6 +47,7 @@ let defaultCompilerPromise: ReturnType<typeof createRegistryCompiler> | undefine
 let defaultCompilerContractDigest: string | undefined;
 
 async function getDefaultCompiler(): Promise<RegistryCompiler> {
+    const { computeInputDigest, createRegistryCompiler } = helperModules().registry;
     const contractDigest = computeInputDigest(fs.readFileSync(API_CONTRACT_PATH, 'utf-8'));
     if (!defaultCompilerPromise || defaultCompilerContractDigest !== contractDigest) {
         defaultCompilerPromise = createRegistryCompiler();
@@ -91,7 +88,7 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
         );
     }
 
-    const metadata = COMPONENT_METADATA;
+    const metadata = helperModules().shared.COMPONENT_METADATA;
     const merged: Record<string, MergedRegistryEntry> = {};
     for (const [name, meta] of Object.entries(metadata)) {
         const fileManifest = manifest[name];
@@ -125,7 +122,7 @@ export function reloadRegistry(): void {
 }
 
 export function runPrebuildScan(): void {
-    const expectedManifest = scanComponentFiles({
+    const expectedManifest = helperModules().scan.scanComponentFiles({
         componentsDir: UI_COMPONENTS_DIR,
         composablesDir: UI_COMPOSABLES_DIR,
         libDir: UI_LIB_DIR,
@@ -147,31 +144,31 @@ export function rewriteImports(
     context: RewriteContext = 'component',
     filename?: string,
 ): string {
-    return coreRewriteImports(code, componentName, context, undefined, filename);
+    return helperModules().registry.rewriteImports(code, componentName, context, undefined, filename);
 }
 
 export function extractDeps(code: string, dirPrefix: string): string[] {
-    return coreExtractDeps(code, dirPrefix);
+    return helperModules().registry.extractDeps(code, dirPrefix);
 }
 
 export function getFileType(filePath: string): RegistryFileType {
-    return coreGetFileType(filePath);
+    return helperModules().registry.getFileType(filePath);
 }
 
 export function extractRegistryDeps(code: string, componentName: string): string[] {
-    return coreExtractRegistryDeps(code, componentName);
+    return helperModules().registry.extractRegistryDeps(code, componentName);
 }
 
 export function extractComponentFileDeps(code: string, componentName: string): string[] {
-    return coreExtractComponentFileDeps(code, componentName);
+    return helperModules().registry.extractComponentFileDeps(code, componentName);
 }
 
 export function extractUnknownRegistryDeps(code: string): string[] {
-    return coreExtractUnknownRegistryDeps(code);
+    return helperModules().registry.extractUnknownRegistryDeps(code);
 }
 
 export function assertKnownRegistryDeps(code: string, ownerName: string, sourceLabel: string): string[] {
-    return coreAssertKnownRegistryDeps(code, ownerName, sourceLabel);
+    return helperModules().registry.assertKnownRegistryDeps(code, ownerName, sourceLabel);
 }
 
 export async function buildRegistryItem(name: string): Promise<RegistryItem> {
@@ -211,7 +208,7 @@ export function buildRegistryManifest(
     const releaseTag = options.releaseTag
         ?? (options.registryVersion ? `v${options.registryVersion}` : 'v0.1.0');
     const baseManifest = {
-        $schema: REGISTRY_MANIFEST_SCHEMA_URL,
+        $schema: helperModules().validation.REGISTRY_MANIFEST_SCHEMA_URL,
         name: index.name,
         schemaVersion: options.schemaVersion ?? index.schemaVersion,
         registryVersion: options.registryVersion,
@@ -221,7 +218,7 @@ export function buildRegistryManifest(
         itemCount: sortedItems.length,
         items,
     };
-    const integrity = computeRegistryManifestIntegrity(baseManifest);
+    const integrity = helperModules().shared.computeRegistryManifestIntegrity(baseManifest);
     return {
         ...baseManifest,
         integrity,
@@ -230,7 +227,7 @@ export function buildRegistryManifest(
 }
 
 export function assertRegistryDependencyGraph(items: RegistryReferenceItem[]): void {
-    const cycles = findRegistryDependencyCycles(items);
+    const cycles = helperModules().validation.findRegistryDependencyCycles(items);
     if (cycles.length > 0) {
         throw new Error(cycles
             .map(cycle => `Registry dependency cycle detected: ${cycle.join(' -> ')}`)
@@ -239,30 +236,29 @@ export function assertRegistryDependencyGraph(items: RegistryReferenceItem[]): v
 }
 
 export function buildRegistrySbom(index: RegistryIndex, manifestIntegrity: string) {
-    return coreBuildRegistrySbom(index, manifestIntegrity);
+    return helperModules().registry.buildRegistrySbom(index, manifestIntegrity);
 }
 
 export function computeSbomIntegrity(sbom: Parameters<typeof coreComputeSbomIntegrity>[0]) {
-    return coreComputeSbomIntegrity(sbom);
+    return helperModules().registry.computeSbomIntegrity(sbom);
 }
 
 export function computeSbomSerialNumber(sbom: Parameters<typeof coreComputeSbomSerialNumber>[0]) {
-    return coreComputeSbomSerialNumber(sbom);
+    return helperModules().registry.computeSbomSerialNumber(sbom);
 }
 
 export function signManifestFromEnv(manifest: RegistryBuildManifest) {
-    return coreSignManifestFromEnv(manifest);
+    return helperModules().registry.signManifestFromEnv(manifest);
 }
 
 export async function run() {
+    const { runBuild } = await import('../src/runner/build-runner.js');
     await runBuild();
 }
 
 export { runWatch };
 
-const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
-
-if (!isVitestRuntime && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (isMain) {
     const isWatchMode = process.argv.includes('--watch') || process.env.BRUTX_WATCH === '1';
     const start = isWatchMode ? runWatch : run;
     start().catch((error) => {
