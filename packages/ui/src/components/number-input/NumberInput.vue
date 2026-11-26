@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, ref, toRef, useId, watch } from 'vue'
 import {
     NumberFieldRoot,
     type NumberFieldRootProps,
-    type NumberFieldRootEmits,
     NumberFieldInput,
     NumberFieldIncrement,
     NumberFieldDecrement,
@@ -16,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { useNativeFormReset, vNativeFormValue } from '@/lib/native-form-reset'
 import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
+import NumberInputControls from './NumberInputControls.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useBrutalHaptics } from '@/composables/useBrutalHaptics'
@@ -48,24 +48,47 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
 
 defineOptions({ inheritAttrs: false })
 
-const emit = defineEmits<NumberFieldRootEmits>()
+const emit = defineEmits<{
+    'update:modelValue': [value: number | null]
+}>()
 
 const { value: currentValue, resetValue, updateValue, bindFormReset, resetting } = useNativeFormReset(
     () => props.modelValue,
     props.defaultValue ?? null,
-    () => { restoreText.value = true },
+    restoreCommittedText,
 )
-// 重置时显示已提交的格式化文本，随后由原语继续处理下一次输入。
 const restoreText = ref(false)
+const draftText = ref<string>()
+let parsedDraft: number | undefined
 const locale = useRekaLocale(toRef(props, 'locale'))
 const resetText = computed(() => resetValue.value === null || Number.isNaN(resetValue.value)
     ? ''
     : new Intl.NumberFormat(locale.value, props.formatOptions).format(resetValue.value))
 
-function onUserUpdate(value: number) {
-    updateValue(value ?? null)
+function restoreCommittedText() {
+    restoreText.value = true
+    draftText.value = undefined
+}
+
+function onInput(event: Event) {
+    restoreText.value = false
+    draftText.value = (event.target as HTMLInputElement).value
+}
+
+function readDraft(apply: () => void) {
+    // Reka 按区域设置解析并同步返回结果，公开事件由输入确认或步进统一发出。
+    parsedDraft = undefined
+    apply()
+    return parsedDraft
+}
+
+function onUserUpdate(value: number | null) {
+    if (Number.isNaN(value) || value === currentValue.value) return
+    updateValue(value)
     emit('update:modelValue', value)
 }
+
+watch(currentValue, restoreCommittedText)
 
 const { t } = useLocale()
 
@@ -149,74 +172,88 @@ const iconClasses = computed(() =>
             v-bind="forwarded"
             :model-value="currentValue"
             :class="containerClasses"
-            @update:model-value="onUserUpdate"
+            @update:model-value="parsedDraft = $event"
         >
-            <template v-if="layout === 'split'">
-                <NumberFieldDecrement
-                    :class="decrementClasses"
-                    :aria-label="t('numberInput.decrease')"
-                    @click="haptics.click()"
-                >
-                    <Minus :class="iconClasses" />
-                </NumberFieldDecrement>
-
-                <NumberFieldInput
-                    v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
-                    v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
-                    :placeholder="resolvedPlaceholder"
-                    :aria-label="ariaLabelledby ? undefined : ariaLabel"
-                    :aria-labelledby="ariaLabelledby"
-                    :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
-                    :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
-                    :class="fieldClasses"
-                    @animationend="isDrumming = false"
-                    @input="restoreText = false"
-                    @vue:mounted="bindFormReset"
-                    @vue:updated="bindFormReset"
-                />
-
-                <NumberFieldIncrement
-                    :class="incrementClasses"
-                    :aria-label="t('numberInput.increase')"
-                    @click="haptics.click()"
-                >
-                    <Plus :class="iconClasses" />
-                </NumberFieldIncrement>
-            </template>
-
-            <template v-else>
-                <NumberFieldInput
-                    v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
-                    v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
-                    :placeholder="resolvedPlaceholder"
-                    :aria-label="ariaLabelledby ? undefined : ariaLabel"
-                    :aria-labelledby="ariaLabelledby"
-                    :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
-                    :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
-                    :class="fieldClasses"
-                    @animationend="isDrumming = false"
-                    @input="restoreText = false"
-                    @vue:mounted="bindFormReset"
-                    @vue:updated="bindFormReset"
-                />
-
-                <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
-                    <NumberFieldIncrement
-                        :class="incrementClasses"
-                        :aria-label="t('numberInput.increase')"
-                        @click="haptics.click()"
-                    >
-                        <ChevronUp :class="iconClasses" />
-                    </NumberFieldIncrement>
+            <NumberInputControls
+                v-slot="{ stepOnClick }"
+                :step="forwarded.step"
+                :step-snapping="forwarded.stepSnapping"
+                :focus-on-change="forwarded.focusOnChange"
+                :editing="draftText !== undefined && draftText !== textValue"
+                :locale="locale"
+                :format-options="formatOptions"
+                :read-draft="readDraft"
+                @commit="onUserUpdate"
+                @restore="restoreCommittedText"
+                @step-click="haptics.click()"
+            >
+                <template v-if="layout === 'split'">
                     <NumberFieldDecrement
                         :class="decrementClasses"
                         :aria-label="t('numberInput.decrease')"
-                        @click="haptics.click()"
+                        @click="stepOnClick($event, -1)"
                     >
-                        <ChevronDown :class="iconClasses" />
+                        <Minus :class="iconClasses" />
                     </NumberFieldDecrement>
-                </div>
-            </template>
+
+                    <NumberFieldInput
+                        v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
+                        v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
+                        :placeholder="resolvedPlaceholder"
+                        :aria-label="ariaLabelledby ? undefined : ariaLabel"
+                        :aria-labelledby="ariaLabelledby"
+                        :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
+                        :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
+                        :class="fieldClasses"
+                        @animationend="isDrumming = false"
+                        @input="onInput"
+                        @vue:mounted="bindFormReset"
+                        @vue:updated="bindFormReset"
+                    />
+
+                    <NumberFieldIncrement
+                        :class="incrementClasses"
+                        :aria-label="t('numberInput.increase')"
+                        @click="stepOnClick($event, 1)"
+                    >
+                        <Plus :class="iconClasses" />
+                    </NumberFieldIncrement>
+                </template>
+
+                <template v-else>
+                    <NumberFieldInput
+                        v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
+                        v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
+                        :placeholder="resolvedPlaceholder"
+                        :aria-label="ariaLabelledby ? undefined : ariaLabel"
+                        :aria-labelledby="ariaLabelledby"
+                        :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
+                        :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
+                        :class="fieldClasses"
+                        @animationend="isDrumming = false"
+                        @input="onInput"
+                        @vue:mounted="bindFormReset"
+                        @vue:updated="bindFormReset"
+                    />
+
+                    <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
+                        <NumberFieldIncrement
+                            :class="incrementClasses"
+                            :aria-label="t('numberInput.increase')"
+                            @click="stepOnClick($event, 1)"
+                        >
+                            <ChevronUp :class="iconClasses" />
+                        </NumberFieldIncrement>
+                        <NumberFieldDecrement
+                            :class="decrementClasses"
+                            :aria-label="t('numberInput.decrease')"
+                            @click="stepOnClick($event, -1)"
+                        >
+                            <ChevronDown :class="iconClasses" />
+                        </NumberFieldDecrement>
+                    </div>
+                </template>
+            </NumberInputControls>
             <VisuallyHidden
                 v-if="name"
                 v-native-form-value="{

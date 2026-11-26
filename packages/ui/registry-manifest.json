@@ -845,6 +845,8 @@
   "number-input": {
     "files": [
       "NumberInput.vue",
+      "NumberInputControls.vue",
+      "number-input-range.ts",
       "number-input-variants.ts"
     ],
     "composables": [

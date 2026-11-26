@@ -74,9 +74,14 @@ Set different border styles via the `variant` prop for form validation state fee
 
 <ComponentApi name="number-input" />
 
+## Committing and stepping
+
+- Clearing the field and pressing Enter or leaving the field commits `null`. Its form value is empty, and a required field fails validation. The parent decides the final value in controlled mode. A form reset restores the initial uncontrolled value or the current controlled value.
+- Step buttons, arrow keys, and the wheel follow the same stepping rules. With step snapping disabled, the last step can land on `min` or `max`. The `formatOptions` control display precision, while stepping and native form submission keep the actual numeric value within the range.
+
 ## Accessibility
 
-- **Keyboard**: Input supports Tab focus, increment/decrement buttons support Enter/Space trigger, Up/Down arrow keys adjust the value
+- **Keyboard**: Tab focuses the input, Up/Down arrows step, Page Up/Page Down take larger steps, and Home/End move to the bounds. Enter/Space activate a focused step button. A read-only field stays focusable and keeps its form value while blocking value changes.
 - **ARIA attributes**: Increment/decrement buttons automatically set `aria-label` (e.g. "Increase"/"Decrease"), input sets `aria-valuemin`, `aria-valuemax`, `aria-valuenow` attributes
 - **Accessible name**: Name the numeric input with a native label associated through `id`, `aria-label`, or `aria-labelledby`. When both `aria-label` and `aria-labelledby` are provided, `aria-labelledby` takes precedence. Other ARIA and native input attributes reach the numeric control
 - **Form integration**: Supports `name`, `required`, `disabled`, `readonly` and other native form attributes, compatible with form validation

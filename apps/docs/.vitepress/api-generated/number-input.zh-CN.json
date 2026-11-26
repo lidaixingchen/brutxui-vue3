@@ -450,7 +450,7 @@
             ],
             "references": []
           },
-          "description": "是否将输入值对齐到 step 的整数倍。",
+          "description": "是否从 min（未设置时从零）开始按 step 对齐。关闭后，最后一步可直接停在范围边界。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"
@@ -574,7 +574,7 @@
             ],
             "references": []
           },
-          "description": "禁止直接编辑数值，但不等同于禁用组件。",
+          "description": "保留焦点和表单值，禁止通过输入、按键、步进按钮或滚轮改值。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"
@@ -784,11 +784,13 @@
           "name": "update:modelValue",
           "kind": "events",
           "type": {
-            "text": "[val: number]",
-            "literals": [],
+            "text": "[value: number | null]",
+            "literals": [
+              "null"
+            ],
             "references": []
           },
-          "description": "用户输入或步进调整产生新数值时发出，用于更新 v-model。",
+          "description": "用户确认输入或步进产生新值时发出。确认清空时发出 null。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"

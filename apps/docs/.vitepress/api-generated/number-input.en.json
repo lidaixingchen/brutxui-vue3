@@ -450,7 +450,7 @@
             ],
             "references": []
           },
-          "description": "Whether input values are aligned to multiples of step.",
+          "description": "Aligns values to step intervals from min, or zero when min is omitted. When disabled, the last step can land on the range boundary.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"
@@ -574,7 +574,7 @@
             ],
             "references": []
           },
-          "description": "Prevents direct value editing without disabling the component.",
+          "description": "Keeps the field focusable and included in form submission while preventing changes by typing, keyboard shortcuts, step buttons, or the wheel.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"
@@ -784,11 +784,13 @@
           "name": "update:modelValue",
           "kind": "events",
           "type": {
-            "text": "[val: number]",
-            "literals": [],
+            "text": "[value: number | null]",
+            "literals": [
+              "null"
+            ],
             "references": []
           },
-          "description": "Emits the new numeric value after typing or stepping so v-model can be updated.",
+          "description": "Emits a new value when an edit is confirmed or a step changes the value. Confirming an empty field emits null.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue"

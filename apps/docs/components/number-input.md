@@ -75,9 +75,14 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 
 <ComponentApi name="number-input" />
 
+## 提交与步进
+
+- 清空后按 Enter 或离开输入框会提交 `null`。该字段的表单值为空，必填时校验失败。受控模式下由父组件决定最终值。表单重置会恢复非受控字段的初始值或受控字段当前的父组件值。
+- 步进按钮、方向键和滚轮按同一规则调整数值。关闭步长对齐时，最后一步可停在 `min` 或 `max`。显示精度可以通过 `formatOptions` 设置，步进和原生表单提交保留范围内的实际数值。
+
 ## 可访问性
 
-- **键盘操作**：输入框支持 Tab 键聚焦，加减按钮支持 Enter/Space 键触发，支持方向键 Up/Down 微调数值
+- **键盘操作**：输入框支持 Tab 键聚焦、方向键 Up/Down 步进、Page Up/Page Down 大步调整、Home/End 跳到边界，加减按钮支持 Enter/Space 键触发。只读时保留焦点和表单值，所有调整方式均停止写入
 - **ARIA 属性**：加减按钮自动设置 `aria-label`（如"增加"/"减少"），输入框设置 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 属性
 - **可访问名称**：可用关联 `id` 的原生标签、`aria-label` 或 `aria-labelledby` 命名数值输入框；同时提供 `aria-label` 和 `aria-labelledby` 时，以 `aria-labelledby` 为准。其他 ARIA 和原生输入属性会传给数值输入控件
 - **表单集成**：支持 `name`、`required`、`disabled`、`readonly` 等原生表单属性，与表单验证兼容
