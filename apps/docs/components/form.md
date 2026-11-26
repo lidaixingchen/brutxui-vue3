@@ -76,6 +76,8 @@ function onSubmit(values) {
 
 基于 `Stepper` 组件构建的向导式表单，支持步骤验证、线性导航和自定义步骤内容。
 
+步骤重排时，当前步骤、完成状态和校验错误随 `step.id` 保留。移除当前步骤时，向导选择原位置上仍有效的步骤，原位置超出范围时选择最后一步。
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -244,6 +246,8 @@ const {
     canGoNext,      // ComputedRef<boolean>
 } = useFormWizard()
 ```
+
+同一次操作可以多次调用 `updateValues()`。第一份更新立即发出，后续更新依次合并到父组件确认的 `modelValue`。紧接着调用 `nextStep()`、线性向前的 `goToStep()` 或 `complete()` 时，向导等这些更新完成后再校验。如果父组件需要等待远程响应才更新 `modelValue`，请在确认后调用导航或提交方法。
 
 ## 程序化控制
 

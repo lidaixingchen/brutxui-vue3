@@ -1,5 +1,5 @@
-import { mount } from '@vue/test-utils'
-import { h } from 'vue'
+import { flushPromises, mount } from '@vue/test-utils'
+import { defineComponent, h, ref } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import FormWizard from './FormWizard.vue'
@@ -254,6 +254,249 @@ describe('FormWizard', () => {
             // 动态收窄为 1 步：currentStep 应被 watch 重新钳制到 0
             await wrapper.setProps({ steps: [testSteps[0]] })
             expect(wrapper.text()).toContain('Step 1 of 1')
+        })
+    })
+
+    describe('dynamic step identity', () => {
+        it('keeps the active step and its errors through insertion and reorder', async () => {
+            const errors = { address: 'Address is required' }
+            const address = { ...testSteps[1], validator: () => ({ valid: false, errors }) }
+            const steps = [testSteps[0], address, testSteps[2]]
+            const wrapper = mount(FormWizard, { props: { steps }, global: globalProvide })
+            const nextButton = () => wrapper.findAll('button').find(button => button.text() === 'Next')!
+            const activePanel = () => wrapper.findAll<HTMLElement>('[role="tabpanel"]')
+                .find(panel => panel.element.style.display !== 'none')
+
+            await nextButton().trigger('click')
+            await nextButton().trigger('click')
+            expect(wrapper.emitted('validation-error')).toEqual([[1, errors]])
+
+            const extra = { id: 'extra', title: 'Extra', optional: true }
+            await wrapper.setProps({ steps: [extra, ...steps] })
+            expect(activePanel()?.attributes('aria-label')).toBe(address.title)
+            expect(wrapper.text()).toContain(errors.address)
+            expect(nextButton().attributes('disabled')).toBeDefined()
+
+            await wrapper.setProps({ steps: [address, extra, steps[0], steps[2]] })
+            expect(activePanel()?.attributes('aria-label')).toBe(address.title)
+            expect(wrapper.emitted('step-change')).toEqual([[1, 0]])
+
+            await wrapper.setProps({ steps: [extra, steps[0], steps[2]] })
+            expect(activePanel()?.attributes('aria-label')).toBe(extra.title)
+            expect(wrapper.text()).not.toContain(errors.address)
+            await wrapper.setProps({ steps: [extra, address, steps[0], steps[2]] })
+            await nextButton().trigger('click')
+            expect(activePanel()?.attributes('aria-label')).toBe(address.title)
+            expect(nextButton().attributes('disabled')).toBeUndefined()
+            await nextButton().trigger('click')
+            expect(wrapper.emitted('validation-error')).toEqual([[1, errors], [1, errors]])
+        })
+
+        it('rechecks required predecessors after a completed step is replaced', async () => {
+            const wrapper = mount(FormWizard, { props: { steps: testSteps }, global: globalProvide })
+            const nextButton = () => wrapper.findAll('button').find(button => button.text() === 'Next')!
+            const replacement = { id: 'replacement', title: 'Replacement' }
+
+            await nextButton().trigger('click')
+            await wrapper.setProps({ steps: [replacement, ...testSteps.slice(1)] })
+            await nextButton().trigger('click')
+            expect(wrapper.emitted('navigation-blocked')).toEqual([[2, 0]])
+            expect(wrapper.emitted('step-change')).toEqual([[1, 0]])
+
+            await wrapper.setProps({ steps: [{ ...replacement, optional: true }, ...testSteps.slice(1)] })
+            await wrapper.findAll('[role="listitem"] button')[2].trigger('click')
+            expect(wrapper.emitted('step-change')).toEqual([[1, 0], [2, 1]])
+        })
+    })
+
+    describe('model update and navigation', () => {
+        it.each(['accept', 'normalize-first', 'reject-first'] as const)('merges consecutive proposals against the committed model (%s)', async (policy) => {
+            const Consumer = defineComponent({
+                setup() {
+                    const { updateValues, complete } = useFormWizard()
+                    return () => h('button', {
+                        onClick: () => {
+                            updateValues({ b: 'B' })
+                            updateValues({ c: 'C' })
+                            complete()
+                        },
+                    }, 'Save both')
+                },
+            })
+            const initialValues = { a: 'A' }
+            const committedAfterFirst = policy === 'reject-first'
+                ? initialValues
+                : { ...initialValues, b: policy === 'normalize-first' ? 'Normalized' : 'B' }
+            const finalValues = { ...committedAfterFirst, c: 'C' }
+            const Host = defineComponent({
+                setup() {
+                    const modelValue = ref<Record<string, unknown>>(initialValues)
+                    return () => h(FormWizard, {
+                        steps: testSteps,
+                        modelValue: modelValue.value,
+                        'onUpdate:modelValue': (values) => {
+                            if ('c' in values || policy === 'accept') modelValue.value = values
+                            else if (policy === 'normalize-first') modelValue.value = { ...values, b: 'Normalized' }
+                        },
+                    }, { 'step-step1': () => h(Consumer) })
+                },
+            })
+            const host = mount(Host, { global: globalProvide })
+            const wizard = host.getComponent(FormWizard)
+            const click = host.findAll('button').find(button => button.text() === 'Save both')!.trigger('click')
+            expect(wizard.emitted('update:modelValue')?.[0]).toEqual([{ ...initialValues, b: 'B' }])
+            await click
+            await flushPromises()
+
+            expect(wizard.emitted('update:modelValue')).toEqual([[{ ...initialValues, b: 'B' }], [finalValues]])
+            expect(wizard.emitted('complete')).toEqual([[finalValues]])
+        })
+
+        it.each([true, false])('checks completion after a model proposal during a direct forward jump (accepted: %s)', async (accept) => {
+            const readBackwardIndex = vi.fn()
+            const steps = [
+                { ...testSteps[0], validator: (values: Record<string, unknown>) => ({ valid: Boolean(values.name), errors: { name: 'Required' } }) },
+                { ...testSteps[1], optional: true },
+                testSteps[2],
+            ]
+            const FirstStep = defineComponent({
+                setup() {
+                    const { updateValues, goToStep } = useFormWizard()
+                    return () => [
+                        h('button', { id: 'jump', onClick: () => goToStep(2) }, 'Jump'),
+                        h('button', {
+                            id: 'clear-and-jump',
+                            onClick: () => {
+                                updateValues({ name: '' })
+                                goToStep(2)
+                            },
+                        }, 'Clear and jump'),
+                    ]
+                },
+            })
+            const OptionalStep = defineComponent({
+                setup() {
+                    const { currentStep, updateValues, previousStep } = useFormWizard()
+                    return () => h('button', {
+                        id: 'save-and-back',
+                        onClick: () => {
+                            updateValues({ optional: 'Saved' })
+                            previousStep()
+                            readBackwardIndex(currentStep.value)
+                        },
+                    }, 'Save and back')
+                },
+            })
+            const Host = defineComponent({
+                setup() {
+                    const modelValue = ref<Record<string, unknown>>({ name: 'A' })
+                    return () => h(FormWizard, {
+                        steps,
+                        modelValue: modelValue.value,
+                        'onUpdate:modelValue': (values) => {
+                            if (accept || values.name) modelValue.value = values
+                        },
+                    }, { 'step-step1': () => h(FirstStep), 'step-step2': () => h(OptionalStep) })
+                },
+            })
+            const host = mount(Host, { global: globalProvide })
+            const wizard = host.getComponent(FormWizard)
+            const navButton = (text: string) => host.findAll('button').find(button => button.text() === text)!
+            await navButton('Next').trigger('click')
+            await host.get('#save-and-back').trigger('click')
+            await flushPromises()
+            expect(readBackwardIndex).toHaveBeenCalledExactlyOnceWith(0)
+
+            const jump = host.get('#jump').trigger('click')
+            expect(wizard.emitted('step-change')?.at(-1)).toEqual([2, 0])
+            await jump
+            await navButton('Previous').trigger('click')
+            await navButton('Previous').trigger('click')
+            await host.get('#clear-and-jump').trigger('click')
+            await flushPromises()
+
+            expect(wizard.emitted('navigation-blocked')).toEqual(accept ? [[2, 0]] : undefined)
+            expect(wizard.emitted('step-change')?.at(-1)).toEqual(accept ? [0, 1] : [2, 0])
+        })
+
+        it.each([
+            { accept: true, action: 'nextStep' },
+            { accept: false, action: 'nextStep' },
+            { accept: true, action: 'complete' },
+            { accept: false, action: 'complete' },
+        ] as const)('$action validates the actual model value after an update (accepted: $accept)', async ({ accept, action }) => {
+            const errors = { name: 'Name is required' }
+            const validator = vi.fn((values: Record<string, unknown>) => ({ valid: Boolean(values.name), errors }))
+            const steps = [{ ...testSteps[0], validator }, testSteps[1]]
+            const confirmedValues = { name: 'Accepted' }
+            const Consumer = defineComponent({
+                setup() {
+                    const wizard = useFormWizard()
+                    return () => h('button', {
+                        onClick: () => {
+                            wizard.updateValues({ name: 'Proposed' })
+                            wizard[action]()
+                        },
+                    }, 'Save')
+                },
+            })
+            const Host = defineComponent({
+                setup() {
+                    const modelValue = ref<Record<string, unknown>>({})
+                    return () => h(FormWizard, {
+                        steps,
+                        modelValue: modelValue.value,
+                        'onUpdate:modelValue': () => {
+                            if (accept) modelValue.value = confirmedValues
+                        },
+                    }, { 'step-step1': () => h(Consumer) })
+                },
+            })
+            const host = mount(Host, { global: globalProvide })
+            const wizard = host.getComponent(FormWizard)
+
+            await host.findAll('button').find(button => button.text() === 'Save')!.trigger('click')
+            await flushPromises()
+
+            expect(wizard.emitted('update:modelValue')).toEqual([[{ name: 'Proposed' }]])
+            expect(validator).toHaveBeenCalledExactlyOnceWith(accept ? confirmedValues : {})
+            expect(wizard.emitted('step-change')).toEqual(accept && action === 'nextStep' ? [[1, 0]] : undefined)
+            expect(wizard.emitted('complete')).toEqual(accept && action === 'complete' ? [[confirmedValues]] : undefined)
+            expect(wizard.emitted('validation-error')).toEqual(accept ? undefined : [[0, errors]])
+        })
+
+        it('discards queued advancement when its originating step is replaced', async () => {
+            const validator = vi.fn(() => ({ valid: true, errors: {} }))
+            const Consumer = defineComponent({
+                setup() {
+                    const { updateValues, nextStep } = useFormWizard()
+                    return () => h('button', {
+                        onClick: () => {
+                            updateValues({ name: 'Proposed' })
+                            nextStep()
+                        },
+                    }, 'Save and next')
+                },
+            })
+            const Host = defineComponent({
+                setup() {
+                    const steps = ref(testSteps)
+                    return () => h(FormWizard, {
+                        steps: steps.value,
+                        'onUpdate:modelValue': () => {
+                            steps.value = [{ id: 'replacement', title: 'Replacement', validator }, ...testSteps.slice(1)]
+                        },
+                    }, { 'step-step1': () => h(Consumer) })
+                },
+            })
+            const host = mount(Host, { global: globalProvide })
+
+            await host.findAll('button').find(button => button.text() === 'Save and next')!.trigger('click')
+            await flushPromises()
+
+            expect(host.text()).toContain('Step 1 of 3')
+            expect(validator).not.toHaveBeenCalled()
+            expect(host.getComponent(FormWizard).emitted('step-change')).toBeUndefined()
         })
     })
 

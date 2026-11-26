@@ -77,6 +77,8 @@ function onSubmit(values) {
 
 A wizard-style form built on the `Stepper` component, supporting step validation, linear navigation, and custom step content.
 
+When steps are reordered, the wizard preserves the active step, completion status, and validation errors by `step.id`. If the active step is removed, the wizard selects the step at its former position or the last step if that position is out of range.
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -245,6 +247,8 @@ const {
     canGoNext,      // ComputedRef<boolean>
 } = useFormWizard()
 ```
+
+You can call `updateValues()` several times in one interaction. The wizard emits the first update immediately, then merges each subsequent patch into the `modelValue` accepted by the parent. A following `nextStep()`, forward `goToStep()` in linear mode, or `complete()` waits for those updates before validating. If the parent waits for a remote response to update `modelValue`, call the navigation or submission method after the parent accepts the change.
 
 ## Programmatic Control
 

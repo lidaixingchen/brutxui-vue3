@@ -8,7 +8,7 @@ export { useFormWizard } from './form-wizard-utils'
 </script>
 
 <script setup lang="ts">
-import { ref, computed, provide, watch } from 'vue'
+import { ref, computed, nextTick, onBeforeUnmount, provide, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInfoVariants, formWizardStepCounterVariants, formWizardErrorPanelVariants, formWizardErrorTitleVariants } from './form-wizard-variants'
 import Stepper from '../stepper/Stepper.vue'
@@ -35,13 +35,34 @@ const emit = defineEmits<{
     'navigation-blocked': [targetStep: number, blockedStep: number]
 }>()
 
-// 钳制初始步骤到合法区间 [0, steps.length - 1]，防止 steps 为空或 initialStep 越界时
-// currentStepConfig 为 undefined 导致校验崩溃；steps 为空时钳制为 0
-const currentStep = ref(
-    Math.min(Math.max(props.initialStep, 0), Math.max(props.steps.length - 1, 0))
-)
-const completedSteps = ref<Set<number>>(new Set())
-const stepErrors = ref<Map<number, Record<string, string>>>(new Map())
+interface ValuePatch {
+    values: Record<string, unknown>
+    stepId: string | undefined
+}
+
+interface ValueBatch {
+    patches: ValuePatch[]
+    actions: Array<() => void>
+    sourceStepId?: string
+}
+
+let pendingValueBatch: ValueBatch | undefined
+
+function clampStepIndex(index: number, length: number) {
+    return Math.min(Math.max(index, 0), Math.max(length - 1, 0))
+}
+
+const stepIds = computed(() => props.steps.map(step => step.id))
+const activeStepId = ref(props.steps[clampStepIndex(props.initialStep, props.steps.length)]?.id)
+const completedSteps = ref(new Set<string>())
+const stepErrors = ref(new Map<string, Record<string, string>>())
+const currentStep = computed({
+    get: () => activeStepId.value === undefined ? 0 : Math.max(stepIds.value.indexOf(activeStepId.value), 0),
+    set: (index) => {
+        const step = props.steps[index]
+        if (step) activeStepId.value = step.id
+    },
+})
 
 const stepperSteps = computed<StepperStep[]>(() =>
     props.steps.map((step) => ({
@@ -53,53 +74,46 @@ const stepperSteps = computed<StepperStep[]>(() =>
 
 const isFirstStep = computed(() => currentStep.value === 0)
 const isLastStep = computed(() => currentStep.value === props.steps.length - 1)
-const currentStepConfig = computed(() => props.steps[currentStep.value])
+const currentStepConfig = computed(() => props.steps.find(step => step.id === activeStepId.value))
+const currentStepErrors = computed(() => activeStepId.value === undefined ? undefined : stepErrors.value.get(activeStepId.value))
+const canGoNext = computed(() => !props.linear || !props.validateOnNext || !currentStepErrors.value)
 
-const canGoNext = computed(() => {
-    if (!props.linear) return true
-    return !stepErrors.value.has(currentStep.value)
+watch(stepIds, (ids, previousIds) => {
+    const existingIds = new Set(ids)
+    for (const id of previousIds) {
+        if (existingIds.has(id)) continue
+        completedSteps.value.delete(id)
+        stepErrors.value.delete(id)
+    }
+
+    const activeId = activeStepId.value
+    if (activeId !== undefined && existingIds.has(activeId)) return
+    const previousIndex = activeId === undefined ? 0 : previousIds.indexOf(activeId)
+    activeStepId.value = ids[clampStepIndex(previousIndex, ids.length)]
 })
 
 watch(() => props.modelValue, () => {
-    stepErrors.value.delete(currentStep.value)
-    completedSteps.value.delete(currentStep.value)
-    // 清除当前步骤之后所有已完成/有错误的步骤：当前步骤数据变更可能使下游步骤失效，
-    // 用户若返回上游修改数据后再次前进，需重新验证下游步骤而非跳过
-    for (let i = currentStep.value + 1; i < props.steps.length; i++) {
-        completedSteps.value.delete(i)
-        stepErrors.value.delete(i)
+    // 同批回退时，仍从发起编辑的步骤清除该步骤及后续步骤的校验结论。
+    const sourceId = pendingValueBatch?.sourceStepId
+    const sourceIndex = sourceId === undefined ? -1 : stepIds.value.indexOf(sourceId)
+    for (const id of stepIds.value.slice(sourceIndex < 0 ? currentStep.value : sourceIndex)) {
+        completedSteps.value.delete(id)
+        stepErrors.value.delete(id)
     }
-    // flush: 'post' 合并同一帧内的多次输入更新，避免每次击键都执行下游步骤清理
-}, { deep: true, flush: 'post' })
+}, { deep: true })
 
-// 注意：进入步骤时不清除该步骤历史错误——
-// 错误保留到该步骤被重新校验（validateCurrentStep 成功时清除），
-// 否则返回再进入时 canGoNext 会提前变为 true，下一步按钮被错误启用
+function validateStep(step: FormStep, index: number, values: Record<string, unknown>): boolean {
+    if (!step.validator) return true
 
-// steps 动态收窄（如父组件移除尾部步骤）时，将 currentStep 重新钳制到合法区间 [0, steps.length - 1]，
-// 与初始化钳制逻辑保持一致（steps 为空钳制为 0），保证模板 v-show 展示与步骤计数器一致
-watch(() => props.steps.length, (length) => {
-    currentStep.value = Math.min(
-        Math.max(currentStep.value, 0),
-        Math.max(length - 1, 0)
-    )
-})
-
-function validateCurrentStep(): boolean {
-    if (!props.validateOnNext) return true
-
-    const step = currentStepConfig.value
-    // 兜底：steps 为空或 currentStep 越界时 step 可能为 undefined，避免访问其属性崩溃
-    if (!step || !step.validator) return true
-
-    const result = step.validator(props.modelValue)
+    const result = step.validator(values)
     if (!result.valid) {
-        stepErrors.value.set(currentStep.value, result.errors)
-        emit('validation-error', currentStep.value, result.errors)
+        completedSteps.value.delete(step.id)
+        stepErrors.value.set(step.id, result.errors)
+        emit('validation-error', index, result.errors)
         return false
     }
 
-    stepErrors.value.delete(currentStep.value)
+    stepErrors.value.delete(step.id)
     return true
 }
 
@@ -111,12 +125,13 @@ function setCurrentStep(step: number) {
     emit('step-change', step, previousStep)
 }
 
-function goToStep(step: number) {
-    if (step < 0 || step >= props.steps.length) return
+function navigateToStep(step: number) {
+    if (!props.steps[step]) return
 
     if (props.linear && step > currentStep.value) {
         for (let i = 0; i < step; i++) {
-            if (!completedSteps.value.has(i) && !props.steps[i].optional) {
+            const prerequisite = props.steps[i]
+            if (!prerequisite.optional && !completedSteps.value.has(prerequisite.id)) {
                 emit('navigation-blocked', step, i)
                 return
             }
@@ -126,52 +141,100 @@ function goToStep(step: number) {
     setCurrentStep(step)
 }
 
-function nextStep() {
-    if (isLastStep.value) return
+function goToStep(step: number) {
+    const targetId = stepIds.value[step]
+    if (targetId === undefined) return
 
-    if (validateCurrentStep()) {
-        completedSteps.value.add(currentStep.value)
-        goToStep(currentStep.value + 1)
+    if (props.linear && step > currentStep.value) {
+        withConfirmedValues(() => navigateToStep(stepIds.value.indexOf(targetId)))
+    } else {
+        navigateToStep(step)
     }
+}
+
+function nextStep() {
+    if (!currentStepConfig.value || isLastStep.value) return
+
+    withConfirmedValues(() => {
+        const step = currentStepConfig.value
+        if (!step || isLastStep.value) return
+        if (props.validateOnNext && !validateStep(step, currentStep.value, props.modelValue)) return
+
+        completedSteps.value.add(step.id)
+        navigateToStep(currentStep.value + 1)
+    })
 }
 
 function previousStep() {
     if (isFirstStep.value) return
-    goToStep(currentStep.value - 1)
+    navigateToStep(currentStep.value - 1)
 }
 
 function complete() {
-    // 提交前对所有带 validator 的步骤做一次校验（不只当前步骤）：
-    // 防止依赖 modelValue 之外状态或过期 completedSteps 的数据绕过重新校验直接提交
-    if (props.validateOnNext) {
-        for (let i = 0; i < props.steps.length; i++) {
-            const step = props.steps[i]
-            if (!step.validator) continue
-            const result = step.validator(props.modelValue)
-            if (!result.valid) {
-                stepErrors.value.set(i, result.errors)
-                emit('validation-error', i, result.errors)
-                // 跳转到第一个失败步骤，让错误面板展示该步骤错误，
-                // 避免用户停留在最后一步却看不到失败原因
-                if (i !== currentStep.value) {
-                    setCurrentStep(i)
+    withConfirmedValues(() => {
+        const values = props.modelValue
+        if (props.validateOnNext) {
+            for (const [index, step] of props.steps.entries()) {
+                if (!step.validator) continue
+                if (!validateStep(step, index, values)) {
+                    if (step.id !== activeStepId.value) setCurrentStep(index)
+                    return
                 }
-                return
+                completedSteps.value.add(step.id)
             }
-            stepErrors.value.delete(i)
-            completedSteps.value.add(i)
         }
-    }
-    emit('complete', props.modelValue)
+        emit('complete', values)
+    })
 }
 
+onBeforeUnmount(() => {
+    pendingValueBatch = undefined
+})
+
 function updateValues(values: Record<string, unknown>) {
-    // 浅合并后发出，避免各步骤只提交自身字段时覆盖其他步骤已录入的数据
-    emit('update:modelValue', { ...props.modelValue, ...values })
+    const patch = { values: { ...values }, stepId: activeStepId.value }
+    if (pendingValueBatch) {
+        pendingValueBatch.patches.push(patch)
+        return
+    }
+
+    const batch: ValueBatch = { patches: [], actions: [] }
+    pendingValueBatch = batch
+    void dispatchValueUpdates(batch, patch)
+}
+
+async function dispatchValueUpdates(batch: ValueBatch, firstPatch: ValuePatch) {
+    let patch: ValuePatch | undefined = firstPatch
+    while (patch) {
+        batch.sourceStepId = patch.stepId
+        emit('update:modelValue', { ...props.modelValue, ...patch.values })
+
+        // 每个补丁都等待父组件回传本次更新，下一次合并使用回传后的值。
+        await Promise.resolve()
+        await nextTick()
+        if (pendingValueBatch !== batch) return
+        patch = batch.patches.shift()
+    }
+
+    pendingValueBatch = undefined
+    for (const action of batch.actions) action()
+}
+
+function withConfirmedValues(action: () => void) {
+    if (!pendingValueBatch) {
+        action()
+        return
+    }
+
+    const stepId = activeStepId.value
+    pendingValueBatch.actions.push(() => {
+        if (stepId === activeStepId.value) action()
+    })
 }
 
 function getStepErrors(step: number): Record<string, string> | undefined {
-    return stepErrors.value.get(step)
+    const id = stepIds.value[step]
+    return id === undefined ? undefined : stepErrors.value.get(id)
 }
 
 provide(formWizardContextKey, {
@@ -213,7 +276,7 @@ const errorTitleClasses = formWizardErrorTitleVariants()
         <!-- Step Content -->
         <div class="min-h-50">
             <template v-for="(step, index) in steps" :key="step.id">
-                <div v-show="index === currentStep" role="tabpanel" :aria-label="step.title">
+                <div v-show="step.id === activeStepId" role="tabpanel" :aria-label="step.title">
                     <slot :name="`step-${step.id}`" :step="step" :index="index" />
                 </div>
             </template>
@@ -257,12 +320,12 @@ const errorTitleClasses = formWizardErrorTitleVariants()
         </div>
 
         <!-- Error Display -->
-        <div v-if="getStepErrors(currentStep)" :class="errorPanelClasses">
+        <div v-if="currentStepErrors" :class="errorPanelClasses">
             <p :class="errorTitleClasses">
                 {{ t('formWizard.validationErrors') }}
             </p>
             <ul class="mt-2 list-disc list-inside">
-                <li v-for="(error, field) in getStepErrors(currentStep)" :key="field">
+                <li v-for="(error, field) in currentStepErrors" :key="field">
                     {{ error }}
                 </li>
             </ul>

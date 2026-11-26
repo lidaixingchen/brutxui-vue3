@@ -1,6 +1,7 @@
 import type { Component, Ref, ComputedRef } from 'vue'
 
 export interface FormStep {
+    /** 向导内唯一且稳定的步骤标识 */
     id: string
     title: string
     description?: string
@@ -30,7 +31,7 @@ export interface FormWizardContext {
     currentStep: Ref<number>
     steps: ComputedRef<FormStep[]>
     values: ComputedRef<Record<string, unknown>>
-    /** 浅合并后写入（{ ...values, ...patch }），各步骤可只提交自身字段而不覆盖其他步骤数据 */
+    /** 逐次将补丁浅合并到父组件确认的值。同批的线性前进、nextStep 和 complete 等待补丁处理 */
     updateValues: (values: Record<string, unknown>) => void
     nextStep: () => void
     previousStep: () => void

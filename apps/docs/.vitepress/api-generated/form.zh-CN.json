@@ -801,7 +801,7 @@
             "references": [
               {
                 "name": "FormStep",
-                "text": "export interface FormStep {\n    id: string\n    title: string\n    description?: string\n    icon?: Component\n    /** 入参为全量 values（跨步骤共享的扁平字段集合），约定只返回当前步骤相关字段的错误 */\n    validator?: (values: Record<string, unknown>) => ValidationResult\n    /** 线性导航下可跳过（不要求完成即可前进），但不豁免 validator */\n    optional?: boolean\n}",
+                "text": "export interface FormStep {\n    /** 向导内唯一且稳定的步骤标识 */\n    id: string\n    title: string\n    description?: string\n    icon?: Component\n    /** 入参为全量 values（跨步骤共享的扁平字段集合），约定只返回当前步骤相关字段的错误 */\n    validator?: (values: Record<string, unknown>) => ValidationResult\n    /** 线性导航下可跳过（不要求完成即可前进），但不豁免 validator */\n    optional?: boolean\n}",
                 "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fform%2Fform-wizard-types.ts%23FormStep"
               }
             ]
@@ -810,7 +810,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": true,
@@ -834,7 +834,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -866,7 +866,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -901,7 +901,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -936,7 +936,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -971,7 +971,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -1003,7 +1003,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/form-wizard-types.ts",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
