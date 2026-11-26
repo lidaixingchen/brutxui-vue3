@@ -1,13 +1,26 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { defineConfig } from 'vitepress'
+import { defineConfig, type UserConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import { createApiPagePlugin, createApiPageSearchOptions } from './api-page'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
-import { createDocsSitePaths } from './site-paths'
+import { CHANGELOG_GUIDE, DOCS_CANONICAL_ROOT, createDocsSitePaths } from './site-paths'
+import { docsPageCanonical, docsPagePath } from './site-translations'
+import { createSiteTranslations } from './site-translations-dev'
 import { markdownTables } from './markdown-tables'
 
 const sitePaths = createDocsSitePaths(Boolean(process.env.VERCEL))
+const siteTranslations = createSiteTranslations()
+const languageMenuPlugin = {
+    name: 'brutx:language-menu',
+    enforce: 'pre',
+    resolveId(source, importer) {
+        // 默认主题的桌面、窄屏和移动菜单共用这个 composable。
+        if (source === '../composables/langs' && importer?.includes('/vitepress/dist/client/theme-default/components/')) {
+            return path.resolve(import.meta.dirname, 'theme/lib/language-menu.ts')
+        }
+    },
+} satisfies NonNullable<NonNullable<UserConfig['vite']>['plugins']>[number]
 
 const apiPageOptions = {
     catalogPath: path.resolve(import.meta.dirname, 'api-generated/catalog.json'),
@@ -68,6 +81,7 @@ function generateChangelogSidebar(): any[] {
 export default defineConfig({
     lang: 'zh-CN',
     markdown: {
+        ...siteTranslations.markdown,
         config(md) {
             md.use(createApiPagePlugin(apiPageOptions)).use(markdownTables)
         },
@@ -109,7 +123,7 @@ export default defineConfig({
                     { text: 'Guide', link: '/en/guide/getting-started' },
                     { text: 'Components', link: '/en/components/' },
                     { text: 'Blocks', link: '/en/blocks/' },
-                    { text: 'Changelog', link: '/en/guide/changelog' },
+                    { text: 'Changelog', link: `/en${CHANGELOG_GUIDE}` },
                     { text: 'GitHub', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
                 ],
                 sidebar: {
@@ -143,7 +157,7 @@ export default defineConfig({
                                 { text: 'Supply Chain Security', link: '/en/guide/security' },
                                 { text: 'FAQ', link: '/en/guide/faq' },
                                 { text: 'Migration Guide', link: '/en/guide/migration' },
-                                { text: 'Changelog', link: '/en/guide/changelog' },
+                                { text: 'Changelog', link: `/en${CHANGELOG_GUIDE}` },
                                 { text: 'Contributing', link: '/en/guide/contributing' },
                             ],
                         },
@@ -185,7 +199,7 @@ export default defineConfig({
     base: sitePaths.base,
     lastUpdated: true,
     sitemap: {
-        hostname: 'https://lidaixingchen.github.io/brutxui-vue3/',
+        hostname: DOCS_CANONICAL_ROOT,
     },
     head: [
         ['link', { rel: 'icon', type: 'image/svg+xml', href: sitePaths.favicon }],
@@ -201,25 +215,11 @@ export default defineConfig({
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&display=swap' }],
         ['link', { rel: 'manifest', href: sitePaths.manifest }],
     ],
-    transformHead(context) {
-        let pageUrl = context.page.replace(/\.md$/, '')
-        if (pageUrl === 'index') pageUrl = ''
-        pageUrl = pageUrl.replace(/\/index$/, '')
-        const isEn = pageUrl === 'en' || pageUrl.startsWith('en/')
-        const basePath = isEn ? pageUrl.replace(/^en\/?/, '') : pageUrl
-        const baseUrl = 'https://lidaixingchen.github.io/brutxui-vue3'
-        const canonicalUrl = isEn ? `${baseUrl}/en/${basePath}` : `${baseUrl}/${basePath}`
-        const description = isEn
-            ? (context.description ?? 'Neo-Brutalism Vue 3 Component Library')
-            : (context.description ?? 'Neo-Brutalism 风格 Vue 3 组件库')
+    transformPageData: siteTranslations.transformPageData,
+    transformHead({ page, siteConfig, title, description }) {
+        const canonicalUrl = docsPageCanonical(docsPagePath(page, siteConfig.cleanUrls))
 
         return [
-            // hreflang 标签
-            ['link', { rel: 'alternate', hreflang: 'zh-CN', href: `${baseUrl}/${basePath}` }],
-            ['link', { rel: 'alternate', hreflang: 'en', href: `${baseUrl}/en/${basePath}` }],
-            ['link', { rel: 'alternate', hreflang: 'x-default', href: `${baseUrl}/${basePath}` }],
-            // canonical URL
-            ['link', { rel: 'canonical', href: canonicalUrl }],
             // OG / Twitter meta
             ['meta', { property: 'og:url', content: canonicalUrl }],
             ['meta', { property: 'og:description', content: description }],
@@ -231,7 +231,7 @@ export default defineConfig({
                 JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'SoftwareSourceCode',
-                    name: context.title ?? 'BrutxUI',
+                    name: title,
                     description,
                     url: canonicalUrl,
                     codeRepository: 'https://github.com/lidaixingchen/brutxui-vue3',
@@ -252,7 +252,7 @@ export default defineConfig({
             { text: '指南', link: '/guide/getting-started' },
             { text: '组件', link: '/components/' },
             { text: '区块与模板', link: '/blocks/' },
-            { text: '更新日志', link: '/guide/changelog' },
+            { text: '更新日志', link: CHANGELOG_GUIDE },
             {
                 text: 'GitHub',
                 link: 'https://github.com/lidaixingchen/brutxui-vue3',
@@ -311,7 +311,7 @@ export default defineConfig({
                         { text: '供应链安全与合规', link: '/guide/security' },
                         { text: '常见问题', link: '/guide/faq' },
                         { text: '迁移指南', link: '/guide/migration' },
-                        { text: '版本历史', link: '/guide/changelog' },
+                        { text: '版本历史', link: CHANGELOG_GUIDE },
                         { text: '贡献指南', link: '/guide/contributing' },
                     ],
                 },
@@ -357,7 +357,7 @@ export default defineConfig({
     },
     vite: {
         // @ts-expect-error VitePress 1.x PluginOption 类型与 Vite 8 不兼容 (TS2322)
-        plugins: [tailwindcss()],
+        plugins: [tailwindcss(), languageMenuPlugin, siteTranslations.plugin],
         resolve: {
             alias: {
                 '@': import.meta.dirname,

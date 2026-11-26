@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import { useRouter } from 'vitepress'
-import { Result, Button } from 'brutx-ui-vue'
+import { computed } from 'vue'
+import { Result, Button, en, provideLocale, zhCN } from 'brutx-ui-vue'
 import { useI18n } from './lib/i18n'
 
 const { Layout } = DefaultTheme
 const router = useRouter()
-const { t } = useI18n()
+const { isEn, t } = useI18n()
+
+provideLocale(computed(() => isEn.value ? en : zhCN))
 
 function handleBack() {
     router.go('/')

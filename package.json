@@ -12,6 +12,7 @@
         "typecheck": "turbo run typecheck:source",
         "test": "turbo run test",
         "test:ssr": "turbo run test:ssr",
+        "test:docs:site": "node --test scripts/docs/site-languages.test.mjs",
         "test:consumers": "node packages/cli/scripts/test-consumers.mjs",
         "test:watch": "pnpm --filter brutx-ui-vue test:watch",
         "test:coverage": "pnpm --filter brutx-ui-vue test:coverage",

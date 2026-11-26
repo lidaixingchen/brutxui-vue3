@@ -157,12 +157,16 @@ Bench 要求两份结果包含同一组有效测量；缺失、损坏或测试�
 | `pnpm --filter brutx-ui-vue docs:manifest` | 生成组件 API 双语分组数据与页面目录 | 根目录 |
 | `pnpm --filter brutx-ui-vue docs:manifest:check` | 只读检查组件 API 双语分组数据与页面目录 | 根目录 |
 | `pnpm --filter docs dev` | 生成 API 数据并启动文档站，监听相关源码和配置变化 | 根目录 |
+| `pnpm --filter docs test` | 运行文档站双语路由单元测试 | 根目录 |
+| `pnpm test:docs:site` | 在临时本地端口预览已有产物，检查服务端渲染和 Chrome 换语言交互 | 根目录 |
 
 `docs:api`、`docs:api:full` 与 `docs:api:vue` 输出供包内阅读的 Markdown 文档。VitePress 使用的结构化双语 API 数据由 `docs:manifest` 经共享 API collector 独立生成，不由上述 Markdown 命令生成。文档开发参数会传给 VitePress，例如：
 
 ```bash
 pnpm --filter docs dev -- --host 127.0.0.1 --port 5180
 ```
+
+运行站点产物回归前，用 `pnpm build:docs` 生成产物。站点测试默认启动本机 Google Chrome，也可设置 `BRUTX_CHROMIUM_EXECUTABLE` 使用现有 Chromium。CI 的站点任务直接验证本次构建产物。
 
 ## 七、 生成编排与候选快照
 

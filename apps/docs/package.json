@@ -8,6 +8,7 @@
         "build": "pnpm exec turbo run build:artifact --filter=docs",
         "build:artifact": "vitepress build",
         "preview": "vitepress preview",
+        "test": "node --import tsx --test .vitepress/site-translations.test.ts .vitepress/site-translations-dev.test.ts",
         "typecheck": "pnpm exec turbo run typecheck:source --filter=docs",
         "typecheck:source": "vue-tsc --noEmit"
     },
