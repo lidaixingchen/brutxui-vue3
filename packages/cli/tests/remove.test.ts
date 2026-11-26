@@ -4,12 +4,15 @@ import os from 'os';
 import path from 'path';
 import * as project from '../src/lib/project.js';
 import * as prompts from '@inquirer/prompts';
+import { computeRegistryIntegrity } from 'brutx-shared-vue';
+import { add } from '../src/commands/add.js';
 import { remove } from '../src/commands/remove.js';
+import { update } from '../src/commands/update.js';
 import { CliError } from '../src/lib/error.js';
 import { logger } from '../src/lib/logger.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
-import { updateInstalledComponents } from '../src/lib/manifest.js';
+import { readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
@@ -95,6 +98,7 @@ describe('remove command', () => {
 
     afterEach(async () => {
         vi.restoreAllMocks();
+        vi.unstubAllGlobals();
         await fs.remove(tmpDir);
         if (savedEnv === undefined) {
             delete process.env.BRUTX_NO_CACHE;
@@ -247,6 +251,59 @@ describe('remove command', () => {
     });
 
     describe('successful removal with --yes', () => {
+        it('keeps project files after an update drops a skipped registry file', async () => {
+            vi.mocked(RegistryClient.prototype.fetchItem).mockRestore();
+            const registry = 'https://raw.githubusercontent.com/org/repo/main/registry';
+            const sourceFor = (version: string) => registry.replace('/main/', `/v${version}/`);
+            const componentPath = 'components/ui/button';
+            const custom = { path: `${componentPath}/custom.ts`, content: 'export const custom = false;\n', type: 'registry:ui' as const };
+            const helper = {
+                path: `${componentPath}/helper.ts`,
+                content: "import { projectHelper } from '@/composables/project-helper';\nexport const helper = projectHelper;\n",
+                type: 'registry:ui' as const,
+            };
+            const itemFor = (files: RegistryItem['files']): RegistryItem => ({
+                name: 'button', type: 'registry:ui', title: 'Button', description: 'Button component',
+                files, dependencies: [], registryDependencies: [], examples: [],
+                tailwind: {}, cssVars: {}, integrity: computeRegistryIntegrity(files),
+            });
+            const items = new Map([
+                [`${sourceFor('2.0.0')}/button.json`, itemFor([custom, helper])],
+                [`${sourceFor('3.0.0')}/button.json`, itemFor([helper])],
+            ]);
+            vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+                const item = items.get(url);
+                return item ? Response.json(item) : new Response(null, { status: 404 });
+            }));
+            const localContent = 'export const custom = true;\n';
+            const customPath = `src/${custom.path}`;
+            const helperPath = `src/${helper.path}`;
+            const projectHelper = path.join(tmpDir, 'src/composables/project-helper.ts');
+            await fs.outputFile(path.join(tmpDir, customPath), localContent);
+            await fs.outputFile(projectHelper, 'export const projectHelper = true;\n');
+            await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), { compilerOptions: { paths: { '@/*': ['./src/*'] } } });
+            const options = { cwd: tmpDir, yes: true, silent: true, cache: false };
+
+            await add(['button@2.0.0'], { ...options, registry });
+            expect((await readManifest(tmpDir))?.components.button).toMatchObject({ files: [helperPath], pendingFiles: [customPath] });
+
+            await update(['button@3.0.0'], { ...options, acrossVersions: true });
+            const updated = (await readManifest(tmpDir))?.components.button;
+            expect(updated).toMatchObject({ version: '3.0.0', files: [helperPath] });
+            expect(updated?.pendingFiles).toBeUndefined();
+
+            await remove(['button'], { ...options, dryRun: true });
+            expect(getLoggedMessages(logSpy)).toContainEqual(expect.stringMatching(/button \(1 file\)/));
+            expect(getLoggedMessages(logSpy)).not.toContainEqual(expect.stringContaining('Orphaned files:'));
+
+            await remove(['button'], options);
+            expect(getLoggedMessages(successSpy)).toContainEqual(expect.stringContaining('Removed 1 file(s) and 0 orphaned file(s).'));
+            expect(await fs.pathExists(path.join(tmpDir, helperPath))).toBe(false);
+            expect(await fs.readFile(path.join(tmpDir, customPath), 'utf-8')).toBe(localContent);
+            expect(await fs.pathExists(projectHelper)).toBe(true);
+            expect((await readManifest(tmpDir))?.components.button).toBeUndefined();
+        });
+
         it('should remove component directory and show success message', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             const buttonDir = await createComponent('button', {

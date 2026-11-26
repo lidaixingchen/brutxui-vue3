@@ -3,7 +3,7 @@ import type { FileSystemAdapter } from '../fs/index.js';
 import { CliError } from '../error.js';
 import type { ProjectContext } from '../project-context.js';
 import type { FileTransaction } from '../file-transaction.js';
-import type { BrutxManifest, RegistryItem } from '../types.js';
+import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from '../types.js';
 import { collectInstalledFilePaths, projectRegistryFiles, resolveInstalledFile } from '../component-files.js';
 import {
     assertInstalledComponentIdentity,
@@ -29,6 +29,11 @@ export interface ComponentMergeExecutionResult {
     plan: ComponentMergePlan;
     filesWritten: string[];
     filesDeleted: string[];
+}
+
+interface AppliedBaselineOwner {
+    entry: InstalledComponentManifest;
+    readBaseline: (relativePath: string) => Promise<string | undefined>;
 }
 
 export class MergeExecutor {
@@ -68,16 +73,29 @@ export class MergeExecutor {
         const baseline = await this.baselineProvider.getComponentBaseline(context, componentName, baselineOptions);
         const ownedFiles = retainedPaths ?? collectInstalledFilePaths(context, installedManifest, new Set([componentName]));
         const projectedFiles = await projectRegistryFiles(context, remoteItem.files ?? []);
-        const additions = new Map(projectedFiles
-            .filter(file => !baseline.projectPaths?.has(file.relativePath))
-            .map(file => [file.relativePath, file.content]));
+        const remoteContents = new Map(projectedFiles.map(file => [file.relativePath, file.content]));
+        const installedEntry = installedManifest?.components[componentName];
+        const pendingPaths = new Set(installedEntry?.pendingFiles?.map(file => this.installedPath(context, file)));
+        const installedAt = Date.parse(installedEntry?.installedAt ?? '');
         const ownersByPath = new Map<string, string[]>();
+        const appliedOwnersByPath = new Map<string, AppliedBaselineOwner[]>();
         const sharedOwners = new Set<string>();
         for (const [owner, entry] of Object.entries(installedManifest?.components ?? {})) {
             if (owner === componentName) continue;
-            for (const file of entry.files) {
-                const relativePath = context.toRelativePosixPath(resolveInstalledFile(context, file));
-                if (!additions.has(relativePath)) continue;
+            // 只有晚于本次部分安装且已应用该文件的归属，才能证明磁盘内容来自另一个安装。
+            const installedLater = pendingPaths.size > 0 && Date.parse(entry.installedAt) > installedAt;
+            const ownerPending = new Set(installedLater ? entry.pendingFiles?.map(file => this.installedPath(context, file)) : undefined);
+            const ownerPaths = new Set(entry.files.map(file => this.installedPath(context, file)));
+            let appliedOwner: AppliedBaselineOwner | undefined;
+            for (const relativePath of ownerPaths) {
+                if (!remoteContents.has(relativePath)) continue;
+                if (installedLater && pendingPaths.has(relativePath) && !ownerPending.has(relativePath)) {
+                    appliedOwner ??= { entry, readBaseline: this.baselineProvider.localBaselines(context, entry, ownerPaths).read };
+                    const owners = appliedOwnersByPath.get(relativePath) ?? [];
+                    owners.push(appliedOwner);
+                    appliedOwnersByPath.set(relativePath, owners);
+                }
+                if (baseline.projectPaths?.has(relativePath)) continue;
                 const owners = ownersByPath.get(relativePath) ?? [];
                 owners.push(owner);
                 ownersByPath.set(relativePath, owners);
@@ -90,10 +108,10 @@ export class MergeExecutor {
         )));
         const sharedBaselines = new Map<string, string>();
         const installedIdentities = new Map([
-            [componentName, getInstalledComponentIdentity(installedManifest?.components[componentName])],
+            [componentName, getInstalledComponentIdentity(installedEntry)],
         ]);
         for (const [relativePath, owners] of ownersByPath) {
-            const remoteContent = normalizeEol(additions.get(relativePath)!);
+            const remoteContent = normalizeEol(remoteContents.get(relativePath)!);
             const baselines = owners.map(owner => ownerBaselines.get(owner)?.files.get(relativePath));
             const [sharedBase] = baselines;
             if (sharedBase === undefined || !baselines.every(base => base !== undefined && normalizeEol(base) === remoteContent)) {
@@ -107,8 +125,24 @@ export class MergeExecutor {
 
         const plan = await this.planner.planComponentMerge(context, componentName, remoteItem, baseline, {
             conflictStrategy: options.conflictStrategy,
-        }, { retainedPaths: ownedFiles, sharedBaselines, projectedFiles });
+        }, {
+            retainedPaths: ownedFiles,
+            sharedBaselines,
+            projectedFiles,
+            getAppliedSharedBaseline: appliedOwnersByPath.size === 0 ? undefined : async (relativePath, normalizedLocalContent) => {
+                for (const { entry, readBaseline } of appliedOwnersByPath.get(relativePath) ?? []) {
+                    const content = await readBaseline(relativePath);
+                    if (content === undefined || normalizeEol(content) !== normalizedLocalContent) continue;
+                    installedIdentities.set(entry.name, getInstalledComponentIdentity(entry));
+                    return content;
+                }
+            },
+        });
         return { ...plan, installedIdentities };
+    }
+
+    private installedPath(context: ProjectContext, file: string): string {
+        return context.toRelativePosixPath(resolveInstalledFile(context, file));
     }
 
     async planAndExecute(

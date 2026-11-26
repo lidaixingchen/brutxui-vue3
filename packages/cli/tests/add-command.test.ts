@@ -332,6 +332,47 @@ describe('add command (CLI Adapter)', () => {
         expect(await fs.readFile(file, 'utf8')).toBe(localContent);
     });
 
+    it.each([
+        { target: '2.0.0', acrossVersions: false, dropBaseline: false },
+        { target: '3.0.0', acrossVersions: true, dropBaseline: true },
+    ])('merges a partially added version into $target', async ({ target, acrossVersions, dropBaseline }) => {
+        vi.mocked(RegistryClient.prototype.resolve).mockRestore();
+        const baseSource = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const sourceFor = (version: string) => baseSource.replace('/main/', `/v${version}/`);
+        const helper = { ...buttonFiles[0], path: 'components/ui/button/helper.ts', content: 'export const helper = true;\n' };
+        const items = new Map(['1.2.0', '2.0.0', '3.0.0'].map(version => {
+            const files = [{ ...buttonFiles[0], content: `<template>${version}</template>\n` }];
+            if (version !== '1.2.0') files.push(helper);
+            return [`${sourceFor(version)}/button.json`, { ...buttonItem, files, integrity: computeRegistryIntegrity(files) }];
+        }));
+        const fetcher = vi.fn(async (url: string) => {
+            const item = items.get(url);
+            return item ? Response.json(item) : new Response(null, { status: 404 });
+        });
+        vi.stubGlobal('fetch', fetcher);
+        const options = { cwd: tmpDir, yes: true, silent: true, cache: false };
+        await add(['button@1.2.0'], { ...options, registry: baseSource });
+        await add(['button@2.0.0'], { ...options, registry: baseSource });
+
+        const entry = (await readManifest(tmpDir))!.components.button;
+        const [buttonPath, helperPath] = entry.files;
+        expect(entry).toMatchObject({ version: '2.0.0', pendingFiles: [buttonPath] });
+        expect(await fs.readFile(path.join(tmpDir, buttonPath), 'utf-8')).toBe('<template>1.2.0</template>\n');
+        expect(await fs.readFile(path.join(tmpDir, entry.baselines![buttonPath]), 'utf-8')).toBe('<template>1.2.0</template>\n');
+        expect(await fs.readFile(path.join(tmpDir, entry.baselines![helperPath]), 'utf-8')).toBe(helper.content);
+        if (dropBaseline) await fs.remove(path.join(tmpDir, entry.baselines![buttonPath]));
+
+        fetcher.mockClear();
+        await update([`button@${target}`], { ...options, acrossVersions });
+        expect(await fs.readFile(path.join(tmpDir, buttonPath), 'utf-8')).toBe(`<template>${target}</template>\n`);
+        const completed = (await readManifest(tmpDir))!.components.button;
+        expect(completed.version).toBe(target);
+        expect(completed.pendingFiles).toBeUndefined();
+        expect(completed.baselineSources).toBeUndefined();
+        expect(completed.files).toEqual(entry.files);
+        if (dropBaseline) expect(fetcher).toHaveBeenCalledWith(`${sourceFor('1.2.0')}/button.json`, expect.anything());
+    });
+
     it('supports dry-run without writing files', async () => {
         await add(['button'], {
             cwd: tmpDir,

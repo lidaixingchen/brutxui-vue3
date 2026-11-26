@@ -10,7 +10,7 @@ import { BaselineProvider } from '../src/lib/merge/baseline-provider.js';
 import { diffComponent } from '../src/lib/services/diff-service.js';
 import { CliError } from '../src/lib/error.js';
 import { DEFAULT_REGISTRY_URL } from '../src/lib/constants.js';
-import { readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
+import { getBaselineRelativePath, readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
 import { integrityHashDriftRule } from '../src/lib/diagnostics/rules/integrity-rules.js';
 import { prepareRemoveComponents, removeComponents } from '../src/lib/services/remove-service.js';
 
@@ -359,6 +359,79 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect(await fs.pathExists(sharedPath)).toBe(false);
     });
 
+    it('keeps locally owned and shared files outside a partial add', async () => {
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const custom = { ...buttonFiles[0], path: 'components/ui/badge/custom.ts' };
+        const helper = { ...buttonFiles[0], path: 'components/ui/badge/helper.ts' };
+        const card = makeComponentItem('card', [shared]);
+        const badge = makeComponentItem('badge', [{ ...shared, content: 'export const shared = false;\n' }, custom, helper]);
+        const items = [card];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        const customPath = await context.resolveTargetPath(custom.path);
+        const sharedPath = await context.resolveTargetPath(shared.path);
+        const helperPath = await context.resolveTargetPath(helper.path);
+        await fs.ensureDir(path.dirname(customPath));
+        await fs.writeFile(customPath, 'export const custom = true;\n');
+        await engine.execute(await engine.planInstall({ components: ['card'] }), options);
+        items[0] = badge;
+
+        const installation = await engine.execute(await engine.planInstall({ components: ['badge'] }), options);
+
+        const relative = (file: string) => context.toRelativePosixPath(file);
+        expect(installation.succeeded).toEqual([]);
+        expect(installation.partial).toEqual([{ component: 'badge', pendingFiles: [relative(sharedPath), relative(customPath)] }]);
+        const manifest = (await readManifest(projectCwd, fs))!;
+        expect(manifest.components.card.files).toEqual([relative(sharedPath)]);
+        expect(manifest.components.badge.files).toEqual([relative(helperPath)]);
+        expect(Object.keys(manifest.components.badge.baselines ?? {})).toEqual([relative(helperPath)]);
+
+        const removal = await prepareRemoveComponents(context, ['badge'], manifest, false);
+        expect(removal.orphanedFiles).toEqual([]);
+        await removeComponents(context, removal.toRemove, removal.orphanedFiles);
+        expect(await fs.pathExists(helperPath)).toBe(false);
+        expect(await fs.readFile(sharedPath, 'utf-8')).toBe(shared.content);
+        expect(await fs.readFile(customPath, 'utf-8')).toBe('export const custom = true;\n');
+    });
+
+    it('uses a flat legacy baseline to merge local edits after a partial add', async () => {
+        const original = { ...buttonFiles[0], content: 'export const upstream = 1;\nexport const local = false;\n' };
+        const newer = { ...original, content: 'export const upstream = 2;\nexport const local = false;\n' };
+        const helper = { ...original, path: 'components/ui/button/helper.ts' };
+        const items = [makeComponentItem('button', [original])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        const install = async () => engine.execute(await engine.planInstall({ components: ['button'] }), options);
+        await install();
+
+        const manifestPath = path.join(projectCwd, '.brutx/manifest.json');
+        const manifest = await fs.readJson(manifestPath);
+        const entry = manifest.components.button;
+        const [recorded] = entry.files as string[];
+        const file = path.join(projectCwd, recorded);
+        const flatBaseline = getBaselineRelativePath('button', path.posix.basename(recorded));
+        await fs.writeFile(path.join(projectCwd, flatBaseline), original.content);
+        await fs.remove(path.join(projectCwd, entry.baselines[recorded]));
+        delete entry.baselines;
+        await fs.writeJson(manifestPath, manifest);
+        await fs.writeFile(file, 'export const upstream = 1;\nexport const local = true;\n');
+        items[0] = makeComponentItem('button', [newer, helper]);
+
+        const partial = await install();
+        expect(partial.partial).toEqual([{ component: 'button', pendingFiles: [recorded] }]);
+        expect((await context.getInstalledComponentInfos()).find(info => info.name === 'button')?.pendingFiles).toEqual([recorded]);
+        expect(await fs.readFile(path.join(projectCwd, flatBaseline), 'utf-8')).toBe(original.content);
+
+        const updated = await engine.execute(await engine.planUpdate({ components: ['button'] }), options);
+        expect(updated.conflicts).toEqual([]);
+        expect(await fs.readFile(file, 'utf-8')).toBe('export const upstream = 2;\nexport const local = true;\n');
+        expect((await readManifest(projectCwd, fs))?.components.button.pendingFiles).toBeUndefined();
+    });
+
     it('rolls back a recovered baseline if the manifest write fails during execution', async () => {
         const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
         setupMockRegistry(context);
@@ -424,6 +497,7 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         const progress = vi.fn();
         expect(await fs.readFile(baselinePath, 'utf-8')).toBe(current.files[0].content);
 
+        await expect(engine.execute(stalePlan, { dryRun: true })).rejects.toThrow('changed during merge planning');
         await expect(engine.execute(stalePlan, {
             skipDependencies: true,
             callbacks: { onProgress: progress },
@@ -587,6 +661,115 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect(await fs.pathExists(manifestPath)).toBe(false);
     });
 
+    it('previews the same add outcome for repeat, registry-only and partial installs', async () => {
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        const registry = setupMockRegistry(context);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        const manifestPath = path.join(projectCwd, '.brutx/manifest.json');
+        const source = 'https://registry.example.com';
+
+        async function compare(item: RegistryItem, version: string) {
+            vi.mocked(registry.resolve).mockResolvedValueOnce({
+                items: [item],
+                npmDependencies: [],
+                registryDependencies: [],
+                missingComponents: [],
+                hitSources: new Map([[item.name, source]]),
+                itemSnapshots: new Map([[item.name, { item, source, version }]]),
+            });
+            const plan = await engine.planInstall({ components: [`button@${version}`] });
+            const manifest = await fs.pathExists(manifestPath) ? await fs.readFile(manifestPath, 'utf-8') : undefined;
+            const preview = await engine.execute(plan, { dryRun: true });
+            const afterPreview = await fs.pathExists(manifestPath) ? await fs.readFile(manifestPath, 'utf-8') : undefined;
+            expect(afterPreview).toEqual(manifest);
+            const result = await engine.execute(plan, options);
+            expect(preview).toMatchObject({
+                succeeded: result.succeeded,
+                skipped: result.skipped,
+                filesWritten: result.filesWritten,
+                stats: result.stats,
+                manifestUpdated: false,
+            });
+            expect(preview.partial).toEqual(result.partial);
+            return result;
+        }
+
+        expect(await compare(buttonItem, '1.0.0')).toMatchObject({ succeeded: ['button'], manifestUpdated: true });
+        expect(await compare(buttonItem, '1.0.0')).toMatchObject({ skipped: ['button'], filesWritten: [], manifestUpdated: false });
+        expect(await compare(buttonItem, '2.0.0')).toMatchObject({ succeeded: ['button'], filesWritten: [], manifestUpdated: true });
+
+        const next = { ...buttonFiles[0], content: 'export const next = true;\n' };
+        const helper = { ...next, path: 'components/ui/button/helper.ts' };
+        const result = await compare(makeComponentItem('button', [next, helper]), '3.0.0');
+        expect(result.partial).toEqual([{ component: 'button', pendingFiles: ['src/components/ui/button/Button.vue'] }]);
+    });
+
+    it.each([
+        { mode: 'add', strategy: 'ours' },
+        { mode: 'add', strategy: 'theirs' },
+        { mode: 'update', strategy: 'ours' },
+        { mode: 'update', strategy: 'theirs' },
+    ] as const)('records $mode --$strategy correctly when the old baseline is unavailable', async ({ mode, strategy }) => {
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        const original = makeComponentItem('button', buttonFiles);
+        const items = [original];
+        const registry = setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['button'] }), options);
+
+        const previous = (await readManifest(projectCwd, fs))!.components.button;
+        const [relativeFile] = previous.files;
+        const target = path.join(projectCwd, relativeFile);
+        const baseline = path.join(projectCwd, previous.baselines![relativeFile]);
+        const localContent = '<template>Local button</template>\n';
+        const remote = { ...buttonFiles[0], content: '<template>Remote button</template>\n' };
+        const helper = { ...buttonFiles[0], path: 'components/ui/button/helper.ts' };
+        const helperPath = await context.resolveTargetPath(helper.path);
+        await fs.remove(baseline);
+        await fs.writeFile(target, localContent);
+        items[0] = makeComponentItem('button', [remote, helper]);
+        vi.mocked(registry.fetchItem).mockRejectedValue(new Error('history unavailable'));
+        const request = { components: ['button'], conflictStrategy: strategy };
+        const plan = mode === 'add' ? await engine.planInstall({ ...request, merge: true }) : await engine.planUpdate(request);
+        const acceptRemote = strategy === 'theirs';
+        const preview = await engine.execute(plan, { dryRun: true });
+        expect(preview.succeeded).toEqual(acceptRemote ? ['button'] : []);
+        expect(await fs.readFile(target, 'utf-8')).toBe(localContent);
+        expect(await fs.pathExists(baseline)).toBe(false);
+
+        if (mode === 'update' && acceptRemote) {
+            const failure = vi.spyOn(fs, 'writeJson').mockImplementationOnce(async () => {
+                expect(await fs.readFile(baseline, 'utf-8')).toBe(remote.content);
+                throw new Error('manifest write failed');
+            });
+            await expect(engine.execute(plan, options)).rejects.toThrow(/rollback completed.*manifest write failed/);
+            failure.mockRestore();
+            expect(await fs.readFile(target, 'utf-8')).toBe(localContent);
+            expect(await fs.pathExists(helperPath)).toBe(false);
+            expect(await fs.pathExists(baseline)).toBe(false);
+            expect((await readManifest(projectCwd, fs))?.components.button).toEqual(previous);
+        }
+
+        const result = await engine.execute(plan, options);
+        const current = (await readManifest(projectCwd, fs))!.components.button;
+        expect(result.succeeded).toEqual(preview.succeeded);
+        expect(result.partial).toEqual(preview.partial);
+        expect(await fs.pathExists(helperPath)).toBe(true);
+        if (acceptRemote) {
+            expect(await fs.readFile(target, 'utf-8')).toBe(remote.content);
+            expect(await fs.readFile(baseline, 'utf-8')).toBe(remote.content);
+            expect(current.pendingFiles).toBeUndefined();
+            expect(current.baselineSources).toBeUndefined();
+        } else {
+            expect(await fs.readFile(target, 'utf-8')).toBe(localContent);
+            expect(await fs.pathExists(baseline)).toBe(false);
+            expect(current.pendingFiles).toEqual([relativeFile]);
+            expect(current.baselineSources?.[relativeFile].integrity).toBe(original.integrity);
+        }
+    });
+
     it('planInstall should respect overwrite: false and skip existing files', async () => {
         const targetFilePath = path.join(projectCwd, 'src/components/ui/button/Button.vue');
         await fs.ensureDir(path.dirname(targetFilePath));
@@ -603,8 +786,12 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
 
         expect(plan.files[0].action).toBe('skip');
 
+        const preview = await engine.execute(plan, { dryRun: true });
         const result = await engine.execute(plan, { skipDependencies: true });
         expect(result.skipped).toEqual(['button']);
+        expect(preview.skipped).toEqual(result.skipped);
+        expect(preview.partial).toBeUndefined();
+        expect(result.manifestUpdated).toBe(false);
         expect(await fs.readFile(targetFilePath, 'utf-8')).toBe('<template><button>Old</button></template>');
     });
 

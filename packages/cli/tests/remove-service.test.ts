@@ -351,6 +351,21 @@ describe('remove service', () => {
         for (const file of [...buttonFiles, orphanFile, ...candidates.slice(3)]) expect(await fs.pathExists(file)).toBe(false);
     });
 
+    it('keeps a registered helper referenced by a project file in the removed component directory', async () => {
+        const { buttonFiles, orphanFile } = await seedProject(tmpDir);
+        const [customFile] = await writeComponent(tmpDir, 'button', {
+            'custom.ts': "export * from '../../composables/useButton.js';",
+        });
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const preview = await prepareRemoveComponents(context, ['button']);
+        expect(preview.orphanedFiles).toEqual([]);
+
+        const result = await removeComponents(context, preview.toRemove, [orphanFile], { removeOrphaned: true });
+        expect(result).toEqual({ totalRemoved: buttonFiles.length, orphanedRemoved: 0 });
+        expect(await fs.pathExists(customFile)).toBe(true);
+        expect(await fs.pathExists(orphanFile)).toBe(true);
+    });
+
     it('resolves bare imports under an inherited baseUrl after trying paths targets', async () => {
         const { buttonFiles, cardFiles, orphanFile } = await seedProject(tmpDir);
         const shadowedFile = path.join(path.dirname(orphanFile), 'shadowed.ts');
@@ -533,6 +548,11 @@ describe('remove service', () => {
             ['alpha'],
             ['orphan-alpha', 'orphan-beta'],
         );
+        await updateInstalledComponents(cwd, [{
+            item: makeRegistryItem('alpha'),
+            registrySource: 'https://example.test/registry',
+            files: [componentFiles.get('alpha')!, ...orphanFiles.values()],
+        }], {}, fsAdapter);
 
         let settledWhilePending = false;
         const removalOutcome = removeComponents(

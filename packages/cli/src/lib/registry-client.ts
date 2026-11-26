@@ -89,6 +89,19 @@ function requestedRegistryTag(version?: string): string | undefined {
     return version && version !== 'latest' ? normalizeRegistryTag(version) : undefined;
 }
 
+export function isRegistryVersionAlias(
+    version: string,
+    installedVersion: string,
+    baseSource: string,
+    installedSource: string,
+): boolean {
+    const tag = requestedRegistryTag(version);
+    if (!tag || tag !== requestedRegistryTag(installedVersion)) return false;
+
+    const selection = selectRegistrySource(baseSource.trim(), version);
+    return selection.version !== undefined && selection.source === installedSource;
+}
+
 function assertMatchingRegistryTags(name: string, firstTag?: string, secondTag?: string): void {
     if (firstTag && secondTag && firstTag !== secondTag) {
         throw new CliError(
@@ -126,6 +139,30 @@ interface ManifestSummaryInternal extends RegistryManifestSummary {
 
 function isHttpUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
+}
+
+function selectRegistrySource(baseSource: string, version?: string): RegistrySourceSelection {
+    if (!version || version === 'latest' || !isHttpUrl(baseSource)
+        || DEFAULT_REGISTRY_SOURCES.some(source => source === baseSource.replace(/\/+$/, ''))) {
+        return { source: baseSource };
+    }
+
+    const tag = normalizeRegistryTag(version);
+    const releasePath = /\/releases\/(?:latest\/download|download\/[^/]+)(?=\/|$)/;
+    const rawPath = baseSource.match(GITHUB_RAW_URL_PATTERN);
+    let source: string;
+    if (releasePath.test(baseSource)) {
+        source = baseSource.replace(releasePath, `/releases/download/${tag}`);
+    } else if (rawPath) {
+        const [, owner, repo, , rest] = rawPath;
+        source = `https://raw.githubusercontent.com/${owner}/${repo}/${tag}/${rest}`;
+    } else {
+        const versionPath = /\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/;
+        const trimmed = baseSource.replace(/\/+$/, '');
+        source = versionPath.test(trimmed) ? trimmed.replace(versionPath, `/${tag}`) : `${trimmed}/${tag}`;
+    }
+
+    return { source, version, baseSource };
 }
 
 function isSignalCancellation(error: unknown, signal?: AbortSignal): boolean {
@@ -209,9 +246,9 @@ export class RegistryClient {
     ): RegistryItemRequest {
         this.assertSafeComponentName(name);
         const sources = parent
-            ? [version ? this.selectSource(parent.baseSource ?? parent.source, version) : parent]
+            ? [version ? selectRegistrySource(parent.baseSource ?? parent.source, version) : parent]
             : (options?.sourceOverride ? [options.sourceOverride] : this.sources)
-                .map(source => this.selectSource(source, version));
+                .map(source => selectRegistrySource(source, version));
 
         return {
             key: JSON.stringify([name, sources]),
@@ -265,30 +302,6 @@ export class RegistryClient {
                 { code: 'PATH_UNSAFE', exitCode: 2 }
             );
         }
-    }
-
-    private selectSource(baseSource: string, version?: string): RegistrySourceSelection {
-        if (!version || version === 'latest' || !isHttpUrl(baseSource)
-            || DEFAULT_REGISTRY_SOURCES.some(source => source === baseSource.replace(/\/+$/, ''))) {
-            return { source: baseSource };
-        }
-
-        const tag = normalizeRegistryTag(version);
-        const releasePath = /\/releases\/(?:latest\/download|download\/[^/]+)(?=\/|$)/;
-        const rawPath = baseSource.match(GITHUB_RAW_URL_PATTERN);
-        let source: string;
-        if (releasePath.test(baseSource)) {
-            source = baseSource.replace(releasePath, `/releases/download/${tag}`);
-        } else if (rawPath) {
-            const [, owner, repo, , rest] = rawPath;
-            source = `https://raw.githubusercontent.com/${owner}/${repo}/${tag}/${rest}`;
-        } else {
-            const versionPath = /\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/;
-            const trimmed = baseSource.replace(/\/+$/, '');
-            source = versionPath.test(trimmed) ? trimmed.replace(versionPath, `/${tag}`) : `${trimmed}/${tag}`;
-        }
-
-        return { source, version, baseSource };
     }
 
     /**

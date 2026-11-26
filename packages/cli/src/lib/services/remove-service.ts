@@ -3,7 +3,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { extractModuleSpecifiers } from 'brutx-shared-vue/ast';
 import { getModuleSpecifierPath } from 'brutx-shared-vue/module-resolver';
 import { getTsConfigBaseUrlCandidate, getTsConfigPathCandidates, readTsConfig, type ResolvedTsConfig } from '../env-detector.js';
-import type { BrutxManifest, RegistryItem } from '../types.js';
+import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from '../types.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentIdentity, readManifest, removeInstalledComponents } from '../manifest.js';
 import { collectInstalledFilePaths, resolveInstalledFile, type PlannedComponentSource } from '../component-files.js';
@@ -12,7 +12,6 @@ import { CliError } from '../error.js';
 import { logger } from '../logger.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import type { ProjectContext } from '../project-context.js';
-import type { FileTransaction } from '../file-transaction.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
@@ -39,6 +38,11 @@ interface RemoveConfirmation {
     }>;
     readonly retainedPaths: ReadonlySet<string>;
     readonly orphanedFiles: ReadonlySet<string>;
+}
+
+interface ComponentRemovalPlan {
+    targets: { path: string; recursive: boolean }[];
+    fileCount: number;
 }
 
 export interface RemoveExecutionResult {
@@ -222,7 +226,7 @@ export async function findFilesReferencedByInstalledComponents(
     paths: readonly string[],
     excludedComponents: ReadonlySet<string>,
     plannedSources: ReadonlyMap<string, PlannedComponentSource> = new Map(),
-    excludedDirectories: readonly string[] = [],
+    excludedPaths: readonly string[] = [],
 ): Promise<Set<string>> {
     if (paths.length === 0) return new Set();
 
@@ -232,6 +236,7 @@ export async function findFilesReferencedByInstalledComponents(
     const seen = new Set([...paths, ...plannedSources.keys()]);
     const isSource = (file: string) => COMPONENT_FILE_EXTENSIONS.some(ext => ext === path.extname(file));
     const indexSource = async (importer: string): Promise<void> => {
+        if (excludedPaths.some(target => isInsideDirectory(importer, target))) return;
         if (!isSource(importer) || !await context.isSafePath(importer) || !await context.fs.pathExists(importer)) return;
         const content = await context.fs.readFile(importer, 'utf-8');
         indexImports(importGraph, importer, importer, extractModuleSpecifiers(content, importer));
@@ -255,7 +260,7 @@ export async function findFilesReferencedByInstalledComponents(
     }
     for (const file of await scanComponentFiles(context.cwd, context.fs)) {
         const importer = path.join(context.cwd, file);
-        if (seen.has(importer) || excludedDirectories.some(dir => isInsideDirectory(importer, dir))) continue;
+        if (seen.has(importer)) continue;
         await indexSource(importer);
     }
     const referenced = new Set<string>();
@@ -271,25 +276,6 @@ export async function findFilesReferencedByInstalledComponents(
         }
     }
     return referenced;
-}
-
-async function findManifestKnownFiles(
-    context: ProjectContext,
-    manifest: BrutxManifest | null,
-    removedComponents: string[],
-): Promise<string[]> {
-    const candidateFiles: string[] = [];
-    for (const component of removedComponents) {
-        const entry = manifest?.components[component];
-        if (!entry) continue;
-        for (const manifestFile of entry.files) {
-            const absolutePath = resolveInstalledFile(context, manifestFile);
-            if (await context.isSafePath(absolutePath) && await context.fs.pathExists(absolutePath)) {
-                candidateFiles.push(absolutePath);
-            }
-        }
-    }
-    return candidateFiles;
 }
 
 async function scanAllImports(componentsPath: string, fsAdapter: FileSystemAdapter): Promise<ImportGraph> {
@@ -342,8 +328,7 @@ async function resolveScriptFile(baseDir: string, fileName: string, fsAdapter: F
 
 async function findOrphanedFiles(
     context: ProjectContext,
-    remainingComponents: string[],
-    removedComponents: string[],
+    legacyComponents: ReadonlySet<string>,
     importMap: Map<string, Set<string>>
 ): Promise<string[]> {
     const config = context.requireConfig();
@@ -370,7 +355,7 @@ async function findOrphanedFiles(
     };
 
     for (const [importPath, importers] of importMap) {
-        const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
+        const wasOnlyUsedByRemoved = [...importers].every(c => legacyComponents.has(c));
         if (!wasOnlyUsedByRemoved) continue;
 
         if (importPath.startsWith('.')) continue;
@@ -486,22 +471,8 @@ export async function countComponentFiles(
         return null;
     }
 
-    return processComponentDirectory(componentPath, retainedPaths, context.fs);
-}
-
-async function countFilesRecursive(dir: string, fsAdapter: FileSystemAdapter): Promise<number> {
-    const entries = await fsAdapter.readdir(dir, { withFileTypes: true });
-
-    let count = 0;
-    for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-            count += await countFilesRecursive(fullPath, fsAdapter);
-        } else if (entry.isFile()) {
-            count++;
-        }
-    }
-    return count;
+    const manifest = await readManifest(context.cwd, context.fs);
+    return (await planComponentDirectoryRemoval(context, componentPath, retainedPaths, manifest?.components[componentName])).fileCount;
 }
 
 async function getDirectoryEntries(directory: string, fs: FileSystemAdapter): Promise<Set<string>> {
@@ -525,13 +496,47 @@ async function getOrphansWithoutCurrentReferences(
     context: ProjectContext,
     manifest: BrutxManifest | null,
     paths: readonly string[],
-    removedNames: ReadonlySet<string>,
-    removedDirectories: readonly string[],
+    removedPaths: readonly string[],
 ): Promise<string[]> {
+    // 组件目录中保留的项目文件仍可能引用外部辅助文件。
     const referenced = await findFilesReferencedByInstalledComponents(
-        context, manifest, paths, removedNames, undefined, removedDirectories,
+        context, manifest, paths, new Set(), undefined, removedPaths,
     );
     return paths.filter(file => !referenced.has(file));
+}
+
+function collectRemovalPaths(context: ProjectContext, manifest: BrutxManifest | null, removedNames: ReadonlySet<string>) {
+    const retainedPaths = collectInstalledFilePaths(context, manifest, removedNames);
+    const removedEntries = [...removedNames].flatMap(name => manifest?.components[name] ? [manifest.components[name]] : []);
+    const ownedPaths = new Set(removedEntries.flatMap(entry => entry.files.map(file => resolveInstalledFile(context, file))));
+    for (const entry of removedEntries) {
+        for (const file of entry.pendingFiles ?? []) {
+            const absolutePath = resolveInstalledFile(context, file);
+            if (!ownedPaths.has(absolutePath)) retainedPaths.add(absolutePath);
+        }
+    }
+    return { ownedPaths, retainedPaths };
+}
+
+async function findRemovalOrphanCandidates(
+    context: ProjectContext,
+    ownedPaths: ReadonlySet<string>,
+    retainedPaths: ReadonlySet<string>,
+    removedPaths: readonly string[],
+    legacyNames: ReadonlySet<string>,
+    importGraph?: ImportGraph,
+): Promise<string[]> {
+    const files = new Set(ownedPaths);
+    if (legacyNames.size > 0) {
+        const imports = importGraph ?? await scanAllImports(await context.resolveComponentsDir(), context.fs);
+        for (const file of await findOrphanedFiles(context, legacyNames, imports.byComponent)) files.add(file);
+    }
+    const candidates: string[] = [];
+    for (const file of files) {
+        if (retainedPaths.has(file) || removedPaths.some(target => isInsideDirectory(file, target))) continue;
+        if (await context.isSafePath(file) && (await context.fs.lstat(file).catch(() => null))?.isFile()) candidates.push(file);
+    }
+    return candidates;
 }
 
 export async function prepareRemoveComponents(
@@ -545,6 +550,8 @@ export async function prepareRemoveComponents(
     const toRemove = [...new Set(components.filter(c => installed.includes(c)))];
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
+    const removedNames = new Set(toRemove);
+    const { ownedPaths, retainedPaths } = collectRemovalPaths(context, manifest, removedNames);
 
     const confirmedComponents = await Promise.all(toRemove.map(async (name) => {
         const directory = await context.resolveComponentDir(name);
@@ -552,9 +559,11 @@ export async function prepareRemoveComponents(
         const identity = getInstalledComponentIdentity(manifest?.components[name]);
         return [name, { identity, directory, entries }] as const;
     }));
-    const removedComponentDirs = confirmedComponents.map(([, component]) => component.directory);
-    const removedNames = new Set(toRemove);
-    const remainingFiles = collectInstalledFilePaths(context, manifest, removedNames);
+    const confirmedPlans = await Promise.all(confirmedComponents.map(([name, { directory }]) =>
+        planComponentDirectoryRemoval(context, directory, retainedPaths, manifest?.components[name]).catch(() => null),
+    ));
+    const removedPaths = confirmedPlans.flatMap(plan => plan?.targets.map(target => target.path) ?? []);
+    const legacyNames = new Set(toRemove.filter(name => !manifest?.components[name]));
 
     const emptyImportGraph: ImportGraph = { byComponent: new Map(), byImporterFile: new Map() };
     const importGraph = toRemove.length > 0
@@ -563,17 +572,8 @@ export async function prepareRemoveComponents(
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
         ? await getDependents(context, toRemove, manifest, useCache, importGraph.byComponent)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
-    const orphanedFiles = toRemove.length > 0
-        ? [
-            ...new Set([
-                ...await findOrphanedFiles(context, remaining, toRemove, importGraph.byComponent),
-                ...await findManifestKnownFiles(context, manifest, toRemove),
-            ]),
-        ]
-        : [];
-    const candidates = orphanedFiles.filter(file => !remainingFiles.has(file)
-        && !removedComponentDirs.some(dir => isInsideDirectory(file, dir)));
-    const confirmedOrphans = await getOrphansWithoutCurrentReferences(context, manifest, candidates, removedNames, removedComponentDirs);
+    const candidates = await findRemovalOrphanCandidates(context, ownedPaths, retainedPaths, removedPaths, legacyNames, importGraph);
+    const confirmedOrphans = await getOrphansWithoutCurrentReferences(context, manifest, candidates, removedPaths);
 
     return {
         installed,
@@ -585,7 +585,7 @@ export async function prepareRemoveComponents(
         orphanedFiles: confirmedOrphans,
         confirmation: {
             components: new Map(confirmedComponents),
-            retainedPaths: remainingFiles,
+            retainedPaths,
             orphanedFiles: new Set(confirmedOrphans),
         },
     };
@@ -603,45 +603,44 @@ export async function removeComponents(
         await transaction.lockProjectWrites();
         const manifest = await readManifest(context.cwd, context.fs);
         const removedNames = new Set(componentsToRemove);
-        const componentDirs = await Promise.all([...removedNames].map(async name => {
+        const { ownedPaths, retainedPaths } = collectRemovalPaths(context, manifest, removedNames);
+        for (const file of options.confirmation?.retainedPaths ?? []) retainedPaths.add(file);
+        const componentPlans = await Promise.all([...removedNames].map(async name => {
             const directory = await context.resolveComponentDir(name);
+            const entry = manifest?.components[name];
             if (options.confirmation) {
                 const confirmed = options.confirmation.components.get(name);
                 const confirmedEntries = confirmed?.entries;
-                const identity = getInstalledComponentIdentity(manifest?.components[name]);
+                const identity = getInstalledComponentIdentity(entry);
                 if (!confirmed || !confirmedEntries || !isDeepStrictEqual(confirmed.identity, identity)
                     || confirmed.directory !== directory
                     || [...await getDirectoryEntries(directory, context.fs)].some(entry => !confirmedEntries.has(entry))) {
                     throw new CliError(`Component "${name}" changed while removal was pending. Run remove again.`, { code: 'ACTION_CONFLICT' });
                 }
             }
-            return [name, directory] as const;
+            const plan = await planComponentDirectoryRemoval(context, directory, retainedPaths, entry);
+            return { name, plan };
         }));
-        const retainedPaths = collectInstalledFilePaths(context, manifest, removedNames);
-        for (const file of options.confirmation?.retainedPaths ?? []) retainedPaths.add(file);
-        const candidates: string[] = [];
-        if (options.removeOrphaned) {
-            for (const target of new Set(orphanedFiles.map(file => path.resolve(file)))) {
-                if (options.confirmation && !options.confirmation.orphanedFiles.has(target)) continue;
-                if (retainedPaths.has(target) || componentDirs.some(([, dir]) => isInsideDirectory(target, dir))) continue;
-                if (await context.isSafePath(target) && await context.fs.pathExists(target)) candidates.push(target);
-            }
-        }
-        const removableOrphans = await getOrphansWithoutCurrentReferences(
-            context, manifest, candidates, removedNames, componentDirs.map(([, directory]) => directory),
-        );
+        const removedPaths = componentPlans.flatMap(({ plan }) => plan.targets.map(target => target.path));
+        const requestedOrphans = new Set(orphanedFiles.map(file => path.resolve(file)));
+        const legacyNames = new Set([...removedNames].filter(name => !manifest?.components[name]));
+        const orphanCandidates = options.removeOrphaned && requestedOrphans.size > 0
+            ? await findRemovalOrphanCandidates(context, ownedPaths, retainedPaths, removedPaths, legacyNames)
+            : [];
+        const candidates = orphanCandidates.filter(file => requestedOrphans.has(file)
+            && (!options.confirmation || options.confirmation.orphanedFiles.has(file)));
+        const removableOrphans = await getOrphansWithoutCurrentReferences(context, manifest, candidates, removedPaths);
         const componentRemovalCounts = await awaitConcurrentResults(
-            componentDirs.map(async ([comp, componentPath]) => {
-                if (await context.fs.pathExists(componentPath)) {
-                    const fileCount = await processComponentDirectory(componentPath, retainedPaths, context.fs, transaction);
-                    options.onRemoveComponent?.(comp, fileCount);
-                    return fileCount;
+            componentPlans.map(async ({ name, plan }) => {
+                for (const target of plan.targets) {
+                    await transaction.remove(target.path, { recursive: target.recursive });
                 }
-                return 0;
+                if (plan.targets.length > 0) options.onRemoveComponent?.(name, plan.fileCount);
+                return plan.fileCount;
             })
         );
         const totalRemoved = componentRemovalCounts.reduce((sum, count) => sum + count, 0);
-        await awaitConcurrentResults(removableOrphans.map(file => transaction.remove(file)));
+        await awaitConcurrentResults(removableOrphans.map(file => transaction.remove(file, { recursive: false })));
 
         await removeInstalledComponents(context.cwd, [...removedNames], { transaction }, context.fs);
         await transaction.commit();
@@ -658,31 +657,53 @@ export async function removeComponents(
     }
 }
 
-async function processComponentDirectory(
+async function planComponentDirectoryRemoval(
+    context: ProjectContext,
     directory: string,
     retainedPaths: ReadonlySet<string>,
-    fs: FileSystemAdapter,
-    transaction?: FileTransaction,
-): Promise<number> {
-    if (retainedPaths.has(directory)) return 0;
-    if (![...retainedPaths].some(file => isInsideDirectory(file, directory))) {
-        const fileCount = await countFilesRecursive(directory, fs);
-        await transaction?.remove(directory);
-        return fileCount;
-    }
-
-    let fileCount = 0;
-    for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
-        const target = path.join(directory, entry.name);
-        if (retainedPaths.has(target)) continue;
-        if (entry.isDirectory()) {
-            fileCount += await processComponentDirectory(target, retainedPaths, fs, transaction);
-        } else {
-            await transaction?.remove(target);
-            if (entry.isFile()) fileCount++;
+    entry: InstalledComponentManifest | undefined,
+): Promise<ComponentRemovalPlan> {
+    const { fs } = context;
+    const ownedFiles = entry && new Set(entry.files.map(file => resolveInstalledFile(context, file)));
+    const ownedDirectories = new Set<string>();
+    for (const file of ownedFiles ?? []) {
+        for (let dir = path.dirname(file); isInsideDirectory(dir, directory); dir = path.dirname(dir)) {
+            ownedDirectories.add(dir);
+            if (dir === directory) break;
         }
     }
-    return fileCount;
+
+    async function collect(dir: string): Promise<ComponentRemovalPlan> {
+        const targets: ComponentRemovalPlan['targets'] = [];
+        let fileCount = 0;
+        if (retainedPaths.has(dir) || (ownedFiles && !ownedDirectories.has(dir))) return { targets, fileCount };
+        let wholeDirectory = ![...retainedPaths].some(file => isInsideDirectory(file, dir));
+        for (const item of await fs.readdir(dir, { withFileTypes: true })) {
+            const target = path.join(dir, item.name);
+            if (retainedPaths.has(target)) {
+                wholeDirectory = false;
+            } else if (item.isDirectory()) {
+                const child = await collect(target);
+                if (child.targets[0]?.path !== target) wholeDirectory = false;
+                targets.push(...child.targets);
+                fileCount += child.fileCount;
+            } else if (!ownedFiles || ownedFiles.has(target)) {
+                targets.push({ path: target, recursive: false });
+                if (item.isFile()) fileCount++;
+            } else {
+                wholeDirectory = false;
+            }
+        }
+        if (wholeDirectory && (!ownedFiles || targets.length > 0)) {
+            return { targets: [{ path: dir, recursive: true }], fileCount };
+        }
+        return { targets, fileCount };
+    }
+
+    if (!await fs.pathExists(directory) || (ownedFiles && !(await fs.lstat(directory)).isDirectory())) {
+        return { targets: [], fileCount: 0 };
+    }
+    return collect(directory);
 }
 
 async function awaitConcurrentResults<T>(tasks: Promise<T>[]): Promise<T[]> {

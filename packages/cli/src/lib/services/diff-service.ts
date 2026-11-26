@@ -107,7 +107,7 @@ function getIntegrityMetadata(
 
     let integrityStatus: DiffIntegrityStatus = 'unknown';
     if (installedIntegrity && latestIntegrity) {
-        integrityStatus = installedIntegrity === latestIntegrity ? 'current' : 'outdated';
+        integrityStatus = manifestEntry?.pendingFiles?.length || installedIntegrity !== latestIntegrity ? 'outdated' : 'current';
     }
 
     return {

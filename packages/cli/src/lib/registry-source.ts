@@ -72,7 +72,7 @@ export function isRegistrySelectionOnlyUpdate(
     entry: InstalledComponentManifest | undefined,
     snapshot: RegistryItemSnapshot | undefined,
 ): boolean {
-    if (!entry || !snapshot || entry.integrity !== snapshot.item.integrity) return false;
+    if (!entry || !snapshot || entry.pendingFiles?.length || entry.integrity !== snapshot.item.integrity) return false;
 
     const installedVersion = entry.version ?? 'latest';
     const selectedVersion = snapshot.version ?? 'latest';

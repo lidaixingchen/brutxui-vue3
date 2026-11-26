@@ -142,6 +142,7 @@ function withManifestDefaults(
         integrity: manifestEntry?.integrity,
         installedAt: manifestEntry?.installedAt,
         manifestFiles: manifestEntry?.files,
+        ...(manifestEntry?.pendingFiles?.length ? { pendingFiles: manifestEntry.pendingFiles } : {}),
         managed: manifestEntry !== undefined,
     };
 }

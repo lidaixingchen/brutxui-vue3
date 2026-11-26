@@ -313,6 +313,7 @@ export interface InstalledComponentInfo extends Partial<ManifestInfoFields> {
     updateAvailable?: boolean;
     updateCheckError?: string;
     manifestFiles?: string[];
+    pendingFiles?: string[];
     managed?: boolean;
 }
 
@@ -344,14 +345,17 @@ export interface RegistrySnapshot {
     readonly trusted: boolean;
 }
 
-export interface InstalledComponentManifest {
-    name: string;
+export interface BaselineRegistrySelection {
     registrySource: string;
     /** 通过版本说明符选择版本时的基准注册表源 */
     registryBaseSource?: string;
-    integrity: string;
-    installedContentHash?: string;
     version?: string;
+    integrity: string;
+}
+
+export interface InstalledComponentManifest extends BaselineRegistrySelection {
+    name: string;
+    installedContentHash?: string;
     installedAt: string;
     files: string[];
     dependencies: string[];
@@ -361,6 +365,10 @@ export interface InstalledComponentManifest {
     status?: RegistryItem['status'];
     replacement?: string;
     baselines?: Record<string, string>;
+    /** 仍待应用所选注册表版本的项目相对路径。 */
+    pendingFiles?: string[];
+    /** 与组件当前注册表版本不同的逐文件基线来源。 */
+    baselineSources?: Record<string, BaselineRegistrySelection>;
 }
 
 export type CheckStatus = 'pass' | 'warn' | 'error';

@@ -90,6 +90,8 @@ brutx-vue add --all
 brutx-vue add
 ```
 
+默认的 `add` 会保留内容与注册表不同的已有文件。若只完成部分安装，命令会列出待处理文件，`brutx-vue list` 会显示 `partial`。例如，可以用 `brutx-vue update button` 继续安装 `button`。
+
 | 选项 | 说明 |
 | --- | --- |
 | `-y, --yes` | 跳过确认提示 |
@@ -111,7 +113,7 @@ brutx-vue add
 brutx-vue add button@1.2.0
 ```
 
-示例从 `v1.2.0` 标签安装，并在清单中记录实际来源。官方默认注册表始终安装最新发布版。普通更新会跳过已锁定的组件。
+示例从 `v1.2.0` 标签安装，并在清单中记录实际来源。官方默认注册表始终安装最新发布版。锁定版本的组件若只完成部分安装，`brutx-vue update button` 会按锁定版本继续合并。跨版本更新需要 `--across-versions`。
 
 ### `brutx-vue update [components...]`
 
@@ -172,7 +174,7 @@ brutx-vue info button --json
 
 ### `brutx-vue remove <components...>`
 
-移除已安装的组件。删除组件目录并自动清理不再被其他组件引用的孤立文件（composables、locales、lib 等）。
+移除已安装的组件。已登记的组件按安装清单删除文件，保留同目录中的项目自有文件。CLI 会检查共享 composables、locales 和工具函数的引用，提示是否清理已无引用的文件。
 
 ```bash
 # 移除单个组件

@@ -75,6 +75,10 @@ brutx-vue add --all
 brutx-vue add
 ```
 
+By default, `add` keeps existing files whose contents differ from the registry. If the installation is partial, `add` reports the pending files and `brutx-vue list` shows `partial`. For example, run `brutx-vue update button` to continue installing `button`.
+
+When you run `brutx-vue remove button`, it removes the component’s registered files and keeps project-owned files in the same directory.
+
 | Option                        | Description                  |
 | ----------------------------- | ---------------------------- |
 | `-y, --yes`                   | Skip confirmation prompts    |
@@ -94,7 +98,7 @@ After configuring a custom GitHub Raw registry, use `@` to pin a component versi
 brutx-vue add button@1.2.0
 ```
 
-This installs from the `v1.2.0` tag and records the resolved source in the manifest. The official registry serves the latest release. Updates skip pinned components unless you pass `--across-versions`.
+This installs from the `v1.2.0` tag and records the resolved source in the manifest. The official registry serves the latest release. If the pinned component is partially installed, `brutx-vue update button` resumes the merge at the pinned version. Pass `--across-versions` to update it to a different version.
 
 ## Global Options
 

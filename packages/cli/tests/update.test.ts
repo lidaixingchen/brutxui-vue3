@@ -46,7 +46,7 @@ import { RegistryClient } from '../src/lib/registry-client.js';
 import * as diffService from '../src/lib/services/diff-service.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
-import type { DiffResult, RegistryItem, RegistryItemSnapshot } from '../src/lib/types.js';
+import type { DiffResult, InstalledComponentManifest, RegistryItem, RegistryItemSnapshot } from '../src/lib/types.js';
 import type { ComponentUpdatePlanOptions } from '../src/lib/services/component-mutation-engine.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 
@@ -156,7 +156,9 @@ describe('update command', () => {
         else process.env.BRUTX_NO_CACHE = savedEnv;
     });
 
-    async function createProjectWithManifest(components: Record<string, { registrySource: string; version?: string }>): Promise<string> {
+    async function createProjectWithManifest(
+        components: Record<string, Pick<InstalledComponentManifest, 'registrySource' | 'registryBaseSource' | 'version' | 'pendingFiles'>>,
+    ): Promise<string> {
         const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-update-'));
         tmpDirs.push(tmpDir);
         const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
@@ -166,7 +168,7 @@ describe('update command', () => {
             components: Object.fromEntries(Object.entries(components).map(([name, entry]) => {
                 const item: Record<string, unknown> = {
                     name,
-                    registrySource: entry.registrySource,
+                    ...entry,
                     integrity: `sha256-${name}`,
                     installedAt: '2026-07-07T00:00:00.000Z',
                     files: [`src/components/ui/${name}/${name}.vue`],
@@ -174,9 +176,6 @@ describe('update command', () => {
                     registryDependencies: [],
                     examples: [],
                 };
-                if (entry.version !== undefined) {
-                    item.version = entry.version;
-                }
                 return [name, item];
             })),
         });
@@ -485,6 +484,10 @@ describe('update command', () => {
     });
 
     describe('version-pinned components (update version constraints)', () => {
+        const baseSource = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const pinnedSource = baseSource.replace('/main/', '/v2.0.0/');
+        const pendingFile = 'src/components/ui/button/button.vue';
+
         // Helper: build a modified DiffResult whose `component` matches the name being diffed.
         // update.ts reads `result.component` (not the input name) when grouping selected updates,
         // so reusing a constant result with a mismatched name causes wrong components to be selected.
@@ -504,6 +507,42 @@ describe('update command', () => {
             mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
 
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
+        });
+
+        it.each([
+            { version: '2.0.0', specifier: 'button@v2.0.0', source: baseSource },
+            { version: 'v2.0.0', specifier: 'button@2.0.0', source: baseSource },
+            { version: '2.0.0', specifier: 'button', source: pinnedSource },
+        ])('retries a partial pin at $version with $specifier', async ({ version, specifier, source }) => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: pinnedSource, registryBaseSource: baseSource, version, pendingFiles: [pendingFile] },
+            });
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([specifier], { cwd: tmpDir, silent: true, yes: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledWith(
+                expect.any(ProjectContext), specifier, source, expect.objectContaining({ version }), true, expect.any(Function),
+            );
+            expect(mockPlanUpdate).toHaveBeenCalledWith(expect.objectContaining({ components: [specifier], acrossVersions: false }));
+        });
+
+        it.each([
+            { specifier: 'button@v3.0.0', source: pinnedSource },
+            { specifier: 'button@latest', source: pinnedSource },
+            { specifier: 'button@^2.0.0', source: pinnedSource },
+            { specifier: 'button@2.x', source: pinnedSource },
+            { specifier: 'button@v2.0.0', source: 'https://example.test/registry' },
+        ])('keeps a partial pin at $source locked against $specifier', async ({ specifier, source }) => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: source, version: '2.0.0', pendingFiles: [pendingFile] },
+            });
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([specifier], { cwd: tmpDir, silent: true, yes: true });
 
             expect(mockedDiffComponent).not.toHaveBeenCalled();
             expect(mockPlanUpdate).not.toHaveBeenCalled();

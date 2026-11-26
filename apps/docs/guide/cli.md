@@ -124,6 +124,8 @@ npx brutx-vue@latest add button card dialog input
 npx brutx-vue@latest add --all
 ```
 
+默认的 `add` 会保留内容与注册表不同的已有文件。若只完成部分安装，命令会列出待处理文件。例如，可以用 `npx brutx-vue@latest update button` 继续安装 `button`。
+
 #### 选项
 
 | 标志 | 描述 | 默认值 |
@@ -154,6 +156,7 @@ npx brutx-vue@latest add button@1.2.0
 - **与自定义 Registry 配合**：`@version` 支持 GitHub raw URL 结构的注册表（形如 `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`），CLI 会将 `{ref}` 段动态替换为请求版本，便于从个人 fork 或指定 tag 拉取。
 - **默认源行为**：官方默认源为 Release 资产构建产物，默认始终拉取最新构建（latest）。
 - **版本冲突提示**：当本地已安装组件版本与请求版本不符时，CLI 会输出告警提示（不阻断操作）。
+- **补齐锁定版本**：锁定版本的组件若只完成部分安装，普通 `update button` 会按锁定版本继续合并。跨版本更新需要 `--across-versions`。
 
 ---
 
@@ -164,6 +167,8 @@ npx brutx-vue@latest add button@1.2.0
 ```bash
 npx brutx-vue@latest list
 ```
+
+部分安装的组件会在状态列显示 `partial`。使用 `--json` 时，可在 `pendingFiles` 字段查看待处理文件。
 
 #### 检查更新
 
@@ -282,7 +287,7 @@ npx brutx-vue@latest update --dry-run
 | `-y, --yes` | 跳过更新确认提示 | `false` |
 | `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
 | `--dry-run` | 演练模拟更新，不修改实际文件 | `false` |
-| `--across-versions` | 允许跨越版本锁定（pinned）强制升级组件 | `false` |
+| `--across-versions` | 允许锁定版本的组件更新到其他版本 | `false` |
 | `--ours` | **冲突策略**：发生冲突时优先保留本地代码修改 | `false` |
 | `--theirs` | **冲突策略**：发生冲突时优先采纳远端更新代码 | `false` |
 | `-f, --force` | **覆盖模式**：跳过三方合并，强制全量覆盖本地文件 | `false` |
@@ -296,13 +301,13 @@ npx brutx-vue@latest update --dry-run
 
 ### brutx-vue remove
 
-从项目中安全移除组件，自动清理关联目录并检测孤儿依赖：
+移除选定的组件，并检查可一起清理的共享文件。
 
 ```bash
 npx brutx-vue@latest remove <components...>
 ```
 
-remove 命令不仅删除组件源码目录，还会递归反查项目的依赖拓扑，检测是否有不再被任何组件引用的共享 composables、locales 或工具函数，并引导确认是否同步清理。
+对于已登记的组件，`remove` 按安装清单删除文件，同目录中的项目自有文件会保留。CLI 也会检查共享 composables、locales 和工具函数的引用，提示是否清理已无引用的文件。旧项目中未登记的组件沿用目录扫描。
 
 #### 选项
 

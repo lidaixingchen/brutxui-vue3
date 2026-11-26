@@ -14,7 +14,7 @@ import {
     ComponentMutationEngine,
 } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
-import { collectRegistryComponentRequests } from '../lib/registry-client.js';
+import { collectRegistryComponentRequests, isRegistryVersionAlias } from '../lib/registry-client.js';
 import { withRegistryOperationCache } from '../lib/storage/cache-storage.js';
 import { getUpdateRegistrySource, isRegistrySelectionOnlyUpdate } from '../lib/registry-source.js';
 
@@ -83,9 +83,17 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const acrossVersions = options.acrossVersions === true;
     const versionPinnedNames: string[] = [];
     if (!acrossVersions && manifest) {
-        for (const name of requests.keys()) {
+        for (const { name, version } of requests.values()) {
             const entry = manifest.components[name];
-            if (entry?.version && entry.version !== 'latest') {
+            if (!entry?.version || entry.version === 'latest') continue;
+
+            const retryingPartialSelection = entry.pendingFiles?.length && (
+                version === undefined || version === entry.version
+                || isRegistryVersionAlias(
+                    version, entry.version, options.registry ?? entry.registryBaseSource ?? entry.registrySource, entry.registrySource,
+                )
+            );
+            if (!retryingPartialSelection) {
                 versionPinnedNames.push(name);
             }
         }
@@ -301,6 +309,9 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     logger.success(
         `Update completed for ${result.succeeded.length} component(s) (${result.stats.mergedFiles} files merged, ${result.stats.createdFiles} added${deletedStats}).`
     );
+    for (const { component, pendingFiles } of result.partial ?? []) {
+        logger.warn(`Partially updated ${component}. Pending files: ${pendingFiles.join(', ')}.`);
+    }
 
     if (result.conflicts.length > 0) {
         logger.newLine();

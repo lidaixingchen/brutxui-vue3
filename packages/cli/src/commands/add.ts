@@ -284,9 +284,12 @@ async function addInner(
             },
         });
 
-        const summary = mutationResult.skipped.length > 0
-            ? `Added ${mutationResult.succeeded.length} component(s), skipped ${mutationResult.skipped.length}`
-            : `Added ${mutationResult.succeeded.length} component(s)`;
+        const partial = mutationResult.partial ?? [];
+        const summary = [
+            `Added ${mutationResult.succeeded.length} component(s)`,
+            ...(partial.length ? [`partially added ${partial.length}`] : []),
+            ...(mutationResult.skipped.length ? [`skipped ${mutationResult.skipped.length}`] : []),
+        ].join(', ');
 
         if (options.dryRun) {
             spinner?.succeed(`[Dry Run] Simulated: ${summary}`);
@@ -294,13 +297,19 @@ async function addInner(
             spinner?.succeed(summary);
         }
 
-        if (mutationResult.succeeded.length > 0 && mutationResult.filesWritten.length > 0) {
+        if (mutationResult.filesWritten.length > 0) {
             logger.newLine();
             logger.bold('💾 Files written to disk:');
             for (const filePath of mutationResult.filesWritten) {
                 const relativePath = path.relative(effectiveTargetCwd, filePath);
                 logger.success(`   ✓ ${relativePath}`);
             }
+        }
+
+        for (const { component, pendingFiles } of partial) {
+            const label = options.dryRun ? `[Dry Run] Would partially add ${component}` : `Partially added ${component}`;
+            logger.warn(`${label}. Pending files: ${pendingFiles.join(', ')}.`);
+            if (!options.dryRun) logger.info(`Run brutx-vue update ${component} to merge the pending changes.`);
         }
 
         if (mutationResult.conflicts.length > 0) {

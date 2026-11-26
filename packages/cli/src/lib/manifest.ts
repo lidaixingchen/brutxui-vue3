@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import path from 'path';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import { MANIFEST_VERSION } from './types.js';
-import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
+import type { BaselineRegistrySelection, BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import { FileTransaction } from './file-transaction.js';
 
 const defaultDiskFs = new DiskFileSystemAdapter();
@@ -33,6 +33,8 @@ export interface InstalledManifestEntryInput {
     installedContentHash?: string;
     version?: string;
     baselines?: Record<string, string>;
+    pendingFiles?: string[];
+    baselineSources?: Record<string, BaselineRegistrySelection>;
 }
 
 type InstalledRegistrySelection = Pick<InstalledManifestEntryInput, 'item' | 'registrySource' | 'registryBaseSource' | 'version'>;
@@ -155,6 +157,17 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         throw new Error(`Invalid manifest entry for "${componentName}": "baselines" must be an object with string values.`);
     }
 
+    const pendingFiles = value.pendingFiles;
+    if (pendingFiles !== undefined) assertStringArray(pendingFiles, `${componentName}.pendingFiles`);
+    const baselineSources = value.baselineSources;
+    if (baselineSources !== undefined && (!isRecord(baselineSources) || Object.values(baselineSources).some(source =>
+        !isRecord(source) || typeof source.registrySource !== 'string' || typeof source.integrity !== 'string'
+        || (source.version !== undefined && typeof source.version !== 'string')
+        || (source.registryBaseSource !== undefined && typeof source.registryBaseSource !== 'string')
+    ))) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "baselineSources" must record a registry selection for each path.`);
+    }
+
     return {
         name: value.name,
         registrySource,
@@ -171,6 +184,8 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         status,
         replacement,
         baselines: baselines as Record<string, string> | undefined,
+        ...(pendingFiles?.length ? { pendingFiles } : {}),
+        ...(baselineSources ? { baselineSources: baselineSources as Record<string, BaselineRegistrySelection> } : {}),
     };
 }
 
@@ -331,12 +346,14 @@ async function applyInstalledComponents(
         }
         Object.assign(entry, registryManifestFields(selection));
     }
-    const installationTime = Date.now();
+    // 同一事务共享安装时间，后续事务用它确定共享文件的安装顺序。
+    let installationTime = Date.now();
+    for (const installed of Object.values(manifest.components)) {
+        const previousTime = Date.parse(installed.installedAt);
+        if (previousTime >= installationTime) installationTime = previousTime + 1;
+    }
+    const installedAt = new Date(installationTime).toISOString();
     for (const entry of entries) {
-        const previousInstallationTime = Date.parse(manifest.components[entry.item.name]?.installedAt ?? '');
-        const installedAt = new Date(Number.isFinite(previousInstallationTime)
-            ? Math.max(installationTime, previousInstallationTime + 1)
-            : installationTime).toISOString();
         manifest.components[entry.item.name] = {
             name: entry.item.name,
             ...registryManifestFields(entry),
@@ -345,6 +362,8 @@ async function applyInstalledComponents(
             installedAt,
             files: entry.files.map(file => toPortableRelativePath(cwd, file)),
             baselines: entry.baselines,
+            pendingFiles: entry.pendingFiles,
+            baselineSources: entry.baselineSources,
         };
     }
 

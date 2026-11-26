@@ -3,8 +3,9 @@ import path from 'path';
 import { MemoryFileSystemAdapter } from '../../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../../src/lib/project-context.js';
 import { MergeExecutor } from '../../src/lib/merge/merge-executor.js';
-import { getBaselineRelativePath, getManifestPath, updateInstalledComponents } from '../../src/lib/manifest.js';
-import type { BrutalistConfig, RegistryItem } from '../../src/lib/types.js';
+import { getBaselineRelativePath, getManifestPath, readManifest, updateInstalledComponents } from '../../src/lib/manifest.js';
+import { ComponentMutationEngine } from '../../src/lib/services/component-mutation-engine.js';
+import type { BrutalistConfig, RegistryItem, RegistryItemSnapshot } from '../../src/lib/types.js';
 
 describe('MergeExecutor', () => {
     const projectCwd = process.platform === 'win32' ? 'C:/workspace/test-app' : '/workspace/test-app';
@@ -231,6 +232,117 @@ describe('MergeExecutor', () => {
         expect(await fs.readFile(path.join(projectCwd, optionsPath))).toBe(options.content);
         expect(fetcher).toHaveBeenCalledExactlyOnceWith('button', 'historical-registry', true, fs);
     });
+
+    it.each(['applied', 'legacy baseline', 'local edit', 'pending owner', 'older owner', 'missing baseline'] as const)(
+        'plans a shared-file update across transactions in the same millisecond with %s', async scenario => {
+            const shared = (value: string): RegistryItem['files'][number] => ({
+                path: 'lib/shared.ts',
+                content: `export const value = '${value}';\n`,
+                type: 'registry:lib',
+            });
+            const v1 = shared('v1');
+            const v2 = shared('v2');
+            const v3 = shared('v3');
+            const helper = { ...v2, path: 'components/ui/button/helper.ts', type: 'registry:ui' as const };
+            const button = (version: string, ...files: RegistryItem['files']): RegistryItem => ({
+                ...mockBaseButton, integrity: `sha256-button-${version}`, files: [...mockBaseButton.files, ...files],
+            });
+            const owner = (name: string, version: string, file: RegistryItem['files'][number]): RegistryItem => ({
+                ...mockBaseButton, name, integrity: `sha256-${name}-${version}`, files: [
+                    { ...mockBaseButton.files[0], path: `components/ui/${name}/${name}.vue` }, file,
+                ],
+            });
+            const firstVersion = '0.10.0';
+            const partialVersion = '0.11.0';
+            const latestVersion = '0.12.0';
+            const source = 'https://registry.example.com';
+            const items = new Map<string, RegistryItem>([
+                ['button', button(firstVersion, v1)],
+                ['card', owner('card', firstVersion, v1)],
+                ['badge', owner('badge', firstVersion, v1)],
+            ]);
+            let version = firstVersion;
+            const fs = new MemoryFileSystemAdapter({
+                [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
+                [path.join(projectCwd, 'src/lib/utils.ts')]: '',
+            });
+            const context = await ProjectContext.load(projectCwd, { fs });
+            const sharedPath = await context.resolveTargetPath(v1.path);
+            const relativePath = context.toRelativePosixPath(sharedPath);
+            const snapshot = (item: RegistryItem): RegistryItemSnapshot => ({ item, source, version });
+            vi.spyOn(context.registry, 'resolve').mockImplementation(async components => {
+                const selected = components.map(name => items.get(name)!);
+                return {
+                    items: selected,
+                    npmDependencies: [],
+                    registryDependencies: [],
+                    missingComponents: [],
+                    hitSources: new Map(selected.map(item => [item.name, source])),
+                    itemSnapshots: new Map(selected.map(item => [item.name, snapshot(item)])),
+                };
+            });
+            vi.spyOn(context.registry, 'fetchItemWithMeta').mockImplementation(async name => snapshot(items.get(name)!));
+            const historicalFetch = vi.spyOn(context.registry, 'fetchItem').mockRejectedValue(new Error('Unexpected historical fetch'));
+            const engine = new ComponentMutationEngine(context);
+            const options = { skipDependencies: true };
+            const clock = vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-08-20T00:00:00Z'));
+            try {
+                await engine.execute(await engine.planInstall({ components: [...items.keys()] }), options);
+                version = partialVersion;
+                items.set('button', button(partialVersion, v2, helper));
+                const partial = await engine.execute(await engine.planInstall({ components: ['button'] }), options);
+                expect(partial.partial).toEqual([{ component: 'button', pendingFiles: [relativePath] }]);
+                expect(await fs.readFile(sharedPath)).toBe(v1.content);
+
+                items.set('card', owner('card', partialVersion, v2));
+                await engine.execute(await engine.planUpdate({ components: ['card'], acrossVersions: true }), options);
+                expect(await fs.readFile(sharedPath)).toBe(v2.content);
+
+                const manifest = (await readManifest(projectCwd, fs))!;
+                const card = manifest.components.card;
+                if (scenario === 'legacy baseline') {
+                    await fs.remove(path.join(projectCwd, card.baselines![relativePath]));
+                    await fs.writeFile(path.join(projectCwd, getBaselineRelativePath('card', path.posix.basename(relativePath))), v2.content);
+                    delete card.baselines;
+                } else if (scenario === 'local edit') {
+                    await fs.writeFile(sharedPath, shared('custom').content);
+                } else if (scenario === 'pending owner') {
+                    card.pendingFiles = [relativePath];
+                } else if (scenario === 'older owner') {
+                    card.installedAt = manifest.components.badge.installedAt;
+                } else if (scenario === 'missing baseline') {
+                    await fs.remove(path.join(projectCwd, card.baselines![relativePath]));
+                }
+                await fs.writeJson(getManifestPath(projectCwd), manifest);
+                const cardPath = context.toRelativePosixPath(await context.resolveTargetPath(items.get('card')!.files[0].path));
+                await fs.remove(path.join(projectCwd, getBaselineRelativePath('card', cardPath)));
+
+                version = latestVersion;
+                items.set('button', button(latestVersion, v3, helper));
+                const plan = await engine.planUpdate({ components: ['button'], acrossVersions: true });
+                const sharedUpdate = plan.files.find(file => file.filePath === sharedPath);
+                const mayAdvance = scenario === 'applied' || scenario === 'legacy baseline';
+                expect(sharedUpdate?.hasConflicts).toBe(!mayAdvance);
+                expect(plan.installedIdentities?.has('card')).toBe(mayAdvance);
+                expect(plan.installedIdentities?.has('badge')).toBe(false);
+                expect(historicalFetch).not.toHaveBeenCalled();
+
+                if (mayAdvance) {
+                    await engine.execute(plan, options);
+                    expect(await fs.readFile(sharedPath)).toBe(v3.content);
+                    const updated = await readManifest(projectCwd, fs);
+                    expect(updated?.components.button.version).toBe(latestVersion);
+                    expect(updated?.components.button.pendingFiles).toBeUndefined();
+                    expect(await fs.readFile(path.join(projectCwd, getBaselineRelativePath('button', relativePath)))).toBe(v3.content);
+                } else {
+                    expect(sharedUpdate?.mergedContent).toContain(scenario === 'local edit' ? "'custom'" : "'v2'");
+                    expect(sharedUpdate?.mergedContent).toContain('<<<<<<< LOCAL');
+                }
+            } finally {
+                clock.mockRestore();
+            }
+        },
+    );
 
     it('rejects a standalone plan when a newer installation completes during planning', async () => {
         const relativePath = 'src/components/ui/button/Button.vue';

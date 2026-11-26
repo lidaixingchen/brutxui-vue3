@@ -1,6 +1,6 @@
 import path from 'path';
 import type { ProjectContext } from '../project-context.js';
-import type { RegistryItem, RegistryItemSnapshot } from '../types.js';
+import type { BaselineRegistrySelection, InstalledComponentManifest, RegistryItem, RegistryItemSnapshot } from '../types.js';
 import { DEFAULT_REGISTRY_URL } from '../constants.js';
 import { ensureUtilsFile } from './add-service.js';
 import { mergeSnippetsFile, hasVscodeDir } from '../vscode-snippets.js';
@@ -14,11 +14,13 @@ import {
     getInstalledComponentIdentity,
     type BaselineRecovery,
     type InstalledComponentIdentity,
+    type InstalledManifestEntryInput,
     type RegistrySelectionUpdate,
 } from '../manifest.js';
 import { collectInstalledFilePaths, projectRegistryFiles, resolveInstalledFile, type PlannedComponentSource } from '../component-files.js';
 import { normalizeEol } from '../merge/whitespace-normalizer.js';
 import { MergeExecutor } from '../merge/merge-executor.js';
+import { BaselineProvider } from '../merge/baseline-provider.js';
 import { assertMergeFilesUnchanged, recordMergeFileObservations } from '../merge/file-observations.js';
 import { withRegistryPlanningCache } from '../storage/cache-storage.js';
 import { PackageManagerAdapter } from '../workspace/package-manager-adapter.js';
@@ -38,6 +40,7 @@ export interface MutationPlanFile {
     mergedContent?: string;
     hasConflicts?: boolean;
     conflictMarkers?: boolean;
+    retainBaseline?: boolean;
 }
 
 export interface ComponentMutationPlan {
@@ -54,6 +57,8 @@ export interface ComponentMutationPlan {
     /** 命中并解析该组件的注册表源映射 */
     registrySources: Record<string, string>;
     registryBaseSources?: Record<string, string>;
+    installMode?: 'copy' | 'overwrite' | 'merge';
+    installedBaselines?: ReadonlyMap<string, ReadonlyMap<string, string>>;
     /** 仅同步注册表信息的组件及规划时对应的安装时间 */
     registrySelectionOnly?: ReadonlyMap<string, string>;
     /** 需要同步文件归属的组件，包括仅变更清单的更新 */
@@ -122,6 +127,7 @@ export interface ComponentMutationResult {
     succeeded: string[];
     /** 跳过的组件列表 */
     skipped: string[];
+    partial?: Array<{ component: string; pendingFiles: string[] }>;
     /** 实际写入或合并的目标物理文件路径列表 */
     filesWritten: string[];
     /** 实际删除的目标物理文件路径列表 */
@@ -138,6 +144,69 @@ export interface ComponentMutationResult {
         mergedFiles: number;
         deletedFiles: number;
         skippedFiles: number;
+    };
+}
+
+type ProjectedFiles = Awaited<ReturnType<typeof projectRegistryFiles>>;
+
+function resolveFileOwnership(
+    context: ProjectContext,
+    plan: ComponentMutationPlan,
+    item: RegistryItem,
+    projectedFiles: ProjectedFiles,
+    itemFiles: readonly MutationPlanFile[],
+    previousEntry: InstalledComponentManifest | undefined,
+    writesByPath: ReadonlyMap<string, MutationPlanFile>,
+) {
+    const ownedPaths = new Set(previousEntry?.files.map(filePath =>
+        context.toRelativePosixPath(resolveInstalledFile(context, filePath))));
+    const acceptedPaths = new Set<string>();
+    const retainedPaths = new Set<string>();
+    const pendingFiles = new Set<string>();
+    const itemFilesByPath = new Map(itemFiles.map(file => [file.filePath, file]));
+    let preservedLocalEdits = false;
+
+    for (const { absolutePath, relativePath, content } of projectedFiles) {
+        const file = itemFilesByPath.get(absolutePath);
+        const write = writesByPath.get(absolutePath);
+        let applied: boolean;
+        if (plan.installMode === 'copy' || plan.installMode === 'overwrite') {
+            const finalContent = write?.sourceContent ?? plan.observedFiles?.get(absolutePath);
+            applied = finalContent !== undefined && normalizeEol(finalContent) === normalizeEol(content);
+            const installedBaseline = plan.installedBaselines?.get(item.name)?.get(relativePath);
+            if (!applied && !write && installedBaseline !== undefined && normalizeEol(installedBaseline) === normalizeEol(content)) {
+                applied = true;
+                preservedLocalEdits = true;
+            }
+        } else {
+            applied = !file?.retainBaseline;
+            if (plan.installMode === 'merge' && write && write.componentName !== item.name) {
+                applied = normalizeEol(write.sourceContent) === normalizeEol(content);
+            }
+        }
+        if (applied) {
+            acceptedPaths.add(relativePath);
+        } else {
+            pendingFiles.add(relativePath);
+            if (ownedPaths.has(relativePath)) retainedPaths.add(relativePath);
+        }
+    }
+    if (plan.installMode === 'copy') {
+        for (const relativePath of ownedPaths) {
+            if (acceptedPaths.has(relativePath)) continue;
+            pendingFiles.add(relativePath);
+            retainedPaths.add(relativePath);
+        }
+    }
+    return { ownedPaths, acceptedPaths, retainedPaths, pendingFiles, preservedLocalEdits };
+}
+
+function registrySelectionFor(plan: ComponentMutationPlan, item: RegistryItem) {
+    return {
+        item,
+        registrySource: plan.registrySources[item.name] ?? DEFAULT_REGISTRY_URL,
+        registryBaseSource: plan.registryBaseSources?.[item.name],
+        version: plan.versionByName.get(item.name) ?? 'latest',
     };
 }
 
@@ -180,19 +249,19 @@ export class ComponentMutationEngine {
         const plannedContent = new Map<string, string>();
         const mergeExecutor = options.merge ? new MergeExecutor({ fs: this.context.fs }) : null;
         const existingManifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
-        const installedIdentities = mergeExecutor
-            ? new Map(resolution.items.map(item => [item.name, getInstalledComponentIdentity(existingManifest?.components[item.name])]))
-            : undefined;
+        const installedIdentities = new Map(resolution.items.map(item => [item.name, getInstalledComponentIdentity(existingManifest?.components[item.name])]));
+        const installedBaselines = new Map<string, ReadonlyMap<string, string>>();
 
         for (const item of resolution.items) {
             if (options.merge && mergeExecutor) {
+                const sources = new Map((await projectRegistryFiles(this.context, item.files)).map(file => [file.absolutePath, file.content]));
                 const mergePlan = await mergeExecutor.plan(this.context, item.name, item, {
                     conflictStrategy: options.conflictStrategy,
                     registrySource: resolution.hitSources.get(item.name) ?? options.registryOverride,
                     useCache: options.useCache,
                     installedManifest: existingManifest,
                 });
-                for (const [name, identity] of mergePlan.installedIdentities ?? []) installedIdentities?.set(name, identity);
+                for (const [name, identity] of mergePlan.installedIdentities ?? []) installedIdentities.set(name, identity);
                 if (mergePlan.baselineRecovery) baselineRecoveries.push(mergePlan.baselineRecovery);
                 recordMergeFileObservations(this.context, observedFiles, mergePlan.observedFiles);
 
@@ -209,16 +278,22 @@ export class ComponentMutationEngine {
                         componentName: item.name,
                         filePath: absPath,
                         action,
-                        sourceContent: fileResult.content ?? '',
+                        sourceContent: sources.get(absPath) ?? '',
                         mergedContent: fileResult.content,
                         hasConflicts: fileResult.status === 'conflict' || fileResult.status === 'restore-prompt',
                         conflictMarkers: fileResult.status === 'conflict',
+                        retainBaseline: action === 'skip' && (fileResult.status === 'fallback-diff' || fileResult.status === 'restore-prompt'),
                     });
                 }
             } else {
                 for (const { absolutePath, content } of await projectRegistryFiles(this.context, item.files)) {
                     const alreadyPlanned = plannedContent.has(absolutePath);
-                    const exists = alreadyPlanned || await this.context.fs.pathExists(absolutePath);
+                    if (!observedFiles.has(absolutePath)) {
+                        observedFiles.set(absolutePath, await this.context.fs.pathExists(absolutePath)
+                            ? await this.context.fs.readFile(absolutePath, 'utf-8')
+                            : undefined);
+                    }
+                    const exists = alreadyPlanned || observedFiles.get(absolutePath) !== undefined;
                     let action: PlanFileAction;
                     if (alreadyPlanned && plannedContent.get(absolutePath) === content) {
                         action = 'skip';
@@ -240,6 +315,24 @@ export class ComponentMutationEngine {
             }
         }
 
+        if (!mergeExecutor && !options.overwrite) {
+            const baselineProvider = new BaselineProvider({ fs: this.context.fs });
+            for (const item of resolution.items) {
+                const previous = existingManifest?.components[item.name];
+                if (!previous) continue;
+                const ownedPaths = new Set(previous.files.map(file => resolveInstalledFile(this.context, file)));
+                if (!files.some(file => file.componentName === item.name && file.action === 'skip'
+                    && ownedPaths.has(file.filePath) && !plannedContent.has(file.filePath)
+                    && normalizeEol(observedFiles.get(file.filePath) ?? '') !== normalizeEol(file.sourceContent))) continue;
+                const baseline = await baselineProvider.getComponentBaseline(this.context, item.name, {
+                    installedManifest: existingManifest,
+                    useCache: options.useCache,
+                });
+                installedBaselines.set(item.name, baseline.files);
+                if (baseline.recovery) baselineRecoveries.push(baseline.recovery);
+            }
+        }
+
         const warnings: string[] = [];
         if (existingManifest && versionByName.size > 0) {
             for (const [name, newVersion] of versionByName) {
@@ -258,6 +351,8 @@ export class ComponentMutationEngine {
             updateSnippets,
             registrySources: Object.fromEntries(resolution.hitSources),
             registryBaseSources,
+            installMode: mergeExecutor ? 'merge' : options.overwrite ? 'overwrite' : 'copy',
+            installedBaselines,
             baselineRecoveries,
             installedIdentities,
             observedFiles,
@@ -324,7 +419,7 @@ export class ComponentMutationEngine {
             const projectedPaths = new Set(projected.map(file => file.absolutePath));
             for (const absolutePath of projectedPaths) retainedPaths.add(absolutePath);
             const previous = manifest?.components[name];
-            if (previous && (
+            if (previous && (previous.pendingFiles?.length ||
                 previous.files.length !== projectedPaths.size ||
                 previous.files.some(filePath => !projectedPaths.has(resolveInstalledFile(this.context, filePath)))
             )) {
@@ -374,6 +469,8 @@ export class ComponentMutationEngine {
                         mergedContent: fileResult.content,
                         hasConflicts: fileResult.status === 'conflict' || fileResult.status === 'restore-prompt',
                         conflictMarkers: fileResult.status === 'conflict',
+                        retainBaseline: action === 'skip' && (fileResult.status === 'fallback-diff'
+                            || (fileResult.status === 'restore-prompt' && Boolean(manifest?.components[item.name]?.pendingFiles?.length))),
                     });
                 }
             }
@@ -441,6 +538,44 @@ export class ComponentMutationEngine {
         };
     }
 
+    private async resolveItemMutation(
+        plan: ComponentMutationPlan,
+        item: RegistryItem,
+        previousEntry: InstalledComponentManifest | undefined,
+        writesByPath: ReadonlyMap<string, MutationPlanFile>,
+    ) {
+        const itemFiles = plan.files.filter(file => file.componentName === item.name);
+        const projectedFiles = await projectRegistryFiles(this.context, item.files);
+        const selection = registrySelectionFor(plan, item);
+        const ownership = resolveFileOwnership(this.context, plan, item, projectedFiles, itemFiles, previousEntry, writesByPath);
+        const { acceptedPaths, ownedPaths, pendingFiles } = ownership;
+        const hasFileMutations = itemFiles.some(file => file.action !== 'skip');
+        const installStateChanged = plan.installMode && acceptedPaths.size > 0 && (
+            [...acceptedPaths].some(filePath => !ownedPaths.has(filePath))
+            || (pendingFiles.size === 0 && (
+                previousEntry?.pendingFiles?.length || previousEntry?.version !== selection.version
+                || previousEntry.registrySource !== selection.registrySource || previousEntry.registryBaseSource !== selection.registryBaseSource
+                || previousEntry.integrity !== item.integrity
+            ))
+        );
+        const adoptExistingFiles = !plan.installMode && !previousEntry && projectedFiles.length > 0 && !hasFileMutations
+            && (await Promise.all(projectedFiles.map(async file =>
+                await this.context.fs.pathExists(file.absolutePath) &&
+                normalizeEol(await this.context.fs.readFile(file.absolutePath, 'utf-8')) === normalizeEol(file.content)
+            ))).every(Boolean);
+        const shouldApply = Boolean(hasFileMutations || adoptExistingFiles || installStateChanged || plan.fileOwnershipUpdates?.has(item.name));
+        return { itemFiles, projectedFiles, selection, ownership, shouldApply };
+    }
+
+    private async readMutationManifest(plan: ComponentMutationPlan) {
+        const manifest = await readManifest(this.context.cwd, this.context.fs);
+        for (const [name, identity] of plan.installedIdentities ?? []) {
+            assertInstalledComponentIdentity(manifest, name, identity);
+        }
+        await assertMergeFilesUnchanged(this.context, plan.observedFiles);
+        return manifest;
+    }
+
     /**
      * 阶段二：原子事务执行与外部副作用调度
      */
@@ -460,17 +595,35 @@ export class ComponentMutationEngine {
             else if (f.action === 'skip') skippedFiles++;
         }
 
+        const writtenFiles = plan.files.filter(file => file.action !== 'skip' && file.action !== 'delete');
+        const writesByPath = new Map(writtenFiles.map(file => [file.filePath, file]));
+        const succeeded: string[] = [];
+        const skipped: string[] = [];
+        const partial: NonNullable<ComponentMutationResult['partial']> = [];
+        const recordOutcome = (component: string, shouldApply: boolean, pendingFiles: string[]) => {
+            if (!shouldApply) skipped.push(component);
+            else if (pendingFiles.length > 0) partial.push({ component, pendingFiles });
+            else succeeded.push(component);
+        };
         if (options.dryRun) {
-            const filesWritten = plan.files
-                .filter(f => f.action !== 'skip' && f.action !== 'delete')
-                .map(f => f.filePath);
+            const filesWritten = writtenFiles.map(file => file.filePath);
             const filesDeleted = plan.files
                 .filter(f => f.action === 'delete')
                 .map(f => f.filePath);
+            const previous = await this.readMutationManifest(plan);
+            for (const item of plan.items) {
+                if (plan.registrySelectionOnly?.has(item.name)) {
+                    recordOutcome(item.name, true, []);
+                    continue;
+                }
+                const { shouldApply, ownership } = await this.resolveItemMutation(plan, item, previous?.components[item.name], writesByPath);
+                recordOutcome(item.name, shouldApply, [...ownership.pendingFiles]);
+            }
 
             return {
-                succeeded: plan.items.map(i => i.name),
-                skipped: [],
+                succeeded,
+                skipped,
+                ...(partial.length ? { partial } : {}),
                 filesWritten,
                 filesDeleted,
                 conflicts: [],
@@ -489,29 +642,17 @@ export class ComponentMutationEngine {
         }
 
         const transaction = this.context.createTransaction();
-        const succeeded: string[] = [];
-        const skipped: string[] = [];
         const filesWritten: string[] = [];
         const filesDeleted: string[] = [];
-        const filesByComponent = new Map<string, string[]>();
-        const baselinesByComponent = new Map<string, Record<string, string>>();
+        const manifestEntries: InstalledManifestEntryInput[] = [];
+        const hashableEntries: InstalledManifestEntryInput[] = [];
         const conflictsMap = new Map<string, string[]>();
         const registrySelections: RegistrySelectionUpdate[] = [];
-        const registrySelectionFor = (item: RegistryItem) => ({
-            item,
-            registrySource: plan.registrySources[item.name] ?? DEFAULT_REGISTRY_URL,
-            registryBaseSource: plan.registryBaseSources?.[item.name],
-            version: plan.versionByName.get(item.name) ?? 'latest',
-        });
         let manifestUpdated: boolean = false;
 
         try {
             await transaction.lockProjectWrites();
-            const previousManifest = await readManifest(this.context.cwd, this.context.fs);
-            for (const [name, identity] of plan.installedIdentities ?? []) {
-                assertInstalledComponentIdentity(previousManifest, name, identity);
-            }
-            await assertMergeFilesUnchanged(this.context, plan.observedFiles);
+            const previousManifest = await this.readMutationManifest(plan);
             const updatedNames = new Set(plan.items.filter(item => !plan.registrySelectionOnly?.has(item.name)).map(item => item.name));
             const retainedPaths = collectInstalledFilePaths(this.context, previousManifest, updatedNames);
             if (deletedFiles > 0) {
@@ -546,25 +687,18 @@ export class ComponentMutationEngine {
 
                 const installedAt = plan.registrySelectionOnly?.get(item.name);
                 if (installedAt !== undefined) {
-                    registrySelections.push({ ...registrySelectionFor(item), installedAt });
-                    succeeded.push(item.name);
+                    registrySelections.push({ ...registrySelectionFor(plan, item), installedAt });
+                    recordOutcome(item.name, true, []);
                     continue;
                 }
 
-                const itemFiles = plan.files.filter(f => f.componentName === item.name);
                 const previousEntry = previousManifest?.components[item.name];
-                const projectedFiles = await projectRegistryFiles(this.context, item.files);
-
-                const hasFileMutations = itemFiles.some(file => file.action !== 'skip');
-                const adoptExistingFiles = !previousEntry && projectedFiles.length > 0 && !hasFileMutations
-                    && (await Promise.all(projectedFiles.map(async file =>
-                        await this.context.fs.pathExists(file.absolutePath) &&
-                        normalizeEol(await this.context.fs.readFile(file.absolutePath, 'utf-8')) === normalizeEol(file.content)
-                    ))).every(Boolean);
-                if (!hasFileMutations && !adoptExistingFiles && !plan.fileOwnershipUpdates?.has(item.name)) {
-                    skipped.push(item.name);
-                    continue;
-                }
+                const { itemFiles, projectedFiles, selection, ownership, shouldApply } =
+                    await this.resolveItemMutation(plan, item, previousEntry, writesByPath);
+                const { ownedPaths, acceptedPaths, retainedPaths: retainedPathsForItem, pendingFiles, preservedLocalEdits } = ownership;
+                const pending = [...pendingFiles];
+                recordOutcome(item.name, shouldApply, pending);
+                if (!shouldApply) continue;
 
                 for (const file of itemFiles) {
                     if (file.action === 'skip') {
@@ -607,17 +741,41 @@ export class ComponentMutationEngine {
                     }
                 }
 
-                succeeded.push(item.name);
-
-                const installedPaths: string[] = [];
+                const installedPaths = projectedFiles.filter(({ relativePath }) =>
+                    acceptedPaths.has(relativePath) || retainedPathsForItem.has(relativePath)).map(file => file.absolutePath);
+                const projectedPaths = new Set(projectedFiles.map(file => file.relativePath));
                 const componentBaselines: Record<string, string> = {};
+                const baselineSources: Record<string, BaselineRegistrySelection> = {};
                 const currentBaselinePaths = new Set<string>();
-                for (const { absolutePath, relativePath, content } of projectedFiles) {
+                for (const { relativePath, content } of projectedFiles) {
+                    if (!acceptedPaths.has(relativePath)) continue;
                     const baselineRelPath = getBaselineRelativePath(item.name, relativePath);
                     await transaction.writeFile(path.resolve(this.context.cwd, baselineRelPath), content);
-                    installedPaths.push(absolutePath);
                     componentBaselines[relativePath] = baselineRelPath;
                     currentBaselinePaths.add(baselineRelPath);
+                }
+                const recoveries = plan.baselineRecoveries?.find(recovery => recovery.componentName === item.name);
+                for (const relativePath of retainedPathsForItem) {
+                    if (!previousEntry) continue;
+                    const recovered = recoveries?.files.find(file => file.relativePath === relativePath);
+                    const canonicalPath = getBaselineRelativePath(item.name, relativePath);
+                    const basename = path.posix.basename(relativePath);
+                    const uniqueBasename = [...ownedPaths].filter(file => path.posix.basename(file) === basename).length === 1;
+                    const legacyRecord = uniqueBasename ? previousEntry.baselines?.[basename] : undefined;
+                    const oldPath = previousEntry.baselines?.[relativePath] ?? legacyRecord;
+                    const legacyPath = getBaselineRelativePath(item.name, basename);
+                    if (recovered) await transaction.writeFile(path.resolve(this.context.cwd, canonicalPath), recovered.content);
+                    const recordedPath = recovered ? canonicalPath : oldPath;
+                    if (recordedPath) componentBaselines[relativePath] = recordedPath;
+                    for (const baselinePath of [canonicalPath, legacyPath, recordedPath]) {
+                        if (baselinePath) currentBaselinePaths.add(baselinePath);
+                    }
+                    const { registrySource, registryBaseSource, version, integrity } = previousEntry.baselineSources?.[relativePath] ?? previousEntry;
+                    if (registrySource !== selection.registrySource || registryBaseSource !== selection.registryBaseSource
+                        || version !== selection.version || integrity !== item.integrity) {
+                        baselineSources[relativePath] = { registrySource, registryBaseSource, version, integrity };
+                    }
+                    if (!projectedPaths.has(relativePath)) installedPaths.push(resolveInstalledFile(this.context, relativePath));
                 }
 
                 const previousBaselinePaths = new Set([
@@ -632,39 +790,37 @@ export class ComponentMutationEngine {
                     }
                 }
 
-                filesByComponent.set(item.name, installedPaths);
-                baselinesByComponent.set(item.name, componentBaselines);
+                if (installedPaths.length > 0 || previousEntry) {
+                    const manifestEntry: InstalledManifestEntryInput = {
+                        ...selection,
+                        files: installedPaths,
+                        baselines: componentBaselines,
+                        ...(pending.length ? { pendingFiles: pending } : {}),
+                        ...(Object.keys(baselineSources).length ? { baselineSources } : {}),
+                    };
+                    manifestEntries.push(manifestEntry);
+                    if (!pending.length && !preservedLocalEdits && installedPaths.length > 0) {
+                        hashableEntries.push(manifestEntry);
+                    }
+                }
             }
 
-            if (plan.updateSnippets && filesByComponent.size > 0) {
-                await mergeSnippetsFile(this.context.cwd, [...filesByComponent.keys()], this.context.fs, transaction);
+            const registeredNames = new Set(manifestEntries.map(entry => entry.item.name));
+            if (plan.updateSnippets && registeredNames.size > 0) {
+                await mergeSnippetsFile(this.context.cwd, [...registeredNames], this.context.fs, transaction);
             }
 
-            const baselineRecoveries = plan.baselineRecoveries?.filter(recovery => !filesByComponent.has(recovery.componentName));
-            if (succeeded.length > 0 || baselineRecoveries?.length) {
-                if (filesByComponent.size > 0) {
+            const baselineRecoveries = plan.installMode === 'copy' ? undefined
+                : plan.baselineRecoveries?.filter(recovery => !registeredNames.has(recovery.componentName));
+            if (manifestEntries.length > 0 || registrySelections.length > 0 || baselineRecoveries?.length) {
+                if (manifestEntries.length > 0) {
                     await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
                 }
 
-                const manifestEntries = await Promise.all(
-                    plan.items
-                        .filter(item => filesByComponent.has(item.name))
-                        .map(async item => {
-                            const compFiles = filesByComponent.get(item.name) ?? [];
-                            const allInstalledFilesExist = compFiles.length > 0
-                                && (await Promise.all(compFiles.map(filePath => this.context.fs.pathExists(filePath)))).every(Boolean);
-                            const installedContentHash = allInstalledFilesExist
-                                ? await computeInstalledContentHash(compFiles, this.context.fs)
-                                : undefined;
-
-                            return {
-                                ...registrySelectionFor(item),
-                                files: compFiles,
-                                installedContentHash,
-                                baselines: baselinesByComponent.get(item.name),
-                            };
-                        })
-                );
+                await Promise.all(hashableEntries.map(async entry => {
+                    const allInstalledFilesExist = (await Promise.all(entry.files.map(filePath => this.context.fs.pathExists(filePath)))).every(Boolean);
+                    if (allInstalledFilesExist) entry.installedContentHash = await computeInstalledContentHash(entry.files, this.context.fs);
+                }));
 
                 await updateInstalledComponents(this.context.cwd, manifestEntries, {
                     transaction,
@@ -773,6 +929,7 @@ export class ComponentMutationEngine {
         return {
             succeeded,
             skipped,
+            ...(partial.length ? { partial } : {}),
             filesWritten,
             filesDeleted,
             conflicts,

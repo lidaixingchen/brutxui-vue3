@@ -125,6 +125,8 @@ Add all available components:
 npx brutx-vue@latest add --all
 ```
 
+By default, `add` keeps existing files whose contents differ from the registry. If the installation is partial, `add` reports the pending files. For example, run `npx brutx-vue@latest update button` to continue installing `button`.
+
 #### Options
 
 | Flag | Description | Default |
@@ -155,6 +157,7 @@ npx brutx-vue@latest add button@1.2.0
 - **Custom Registries**: `@version` works with GitHub raw URL registries (e.g., `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`). The CLI dynamically replaces `{ref}` with the requested version.
 - **Default Source Behavior**: The official default source uses GitHub Release assets, which always fetch the latest stable release.
 - **Version Mismatch Warning**: If an already-installed component's version differs from the requested version, the CLI emits a non-blocking warning.
+- **Completing a Pinned Installation**: If the pinned component is partially installed, `update button` resumes the merge at the pinned version. Pass `--across-versions` to update it to a different version.
 
 ---
 
@@ -165,6 +168,8 @@ List all installed components in your project along with file counts and runtime
 ```bash
 npx brutx-vue@latest list
 ```
+
+The Status column shows `partial` for partially installed components. With `--json`, the `pendingFiles` field lists the pending files.
 
 #### Check for Updates
 
@@ -283,7 +288,7 @@ When local modifications collide with incoming updates, control merge behavior w
 | `-y, --yes` | Skip confirmation prompts | `false` |
 | `-c, --cwd <path>` | Set working directory | Current directory |
 | `--dry-run` | Simulate update without writing to disk | `false` |
-| `--across-versions` | Allow updating version-pinned components across their locked version | `false` |
+| `--across-versions` | Allow pinned components to update to a different version | `false` |
 | `--ours` | **Conflict Strategy**: Accept all local changes in conflicts | `false` |
 | `--theirs` | **Conflict Strategy**: Accept all remote changes in conflicts | `false` |
 | `-f, --force` | **Overwrite Mode**: Force full overwrite, ignoring local changes | `false` |
@@ -297,13 +302,13 @@ When local modifications collide with incoming updates, control merge behavior w
 
 ### brutx-vue remove
 
-Safely remove components and automatically detect orphan dependencies:
+Remove selected components and check for shared files that can be cleaned up.
 
 ```bash
 npx brutx-vue@latest remove <components...>
 ```
 
-The remove command deletes component directories, checks reverse dependencies, detects orphan composables or locales that are no longer referenced, and prompts for cleanup.
+For a component recorded in the installation manifest, `remove` deletes its registered files and keeps project-owned files in the same directory. It also checks references to shared composables, locales, and utilities before offering to clean up unused files. For legacy components without a manifest entry, it scans the component directory.
 
 #### Options
 

@@ -33,10 +33,12 @@ export class DirectoryMergePlanner {
             retainedPaths = new Set(),
             sharedBaselines = new Map(),
             projectedFiles,
+            getAppliedSharedBaseline,
         }: {
             retainedPaths?: ReadonlySet<string>;
             sharedBaselines?: ReadonlyMap<string, string>;
             projectedFiles?: Awaited<ReturnType<typeof projectRegistryFiles>>;
+            getAppliedSharedBaseline?: (relativePath: string, normalizedLocalContent: string) => Promise<string | undefined>;
         } = {},
     ): Promise<ComponentMergePlan> {
         const fs = this.fsAdapter ?? context.fs;
@@ -87,7 +89,16 @@ export class DirectoryMergePlanner {
             const installedBase = baseline.projectPaths
                 ? baseline.projectPaths.has(relPath) ? baseline.files.get(relPath) : undefined
                 : baseline.files.get(relPath) ?? baseline.files.get(baseName);
-            const baseContent = installedBase ?? sharedBaselines.get(relPath);
+            const recordedBase = installedBase ?? sharedBaselines.get(relPath);
+            let appliedSharedBase: string | undefined;
+            if (getAppliedSharedBaseline && remoteInfo && localContent !== undefined) {
+                const normalizedLocal = normalizeEol(localContent);
+                if ((recordedBase === undefined || normalizeEol(recordedBase) !== normalizedLocal)
+                    && normalizeEol(remoteInfo.content) !== normalizedLocal) {
+                    appliedSharedBase = await getAppliedSharedBaseline(relPath, normalizedLocal);
+                }
+            }
+            const baseContent = appliedSharedBase ?? recordedBase;
             if (remoteInfo || baseContent !== undefined || baseline.projectPaths?.has(relPath)) {
                 observedFiles.set(absPath, localContent);
             }

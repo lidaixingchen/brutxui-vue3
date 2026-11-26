@@ -34,7 +34,7 @@ async function attachUpdateInfo(
             return {
                 ...info,
                 latestIntegrity: latest.integrity,
-                updateAvailable: latest.integrity !== info.integrity,
+                updateAvailable: Boolean(info.pendingFiles?.length) || latest.integrity !== info.integrity,
             };
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -59,10 +59,9 @@ function formatSource(source: string | undefined): string {
 }
 
 function formatStatus(info: InstalledComponentInfo): string {
-    if (!info.status || info.status === 'stable') {
-        return 'stable';
-    }
-    return info.replacement ? `${info.status} -> ${info.replacement}` : info.status;
+    const status = info.status ?? 'stable';
+    const registryStatus = status !== 'stable' && info.replacement ? `${status} -> ${info.replacement}` : status;
+    return info.pendingFiles?.length ? `${registryStatus} / partial` : registryStatus;
 }
 
 function formatCategory(info: InstalledComponentInfo): string {
