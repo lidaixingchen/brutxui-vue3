@@ -201,13 +201,15 @@ Inspect metadata for a specific component (dependency tree, files, category, exa
 npx brutx-vue@latest info <component>
 ```
 
+Queries use the registry recorded during installation when available and the project registry otherwise. Use `button@1.2.0` to query a specific version.
+
 #### Options
 
 | Flag | Description | Default |
 | :--- | :--- | :--- |
 | `-c, --cwd <path>` | Set working directory | Current directory |
 | `--json` | Output component details in JSON format | `false` |
-| `-r, --registry <url>` | Specify registry path or URL | Configured source |
+| `-r, --registry <url>` | Override the registry path or URL | Installation or project registry |
 | `--offline` | Offline mode (reads from cache) | `false` |
 | `-s, --silent` | Silent output | `false` |
 
@@ -215,7 +217,7 @@ npx brutx-vue@latest info <component>
 
 ### brutx-vue diff
 
-Compare local component implementations against the latest registry version:
+Compare local component implementations against registry files. Queries use the registry recorded during installation when available and the project registry otherwise. Use `button@1.2.0` to compare against a specific version.
 
 ```bash
 npx brutx-vue@latest diff [components...]
@@ -242,7 +244,7 @@ npx brutx-vue@latest diff --all
 | :--- | :--- | :--- |
 | `--all` | Compare all installed components | `false` |
 | `-c, --cwd <path>` | Set working directory | Current directory |
-| `-r, --registry <url>` | Target registry path or URL | Configured source |
+| `-r, --registry <url>` | Override the registry path or URL | Installation or project registry |
 | `--json` | Output JSON report with complete file patches | `false` |
 | `--no-cache` | Skip cache and pull latest remote files | `false` |
 | `--offline` | Compare using cached data only | `false` |

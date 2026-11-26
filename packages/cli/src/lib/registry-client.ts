@@ -81,6 +81,23 @@ export function parseComponentSpecifier(specifier: string): RegistryComponentSpe
     return { name: trimmed };
 }
 
+export function assertSafeComponentName(name: string): void {
+    if (
+        name.length === 0 ||
+        name === '.' ||
+        name === '..' ||
+        name.includes('\\') ||
+        name.includes('/../') ||
+        name.startsWith('../') ||
+        name.endsWith('/..')
+    ) {
+        throw new CliError(
+            `Security Error: Path traversal detected in component name "${name}".`,
+            { code: 'PATH_UNSAFE', exitCode: 2 }
+        );
+    }
+}
+
 function normalizeRegistryTag(version: string): string {
     return version.startsWith('v') ? version : `v${version}`;
 }
@@ -244,7 +261,7 @@ export class RegistryClient {
         options?: FetchItemOptions,
         parent?: RegistrySourceSelection,
     ): RegistryItemRequest {
-        this.assertSafeComponentName(name);
+        assertSafeComponentName(name);
         const sources = parent
             ? [version ? selectRegistrySource(parent.baseSource ?? parent.source, version) : parent]
             : (options?.sourceOverride ? [options.sourceOverride] : this.sources)
@@ -282,26 +299,6 @@ export class RegistryClient {
     public async fetchItem(specifier: string, options?: FetchItemOptions): Promise<RegistryItem> {
         const { item } = await this.fetchItemWithMeta(specifier, options);
         return item;
-    }
-
-    /**
-     * 校验组件名，杜绝路径穿越。
-     */
-    private assertSafeComponentName(name: string): void {
-        if (
-            name.length === 0 ||
-            name === '.' ||
-            name === '..' ||
-            name.includes('\\') ||
-            name.includes('/../') ||
-            name.startsWith('../') ||
-            name.endsWith('/..')
-        ) {
-            throw new CliError(
-                `Security Error: Path traversal detected in component name "${name}".`,
-                { code: 'PATH_UNSAFE', exitCode: 2 }
-            );
-        }
     }
 
     /**

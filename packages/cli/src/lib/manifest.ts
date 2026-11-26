@@ -202,7 +202,7 @@ function validateManifest(value: unknown): BrutxManifest {
         throw new Error('Invalid manifest: "components" must be an object.');
     }
 
-    const components: Record<string, InstalledComponentManifest> = {};
+    const components: Record<string, InstalledComponentManifest> = Object.create(null);
     for (const [componentName, entry] of Object.entries(value.components)) {
         components[componentName] = validateManifestEntry(entry, componentName);
     }

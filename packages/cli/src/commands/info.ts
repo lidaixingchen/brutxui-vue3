@@ -1,11 +1,12 @@
-import { DiskFileSystemAdapter } from '../lib/fs/index.js';
-const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import chalk from 'chalk';
-import type { BrutalistConfig, InfoOptions, RegistryItem } from '../lib/types.js';
-import { RegistryClient, isComponentNotFoundError } from '../lib/registry-client.js';
+import type { InfoOptions, InstalledComponentManifest, RegistryItem } from '../lib/types.js';
+import { assertSafeComponentName, isComponentNotFoundError, parseComponentSpecifier } from '../lib/registry-client.js';
 import { readConfigSafe, CliError, resolveRegistrySources, withOfflineScope } from '../lib/index.js';
-import { resolveAliasPath } from '../lib/project.js';
+import { resolveInstalledFile } from '../lib/component-files.js';
+import { readManifest } from '../lib/manifest.js';
+import { ProjectContext } from '../lib/project-context.js';
+import { getUpdateRegistrySource } from '../lib/registry-source.js';
 import { logger } from '../lib/logger.js';
 
 interface ComponentInfoResult {
@@ -16,58 +17,51 @@ interface ComponentInfoResult {
     status: 'installed' | 'not-installed' | 'not-found' | 'registry-unreachable';
 }
 
-async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName: string): Promise<string[]> {
+async function getLocalFiles(
+    context: ProjectContext,
+    componentName: string,
+    manifestEntry: InstalledComponentManifest | undefined,
+): Promise<string[]> {
     try {
-        const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-        const resolvedComponentsPath = path.resolve(componentsPath);
-        const componentPath = path.resolve(path.join(componentsPath, componentName));
-
-        // 与 registry.ts 本地源校验一致：归一化后路径必须仍在 components 目录内，
-        // 拒绝 "../secret"、绝对路径等越界；"@scope/name" 等作用域组件名位于目录内，放行
-        // （空名/'.' 会让 componentPath 等于 resolvedComponentsPath，已在 getComponentInfo 快速校验拒绝）
-        if (!componentPath.startsWith(resolvedComponentsPath + path.sep)) {
-            throw new CliError(
-                `Security Error: Path traversal detected in component name "${componentName}".`,
-                { code: 'PATH_UNSAFE', exitCode: 2 }
-            );
-        }
-
-        if (!await defaultDiskFs.pathExists(componentPath)) {
-            return [];
-        }
-
-        const files: string[] = [];
+        const { fs } = context;
+        const componentsDir = await context.resolveComponentsDir();
+        const legacyPath = path.resolve(componentsDir, componentName);
+        await context.assertSafePath(legacyPath, componentsDir);
+        let componentPath = legacyPath;
+        const files = new Set<string>();
+        const stat = (filePath: string) => fs.stat(filePath).catch(() => undefined);
 
         async function walk(dir: string, base: string): Promise<void> {
-            const entries = await defaultDiskFs.readdir(dir, { withFileTypes: true });
+            const entries = await fs.readdir(dir, { withFileTypes: true });
             for (const entry of entries) {
                 const fullPath = path.join(dir, entry.name);
                 const relative = base ? `${base}/${entry.name}` : entry.name;
 
-                if (entry.isSymbolicLink()) {
-                    // 符号链接：用 stat 判断真实类型（链接指向的目录不递归，避免环引用）
-                    try {
-                        const stat = await defaultDiskFs.stat(fullPath);
-                        if (stat.isFile()) {
-                            files.push(relative);
-                        }
-                    } catch {
-                        // 悬空链接（目标不存在）忽略
-                    }
-                    continue;
-                }
-
                 if (entry.isDirectory()) {
                     await walk(fullPath, relative);
-                } else if (entry.isFile()) {
-                    files.push(relative);
+                } else if (entry.isFile() || (entry.isSymbolicLink() && (await stat(fullPath))?.isFile())) {
+                    files.add(relative);
                 }
-                // 设备、管道等特殊文件不计入文件清单
             }
         }
 
-        await walk(componentPath, '');
-        return files;
+        if ((await stat(legacyPath))?.isDirectory()) {
+            await walk(legacyPath, '');
+        }
+        if (files.size === 0) {
+            componentPath = await context.resolveComponentDir(componentName);
+            if (componentPath !== legacyPath && (await stat(componentPath))?.isDirectory()) {
+                await walk(componentPath, '');
+            }
+        }
+        for (const recordedPath of manifestEntry?.files ?? []) {
+            const absolutePath = resolveInstalledFile(context, recordedPath);
+            if (absolutePath.startsWith(componentPath + path.sep)) continue;
+            if (await context.isSafePath(absolutePath) && (await stat(absolutePath))?.isFile()) {
+                files.add(context.toRelativePosixPath(absolutePath));
+            }
+        }
+        return [...files];
     } catch (error) {
         // PATH_UNSAFE 是安全错误，必须向上传播，不能降级为空列表
         if (error instanceof CliError && error.code === 'PATH_UNSAFE') {
@@ -82,44 +76,36 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
 }
 
 async function getComponentInfo(
-    cwd: string,
-    config: BrutalistConfig,
-    componentName: string,
+    context: ProjectContext,
+    componentSpecifier: string,
     registryOverride?: string
 ): Promise<ComponentInfoResult> {
-    // 快速校验：拒绝空名、"."、".." 与反斜杠（Windows 路径分隔符）。
-    // 注意 ".." 按精确匹配拒绝，不拒绝 "/"——"@scope/name" 作用域组件名合法；
-    // 含 "/" 与 ".." 组合（如 "a/../../x"）由 getLocalFiles 的解析后越界检查兜底。
-    if (componentName.length === 0
-        || componentName === '.'
-        || componentName === '..'
-        || componentName.includes('\\')) {
-        throw new CliError(
-            `Security Error: Path traversal detected in component name "${componentName}".`,
-            { code: 'PATH_UNSAFE', exitCode: 2 }
-        );
-    }
+    const { name: componentName, version } = parseComponentSpecifier(componentSpecifier);
+    assertSafeComponentName(componentName);
 
-    const sources = resolveRegistrySources(config, registryOverride);
+    const manifest = await readManifest(context.cwd, context.fs).catch(error => {
+        logger.warn(error instanceof Error ? error.message : String(error));
+        return null;
+    });
+    const manifestEntry = manifest?.components[componentName];
+    const registry = getUpdateRegistrySource(manifestEntry, registryOverride, version !== undefined);
+    const sources = resolveRegistrySources(context.requireConfig(), registry);
     let source = sources[0];
     let registryItem: RegistryItem | null;
     let registryFetchError: Error | null = null;
 
-    const client = new RegistryClient({
-        sources,
-        fsAdapter: defaultDiskFs,
-    });
+    const client = context.getRegistryClient({ sources });
 
     try {
-        const item = await client.fetchItem(componentName);
-        registryItem = item;
-        source = client.getLastHitSource(componentName) ?? sources[0];
+        const snapshot = await client.fetchItemWithMeta(componentSpecifier);
+        registryItem = snapshot.item;
+        source = snapshot.source;
     } catch (error) {
         registryItem = null;
         registryFetchError = error instanceof Error ? error : new Error(String(error));
     }
 
-    const localFiles = await getLocalFiles(cwd, config, componentName);
+    const localFiles = await getLocalFiles(context, componentName, manifestEntry);
 
     let status: ComponentInfoResult['status'];
     if (registryItem && localFiles.length > 0) {
@@ -198,7 +184,8 @@ async function infoInner(component: string, options: InfoOptions, cwd: string): 
         });
     }
 
-    const result = await getComponentInfo(cwd, config, component, options.registry);
+    const context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+    const result = await getComponentInfo(context, component, options.registry);
 
     if (options.json) {
         console.log(JSON.stringify(result, null, 2));

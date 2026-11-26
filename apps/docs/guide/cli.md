@@ -200,13 +200,15 @@ npx brutx-vue@latest list --check-updates
 npx brutx-vue@latest info <component>
 ```
 
+已登记组件默认查询安装来源，其他组件使用项目配置的注册表。可用 `button@1.2.0` 查询指定版本。
+
 #### 选项
 
 | 标志 | 描述 | 默认值 |
 | :--- | :--- | :--- |
 | `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
 | `--json` | 以 JSON 格式输出组件详细信息 | `false` |
-| `-r, --registry <url>` | 指定查询的注册表路径或 URL | 配置源 |
+| `-r, --registry <url>` | 覆盖查询的注册表路径或 URL | 安装来源或配置源 |
 | `--offline` | 离线模式查询（基于缓存） | `false` |
 | `-s, --silent` | 静默输出 | `false` |
 
@@ -214,7 +216,7 @@ npx brutx-vue@latest info <component>
 
 ### brutx-vue diff
 
-对比本地已安装组件与远端注册表最新版本之间的代码差异：
+对比本地组件与注册表文件的差异。已登记组件默认查询安装来源，其他组件使用项目配置的注册表。可用 `button@1.2.0` 指定对比版本。
 
 ```bash
 npx brutx-vue@latest diff [components...]
@@ -241,7 +243,7 @@ npx brutx-vue@latest diff --all
 | :--- | :--- | :--- |
 | `--all` | 对比所有已安装的组件 | `false` |
 | `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
-| `-r, --registry <url>` | 指定对比的目标注册表路径或 URL | 配置源 |
+| `-r, --registry <url>` | 覆盖对比的注册表路径或 URL | 安装来源或配置源 |
 | `--json` | 输出包含完整补丁（patch）的 JSON 报告 | `false` |
 | `--no-cache` | 跳过缓存拉取最新远端代码 | `false` |
 | `--offline` | 只读缓存进行对比 | `false` |

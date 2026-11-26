@@ -100,6 +100,8 @@ brutx-vue add button@1.2.0
 
 This installs from the `v1.2.0` tag and records the resolved source in the manifest. The official registry serves the latest release. If the pinned component is partially installed, `brutx-vue update button` resumes the merge at the pinned version. Pass `--across-versions` to update it to a different version.
 
+`brutx-vue diff button@1.2.0` and `brutx-vue info button@1.2.0` query the component’s recorded installation source. For a component without an installation record, they use the project registry. Pass `--registry` to select another source.
+
 ## Global Options
 
 The following options apply to all commands and must precede the subcommand:

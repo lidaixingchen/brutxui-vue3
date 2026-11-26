@@ -5,6 +5,7 @@ import type {
     DiffOptions,
 } from '../lib/types.js';
 import { readConfigSafe, CliError, readManifest, withOfflineScope, withAuditLog, ProjectContext } from '../lib/index.js';
+import { parseComponentSpecifier } from '../lib/registry-client.js';
 import { diffAllComponents, getInstalledComponents } from '../lib/services/diff-service.js';
 import { logger } from '../lib/logger.js';
 export { diffComponent, diffAllComponents, getInstalledComponents } from '../lib/services/diff-service.js';
@@ -171,8 +172,8 @@ async function diffInner(
     const results = await diffAllComponents(
         context,
         targetComponents,
-        component => options.registry ?? manifest?.components?.[component]?.registrySource,
-        component => manifest?.components?.[component],
+        () => options.registry,
+        specifier => manifest?.components[parseComponentSpecifier(specifier).name],
         useCache,
     );
 

@@ -11,13 +11,7 @@ vi.mock('../src/lib/config.js', async (importOriginal) => {
     };
 });
 
-vi.mock('../src/lib/project.js', async (importOriginal) => {
-    const original = await importOriginal<typeof import('../src/lib/project.js')>();
-    return { ...original, resolveAliasPath: vi.fn() };
-});
-
 import * as configLib from '../src/lib/config.js';
-import * as project from '../src/lib/project.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
 import { info } from '../src/commands/info.js';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../src/lib/types.js';
@@ -26,10 +20,8 @@ import { CliError } from '../src/lib/error.js';
 
 const mockedReadConfigSafe = vi.mocked(configLib.readConfigSafe);
 let fetchItemSpy: ReturnType<typeof vi.spyOn>;
-const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
-
-function stubRegistryItem(item: RegistryItem) {
-    fetchItemSpy.mockResolvedValue(item);
+function stubRegistryItem(item: RegistryItem, source = DEFAULT_REGISTRY_URL) {
+    fetchItemSpy.mockResolvedValue({ item, source });
 }
 
 const defaultConfig: BrutalistConfig = {
@@ -44,7 +36,11 @@ const defaultConfig: BrutalistConfig = {
 };
 
 async function createTempDir(): Promise<string> {
-    return fs.mkdtemp(path.join(os.tmpdir(), 'brutx-info-'));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-info-'));
+    await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), {
+        compilerOptions: { paths: { '@/*': ['./src/*'] } },
+    });
+    return tmpDir;
 }
 
 async function runInfoJson(
@@ -69,13 +65,7 @@ describe('info command', () => {
     let tmpDir: string;
 
     beforeEach(() => {
-        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
-        mockedResolveAliasPath.mockImplementation(async (alias: string, cwd: string) => {
-            const match = alias.match(/^(@[^/]*|~)\/(.*)/);
-            if (!match) return path.join(cwd, alias);
-            const [, , relativePath] = match;
-            return path.join(cwd, 'src', relativePath);
-        });
+        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItemWithMeta');
     });
 
     afterEach(async () => {
@@ -106,6 +96,109 @@ describe('info command', () => {
     });
 
     describe('installed component with registry', () => {
+        it.each([false, true])('prefers files from the historical component directory (ui has files: %s)', async (uiHasFiles) => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            const legacyDir = path.join(tmpDir, 'src', 'components', 'card');
+            const uiDir = path.join(tmpDir, 'src', 'components', 'ui', 'card');
+            await fs.outputFile(path.join(legacyDir, 'Card.vue'), '<template>card</template>');
+            await fs.ensureDir(uiDir);
+            if (uiHasFiles) await fs.outputFile(path.join(uiDir, 'Other.vue'), '<template>other</template>');
+            stubRegistryItem({ name: 'card', type: 'registry:ui', files: [] });
+
+            const result = await runInfoJson('card', { cwd: tmpDir });
+
+            expect(result).toMatchObject({ status: 'installed', localFiles: ['Card.vue'] });
+        });
+
+        it.each(['directory', 'symlink to directory', 'symlink to file'])(
+            'only counts actual files when a recorded shared path is a %s',
+            async (kind) => {
+                tmpDir = await createTempDir();
+                const name = 'button';
+                const source = 'https://example.test/installed';
+                const sharedFile = 'src/composables/useButton.ts';
+                const sharedPath = path.join(tmpDir, sharedFile);
+                if (kind === 'directory') {
+                    await fs.ensureDir(sharedPath);
+                } else {
+                    const target = path.join(tmpDir, 'src', 'shared-target');
+                    if (kind === 'symlink to directory') await fs.ensureDir(target);
+                    else await fs.outputFile(target, 'export const useButton = true');
+                    await fs.ensureSymlink(target, sharedPath);
+                }
+                await fs.outputJson(path.join(tmpDir, '.brutx', 'manifest.json'), {
+                    version: 1,
+                    components: {
+                        [name]: {
+                            name,
+                            registrySource: source,
+                            integrity: 'sha256-installed',
+                            installedAt: '2026-07-07T00:00:00.000Z',
+                            files: [sharedFile],
+                            dependencies: [],
+                            registryDependencies: [],
+                        },
+                    },
+                });
+                mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+                stubRegistryItem({ name, type: 'registry:ui', files: [] }, source);
+
+                const result = await runInfoJson(name, { cwd: tmpDir });
+
+                const isFile = kind === 'symlink to file';
+                expect(result).toMatchObject({
+                    status: isFile ? 'installed' : 'not-installed',
+                    localFiles: isFile ? [sharedFile] : [],
+                });
+            },
+        );
+
+        it.each([
+            ['@scope/button', undefined, '/installed/v1.2.0', '/installed/v1.2.0'],
+            ['@scope/button@v1.2.0', undefined, '/installed', '/installed/v1.2.0'],
+            ['@scope/button@1.2.0', '/configured', '/configured', '/configured/v1.2.0'],
+            ['@scope/button@2.0.0', undefined, '/installed', '/installed/v2.0.0'],
+            ['@scope/button@latest', undefined, '/installed', '/installed'],
+        ])('reads the local installation for %s with override %s', async (specifier, override, base, hit) => {
+            tmpDir = await createTempDir();
+            const origin = 'https://example.test';
+            const name = '@scope/button';
+            const componentFile = `src/components/ui/${name}/Button.vue`;
+            const sharedFile = 'src/composables/useButton.ts';
+            const files = [componentFile, sharedFile, 'src/types/missing.ts'];
+            await fs.outputFile(path.join(tmpDir, componentFile), '<template>button</template>');
+            await fs.outputFile(path.join(tmpDir, sharedFile), 'export const useButton = true');
+            await fs.outputJson(path.join(tmpDir, '.brutx', 'manifest.json'), {
+                version: 1,
+                components: {
+                    [name]: {
+                        name,
+                        registrySource: `${origin}/installed/v1.2.0`,
+                        registryBaseSource: `${origin}/installed`,
+                        version: '1.2.0',
+                        integrity: 'sha256-installed',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files,
+                        dependencies: [],
+                        registryDependencies: [],
+                        examples: [],
+                    },
+                },
+            });
+            mockedReadConfigSafe.mockResolvedValue({ ...defaultConfig, registries: [`${origin}/configured`] });
+            fetchItemSpy.mockResolvedValue({ item: { name, files: [] }, source: `${origin}${hit}` });
+
+            const result = await runInfoJson(specifier, {
+                cwd: tmpDir,
+                ...(override ? { registry: `${origin}${override}` } : {}),
+            });
+
+            expect(fetchItemSpy).toHaveBeenCalledWith(specifier);
+            expect(fetchItemSpy.mock.contexts[0]).toMatchObject({ sources: [`${origin}${base}`] });
+            expect(result).toMatchObject({ name, localFiles: ['Button.vue', sharedFile], source: `${origin}${hit}`, status: 'installed' });
+        });
+
         it('should report status as installed with registry item and local files', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
@@ -581,12 +674,14 @@ describe('info command', () => {
 
         it('should correctly resolve alias path using config aliases', async () => {
             tmpDir = await createTempDir();
-            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            mockedReadConfigSafe.mockResolvedValue({
+                ...defaultConfig,
+                aliases: { ...defaultConfig.aliases, components: '@/custom' },
+            });
+            await fs.outputFile(path.join(tmpDir, 'src', 'custom', 'button', 'Button.vue'), '<template>button</template>');
             fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
-            await runInfoJson('button', { cwd: tmpDir });
-
-            expect(mockedResolveAliasPath).toHaveBeenCalledWith('@/components', tmpDir);
+            expect(await runInfoJson('button', { cwd: tmpDir })).toMatchObject({ localFiles: ['Button.vue'] });
         });
     });
 

@@ -96,6 +96,107 @@ describe('diff command', () => {
     });
 
     describe('file matching with different path formats', () => {
+        it('reports mixed component queries when a registry name matches an object property', async () => {
+            const installedSource = 'https://installed.example.test/registry';
+            const configuredSource = 'https://configured.example.test/registry';
+            const integrity = 'sha256-installed';
+            mockedReadConfigSafe.mockResolvedValue(createConfig({ registries: [configuredSource] }));
+            await fs.outputJson(path.join(tmpDir, '.brutx', 'manifest.json'), {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: installedSource,
+                        integrity,
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: [],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+            const constructorSource = `${configuredSource}/v1.2.0`;
+            const sources = new Map([
+                ['button', installedSource], ['card', configuredSource], ['constructor@1.2.0', constructorSource],
+            ]);
+            fetchItemSpy.mockImplementation(async (specifier: string) => ({
+                item: { name: specifier.split('@')[0], type: 'registry:ui', files: [], integrity },
+                source: sources.get(specifier),
+            }));
+
+            const results = await runDiffJson(tmpDir, { components: ['button', 'card', 'constructor@1.2.0'] });
+
+            expect(results).toMatchObject([
+                { component: 'button', installedIntegrity: integrity, registrySource: installedSource, integrityStatus: 'current' },
+                { component: 'card', registrySource: configuredSource, integrityStatus: 'unknown' },
+                { component: 'constructor', registrySource: constructorSource, integrityStatus: 'unknown' },
+            ]);
+            expect(fetchItemSpy.mock.contexts[2]).toMatchObject({ sources: [configuredSource] });
+        });
+
+        it.each([
+            ['button', undefined, '/installed/v1.2.0', '/installed/v1.2.0', 'current', false],
+            ['button@1.2.0', undefined, '/installed', '/installed/v1.2.0', 'current', false],
+            ['button@2.0.0', undefined, '/installed', '/installed/v2.0.0', 'outdated', false],
+            ['button@latest', undefined, '/installed', '/installed', 'outdated', false],
+            ['button@1.2.0', '/configured', '/configured', '/configured/v1.2.0', 'outdated', false],
+            ['button@1.2.0', undefined, '/installed', '/installed/v1.2.0', 'outdated', true],
+        ])('looks up the installed component for %s with override %s', async (
+            specifier, overridePath, sourcePath, hitPath, integrityStatus, partial,
+        ) => {
+            const origin = 'https://example.test';
+            const installedUrl = `${origin}/installed`;
+            const installedSource = `${installedUrl}/v1.2.0`;
+            const localPath = 'src/composables/useButton.ts';
+            const integrity = 'sha256-installed';
+            mockedReadConfigSafe.mockResolvedValue(createConfig({ registries: [`${origin}/configured`] }));
+            await fs.outputFile(path.join(tmpDir, localPath), 'export const useButton = true');
+            await fs.outputJson(path.join(tmpDir, '.brutx', 'manifest.json'), {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: installedSource,
+                        registryBaseSource: installedUrl,
+                        version: '1.2.0',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: [localPath],
+                        dependencies: [],
+                        registryDependencies: [],
+                        examples: [],
+                        integrity,
+                        ...(partial ? { pendingFiles: ['src/components/ui/button/Button.vue'] } : {}),
+                    },
+                },
+            });
+            const registryUrl = `${origin}${sourcePath}`;
+            const selectedSource = `${origin}${hitPath}`;
+            fetchItemSpy.mockResolvedValue({
+                item: {
+                    name: 'button',
+                    type: 'registry:ui',
+                    files: [],
+                    integrity: selectedSource === installedSource ? integrity : 'sha256-selected',
+                },
+                source: selectedSource,
+            });
+
+            const [result] = await runDiffJson(tmpDir, {
+                components: [specifier],
+                ...(overridePath ? { registry: `${origin}${overridePath}` } : {}),
+            });
+
+            expect(fetchItemSpy).toHaveBeenCalledWith(specifier, { useCache: true });
+            expect(fetchItemSpy.mock.contexts[0]).toMatchObject({ sources: [registryUrl] });
+            expect(result).toMatchObject({
+                component: 'button',
+                files: [{ path: localPath, status: 'removed' }],
+                installedIntegrity: integrity,
+                integrityStatus,
+                registrySource: selectedSource,
+            });
+        });
+
         it('discovers installed components from manifest when component directory is missing', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await fs.ensureDir(path.join(tmpDir, '.brutx'));

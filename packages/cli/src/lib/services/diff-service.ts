@@ -10,7 +10,7 @@ import type {
     RegistryItem,
     RegistryItemSnapshot,
 } from '../types.js';
-import { resolveRegistrySources } from '../registry-source.js';
+import { getUpdateRegistrySource, resolveRegistrySources } from '../registry-source.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
 import { ProjectContext } from '../project-context.js';
 import { projectRegistryFiles, resolveInstalledFile } from '../component-files.js';
@@ -97,10 +97,11 @@ async function getLocalComponentFiles(
 }
 
 function getIntegrityMetadata(
-    registryItem: RegistryItem | null,
+    snapshot: RegistryItemSnapshot | undefined,
     manifestEntry?: InstalledComponentManifest
 ): Pick<DiffResult, 'installedIntegrity' | 'latestIntegrity' | 'integrityStatus' | 'registrySource' | 'installedAt'> {
     const installedIntegrity = manifestEntry?.integrity;
+    const registryItem = snapshot?.item;
     const latestIntegrity = typeof registryItem?.integrity === 'string'
         ? registryItem.integrity
         : undefined;
@@ -114,7 +115,7 @@ function getIntegrityMetadata(
         installedIntegrity,
         latestIntegrity,
         integrityStatus,
-        registrySource: manifestEntry?.registrySource,
+        registrySource: snapshot?.source,
         installedAt: manifestEntry?.installedAt,
     };
 }
@@ -127,13 +128,14 @@ export async function diffComponent(
     shouldCache = true,
     onRegistryItem?: (snapshot: RegistryItemSnapshot) => void,
 ): Promise<DiffResult> {
-    const { name: componentName } = parseComponentSpecifier(componentSpecifier);
+    const { name: componentName, version } = parseComponentSpecifier(componentSpecifier);
     const config = context.requireConfig();
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
-    const client = registryOverride
-        ? context.getRegistryClient({ sources: resolveRegistrySources(config, registryOverride) })
+    const source = getUpdateRegistrySource(manifestEntry, registryOverride, version !== undefined);
+    const client = source !== undefined
+        ? context.getRegistryClient({ sources: resolveRegistrySources(config, source) })
         : context.getRegistryClient();
     let snapshot: RegistryItemSnapshot | undefined;
     try {
@@ -163,7 +165,7 @@ export async function diffComponent(
             status,
             files: [],
             registryError: registryError?.message,
-            ...getIntegrityMetadata(registryItem, manifestEntry),
+            ...getIntegrityMetadata(snapshot, manifestEntry),
         };
     }
 
@@ -233,7 +235,7 @@ export async function diffComponent(
         component: componentName,
         status: hasChanges ? 'modified' : 'up-to-date',
         files: fileDiffs,
-        ...getIntegrityMetadata(registryItem, manifestEntry),
+        ...getIntegrityMetadata(snapshot, manifestEntry),
     };
 }
 

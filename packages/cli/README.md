@@ -40,7 +40,7 @@ npx brutx-vue@latest init
 | `brutx-vue remove` | 移除已安装的组件 |
 | `brutx-vue create` | 创建预配置好的新 Vue 3 项目 |
 | `brutx-vue doctor` | 检查项目健康状态并诊断配置问题 |
-| `brutx-vue diff` | 对比本地组件与注册表最新版本差异 |
+| `brutx-vue diff` | 对比本地组件与注册表文件的差异 |
 
 ### `brutx-vue init`
 
@@ -160,6 +160,8 @@ brutx-vue list --json
 
 查看指定组件的详细信息，包括注册表文件、依赖、本地安装状态等。
 
+已登记组件默认查询安装来源，其他组件使用项目配置的注册表。可用 `button@1.2.0` 查询指定版本，用 `--registry` 覆盖注册表来源。
+
 ```bash
 brutx-vue info button
 brutx-vue info button --json
@@ -254,7 +256,7 @@ brutx-vue doctor --json
 
 ### `brutx-vue diff [components...]`
 
-对比本地已安装组件与注册表最新版本的差异，生成 unified diff 报告。
+对比本地组件与注册表文件的差异，生成 unified diff 报告。已登记组件默认查询安装来源，其他组件使用项目配置的注册表。可用 `button@1.2.0` 指定对比版本，用 `--registry` 覆盖注册表来源。
 
 ```bash
 # 对比指定组件

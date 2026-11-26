@@ -226,7 +226,7 @@ describe('diff service', () => {
             .rejects.toThrow(/Security Error.*outside the components directory/);
     });
 
-    it('uses manifest metadata to report registry source and outdated integrity', async () => {
+    it('reports the fetched registry source and compares its integrity with the manifest', async () => {
         await writeComponentFile(tmpDir, 'button', 'Button.vue', '<template>button</template>\n');
         const manifestEntry: InstalledComponentManifest = {
             name: 'button',
@@ -259,7 +259,7 @@ describe('diff service', () => {
             installedIntegrity: 'sha256-old',
             latestIntegrity: 'sha256-new',
             integrityStatus: 'outdated',
-            registrySource: 'https://example.test/registry',
+            registrySource: 'https://registry.example.test',
             installedAt: '2026-07-07T00:00:00.000Z',
         });
     });
