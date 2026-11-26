@@ -42,7 +42,9 @@ async function openTreeSelect(nodes: TreeNode[] = navigationNodes, props: Record
         props: { nodes, ...props },
         attachTo: document.body,
     })
-    await wrapper.find('[role="combobox"]').trigger('click')
+    const trigger = wrapper.get<HTMLButtonElement>('[role="combobox"]')
+    trigger.element.focus()
+    await trigger.trigger('click')
     await nextTick()
     await nextTick()
     await expect.poll(() => document.activeElement).toBe(document.body.querySelector('input[type="text"]'))
@@ -74,6 +76,8 @@ async function expectRovingFocus(item: HTMLElement): Promise<void> {
 }
 
 async function pressKey(item: HTMLElement, key: string): Promise<void> {
+    // 连续按键分属独立的输入任务，后一次按键可能把焦点移给刚挂载的子节点。
+    await new Promise<void>((resolve) => setTimeout(resolve))
     item.focus()
     await nextTick()
     item.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
@@ -388,12 +392,10 @@ describe('TreeSelect keyboard navigation', () => {
 
         expect(getTreeItem('Root').getAttribute('tabindex')).toBe('0')
         expect(document.activeElement).toBe(document.body.querySelector('input[type="text"]'))
-        trigger.focus()
-        expect(document.activeElement).toBe(trigger)
         await pressKey(getTreeItem('Root'), 'Escape')
         await nextTick()
 
         expect(trigger.getAttribute('aria-expanded')).toBe('false')
-        expect(document.activeElement).toBe(trigger)
+        await expect.poll(() => document.activeElement).toBe(trigger)
     })
 })
