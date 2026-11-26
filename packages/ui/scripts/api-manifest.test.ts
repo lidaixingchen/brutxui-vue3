@@ -1,10 +1,15 @@
+import { execFile } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { promisify } from 'node:util'
 import { describe, expect, it } from 'vitest'
 import type { ApiGroup, ApiMember } from '../../../apps/docs/.vitepress/api-types.js'
 import type { ApiCatalog } from './api-docs/catalog.js'
 
 const GENERATED_DIRECTORY = path.resolve(__dirname, '../../../apps/docs/.vitepress/api-generated')
+const UI_PACKAGE_DIRECTORY = path.resolve(__dirname, '..')
+const MANIFEST_CHECK_TIMEOUT_MS = 90_000
+const execFileAsync = promisify(execFile)
 
 function readGeneratedJson<T>(fileName: string): T {
     return JSON.parse(fs.readFileSync(path.join(GENERATED_DIRECTORY, fileName), 'utf8')) as T
@@ -40,6 +45,12 @@ describe('生成的组件 API 分组数据', () => {
             expect(fs.existsSync(path.join(GENERATED_DIRECTORY, `${group.slug}.en.json`))).toBe(false)
         }
     })
+
+    it('用分组检查匹配全量生成的目录和组件数据', async () => {
+        await execFileAsync(process.execPath, [
+            '--import', 'tsx', 'scripts/generate-component-api.ts', '--check', '--groups=tree-view,data-table,button',
+        ], { cwd: UI_PACKAGE_DIRECTORY, timeout: MANIFEST_CHECK_TIMEOUT_MS })
+    }, MANIFEST_CHECK_TIMEOUT_MS)
 
     it('Button 分组保留类型默认值并输出独立的中英文语义', () => {
         const chinese = readGroup('button', 'zh-CN')

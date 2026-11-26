@@ -1,9 +1,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+// eslint-disable-next-line no-restricted-imports
 import type { ApiComponent, ApiContent, ApiGroup, ApiLocale } from '../../../apps/docs/.vitepress/api-types.js'
 import type { ApiContract } from 'brutx-shared-vue/api-contract'
-import type { ApiCatalog, CatalogGroup, CatalogMember } from './api-docs/catalog.js'
+import type { ApiCatalog, CatalogGroup } from './api-docs/catalog.js'
 import { mergeApiContent } from './api-docs/merge.js'
 import { createApiExtractor } from './api-docs/extract.js'
 
@@ -67,8 +68,7 @@ async function loadCatalog(root: string): Promise<{
     }
 }
 
-function resolveSelectedGroups(catalogGroups: readonly CatalogGroup[], requestedGroups: readonly string[] | undefined): CatalogGroup[] {
-    const pageGroups = catalogGroups.filter(group => group.scope === 'component-page')
+function resolveSelectedGroups(pageGroups: readonly CatalogGroup[], requestedGroups: readonly string[] | undefined): CatalogGroup[] {
     if (!requestedGroups || requestedGroups.length === 0) return [...pageGroups]
 
     const selected = new Set<string>()
@@ -110,19 +110,23 @@ function serializeGroup(group: CatalogGroup, locale: ApiLocale, components: ApiC
 function extractGroupComponents(
     extractor: ReturnType<typeof createApiExtractor>,
     group: CatalogGroup,
+    reportErrors = true,
 ): ApiComponent[] {
-    const components = group.members
-        .filter((member): member is CatalogMember & { classification: 'component' } => member.classification === 'component')
-        .map(member => {
-            try {
-                return extractor.extract(member)
-            } catch (error) {
-                const message = error instanceof Error ? error.message : String(error)
-                throw new Error(`API_EXTRACT_FAILED ${member.id} (${member.source}): ${message}`, { cause: error })
-            }
-        })
-    const uniqueIds = new Set(components.map(component => component.id))
-    if (uniqueIds.size !== components.length) throw new Error(`API_COMPONENT_ID_DUPLICATE ${group.id}`)
+    const components: ApiComponent[] = []
+    for (const member of group.members) {
+        if (member.classification !== 'component') continue
+        try {
+            components.push(extractor.extract(member))
+        } catch (error) {
+            if (!reportErrors) continue
+            const message = error instanceof Error ? error.message : String(error)
+            throw new Error(`API_EXTRACT_FAILED ${member.id} (${member.source}): ${message}`, { cause: error })
+        }
+    }
+    if (reportErrors) {
+        const uniqueIds = new Set(components.map(component => component.id))
+        if (uniqueIds.size !== components.length) throw new Error(`API_COMPONENT_ID_DUPLICATE ${group.id}`)
+    }
     return components
 }
 
@@ -150,7 +154,10 @@ export async function collectComponentApiOutputs(
     const { catalog, locales } = catalogData
     assertCatalogHasNoDiagnostics(catalog)
 
-    const selectedGroups = resolveSelectedGroups(catalog.groups, options.groups)
+    const pageGroups = catalog.groups.filter(group => group.scope === 'component-page')
+    const selectedGroups = resolveSelectedGroups(pageGroups, options.groups)
+    const selected = new Set(selectedGroups)
+    const lastSelectedGroup = selectedGroups.at(-1)
     const directory = outputDirectory(repositoryRoot, options.outputDir)
     const extractor = createApiExtractor(repositoryRoot)
 
@@ -159,7 +166,12 @@ export async function collectComponentApiOutputs(
             relativePath: repositoryRelativePath(repositoryRoot, path.join(directory, CATALOG_FILE_NAME)),
             content: catalogData.serialize(catalog),
         }]
-        for (const group of selectedGroups) {
+        // 共享类型检查器按需解析类型，提取顺序决定联合类型文本和部分成员的顺序。
+        for (const group of pageGroups) {
+            if (!selected.has(group)) {
+                extractGroupComponents(extractor, group, false)
+                continue
+            }
             const content = await loadApiContent(repositoryRoot, group.slug)
             if (group.pages.some(page => page.migration === 'complete') && !content?.complete) {
                 throw new Error(`API_MIGRATION_CONTENT_INCOMPLETE ${group.slug}`)
@@ -172,6 +184,7 @@ export async function collectComponentApiOutputs(
                     content: serializeApiGroup(apiGroup),
                 })
             }
+            if (group === lastSelectedGroup) break
         }
         return outputs.sort((left, right) => left.relativePath.localeCompare(right.relativePath, 'en'))
     } finally {
