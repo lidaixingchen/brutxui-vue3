@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import type { RegistryIndex } from 'brutx-shared-vue';
+import registryPackage from '../../package.json' with { type: 'json' };
 import type { RegistrySbom, SbomComponent } from '../compiler/types.js';
 
 export const SBOM_SPEC_VERSION = '1.5';
@@ -12,11 +13,17 @@ export interface SbomGeneratorOptions {
     toolVersion?: string;
 }
 
+type SbomCore = Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>;
+
+export function resolveRegistryBuildTimestamp(timestamp?: string | null): string | null {
+    return timestamp === undefined ? (process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null) : timestamp;
+}
+
 /**
  * 规范化序列化 SBOM 核心字段，确保哈希与 serialNumber 具有一致的口径。
  */
 export function canonicalizeSbomCore(
-    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
+    sbom: SbomCore
 ): string {
     return JSON.stringify({
         bomFormat: sbom.bomFormat,
@@ -30,18 +37,25 @@ export function canonicalizeSbomCore(
  * 对 bomFormat/specVersion/components 求规范化 sha256。
  */
 export function computeSbomIntegrity(
-    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
+    sbom: SbomCore
 ): string {
     const canonical = canonicalizeSbomCore(sbom);
     return `sha256-${crypto.createHash('sha256').update(canonical).digest('hex')}`;
 }
 
-/**
- * 确定性生成 SBOM serialNumber（UUID v4 格式的 urn）。
- */
+function computeManifestBoundSerialNumber(manifestIntegrity: string, sbomIntegrity: string): string {
+    const hex = crypto.createHash('sha256').update(`${manifestIntegrity}:${sbomIntegrity}`).digest('hex');
+    return `urn:uuid:${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-a${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+}
+
+/** 有清单摘要时计算完整 SBOM 的序列号，核心字段调用沿用其独立标识。 */
 export function computeSbomSerialNumber(
-    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
+    sbom: SbomCore & Partial<Pick<RegistrySbom, 'manifestIntegrity'>>
 ): string {
+    if (sbom.manifestIntegrity !== undefined) {
+        return computeManifestBoundSerialNumber(sbom.manifestIntegrity, computeSbomIntegrity(sbom));
+    }
+
     const canonical = canonicalizeSbomCore(sbom);
     const hash = crypto.createHash('sha256').update(canonical).digest();
     const bytes = hash.subarray(0, 16);
@@ -52,7 +66,7 @@ export function computeSbomSerialNumber(
 }
 
 /**
- * 构建 CycloneDX 1.5 格式的 SBOM 数据对象（纯函数）。
+ * 构建 CycloneDX 1.5 格式的 SBOM 数据对象。
  */
 export function buildRegistrySbom(
     index: RegistryIndex,
@@ -79,19 +93,11 @@ export function buildRegistrySbom(
         });
 
         for (const dep of item.dependencies) {
-            if (!seenNpmDeps.has(dep)) {
-                seenNpmDeps.add(dep);
-            }
+            seenNpmDeps.add(dep);
         }
     }
 
-    const sortedNpmDeps = Array.from(seenNpmDeps).sort((a, b) => {
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-    });
-
-    for (const dep of sortedNpmDeps) {
+    for (const dep of seenNpmDeps) {
         components.push({
             'bom-ref': `npm:${dep}`,
             type: 'library',
@@ -99,25 +105,23 @@ export function buildRegistrySbom(
         });
     }
 
-    components.sort((a, b) => {
-        if (a['bom-ref'] < b['bom-ref']) return -1;
-        if (a['bom-ref'] > b['bom-ref']) return 1;
-        return 0;
-    });
+    components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
 
+    const core = { bomFormat: SBOM_FORMAT, specVersion: SBOM_SPEC_VERSION, components };
+    const integrity = computeSbomIntegrity(core);
     const sbomBase = {
         $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
-        bomFormat: SBOM_FORMAT,
-        specVersion: SBOM_SPEC_VERSION,
+        bomFormat: core.bomFormat,
+        specVersion: core.specVersion,
         version: 1,
-        serialNumber: computeSbomSerialNumber({ bomFormat: SBOM_FORMAT, specVersion: SBOM_SPEC_VERSION, components }),
+        serialNumber: computeManifestBoundSerialNumber(manifestIntegrity, integrity),
         metadata: {
-            timestamp: options.timestamp ?? process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
+            timestamp: resolveRegistryBuildTimestamp(options.timestamp),
             tools: [
                 {
-                    vendor: options.toolVendor ?? 'brutx-vue',
-                    name: options.toolName ?? 'registry-builder',
-                    version: options.toolVersion ?? index.registryVersion,
+                    vendor: options.toolVendor ?? 'BrutxUI',
+                    name: options.toolName ?? 'brutx-registry-compiler',
+                    version: options.toolVersion ?? registryPackage.version,
                 },
             ],
             component: {
@@ -130,6 +134,5 @@ export function buildRegistrySbom(
         components,
     };
 
-    const sbomIntegrity = computeSbomIntegrity(sbomBase);
-    return { ...sbomBase, integrity: sbomIntegrity, manifestIntegrity };
+    return { ...sbomBase, integrity, manifestIntegrity };
 }

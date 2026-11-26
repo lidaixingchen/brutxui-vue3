@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type { ComponentMetadataEntry, RegistryManifest } from 'brutx-shared-vue';
 import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
+import { buildRegistrySbom, runBuild } from '../../src/index.js';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
 import { RegistryCompiler } from '../../src/compiler/registry-compiler.js';
 import type { CompilerPaths } from '../../src/compiler/types.js';
@@ -223,11 +224,13 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
 
     it('compiles entire registry and produces valid index, manifest and sbom', async () => {
         const fs = createMockVfs();
+        const buildTimestamp = '2001-02-03T04:05:06.000Z';
         const compiler = new RegistryCompiler({
             fs,
             paths,
             metadata: mockMetadata,
             publicProjection: mockPublicProjection,
+            buildTimestamp,
         });
 
         const result = await compiler.compileAll();
@@ -240,10 +243,39 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
         expect(result.manifest.itemCount).toBe(3);
         expect(result.manifest.integrity).toMatch(/^[a-f0-9]{64}$/);
         expect(result.manifest.items.button?.integrity).toBe(result.items.get('button')?.integrity);
+        expect(result.manifest.buildTimestamp).toBe(buildTimestamp);
 
-        expect(result.sbom.bomFormat).toBe('CycloneDX');
-        expect(result.sbom.serialNumber.startsWith('urn:uuid:')).toBe(true);
-        expect(result.sbom.manifestIntegrity).toBe(result.manifest.integrity);
+        expect(result.sbom).toEqual(buildRegistrySbom(result.index, result.manifest.integrity, {
+            timestamp: buildTimestamp,
+        }));
+        expect(result.sbom.metadata.timestamp).toBe(buildTimestamp);
+    });
+
+    it('preserves all emitted artifacts and cache on a dependency cycle and rebuilds after fixing it', async () => {
+        const fs = createMockVfs();
+        const build = () => runBuild({ fs, paths, metadata: mockMetadata, publicProjection: mockPublicProjection });
+        const buttonPath = '/ui/src/components/button/Button.vue';
+        const initialButton = await fs.readFile(buttonPath, 'utf-8');
+        const scriptStart = '<script setup lang="ts">';
+        const readOutputs = async () => {
+            const entries = await fs.readdir(paths.outputDir, { withFileTypes: true });
+            const pathsToRead = [
+                ...entries.map(entry => `${paths.outputDir}/${entry.name}`).sort(),
+                '/.registry-cache.json',
+            ];
+            return Promise.all(pathsToRead.map(async file => [file, await fs.readFile(file, 'utf-8')]));
+        };
+
+        await build();
+        const validOutputs = await readOutputs();
+
+        await fs.writeFile(buttonPath, initialButton.replace(scriptStart, `${scriptStart}\nimport '../dialog/Dialog.vue';`));
+        await expect(build()).rejects.toThrow('Registry dependency cycle detected: button -> dialog -> button');
+        expect(await readOutputs()).toEqual(validOutputs);
+
+        await fs.writeFile(buttonPath, initialButton.replace('<slot />', '<slot>Updated</slot>'));
+        await build();
+        expect(await readOutputs()).not.toEqual(validOutputs);
     });
 
     it('reuses shared source analysis within one compile session and observes edited input next time', async () => {

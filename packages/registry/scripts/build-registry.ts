@@ -7,12 +7,12 @@ import type {
     RegistryBuildManifest,
     RegistryBuildManifestOptions,
     RewriteContext,
+    SbomGeneratorOptions,
     computeSbomIntegrity as coreComputeSbomIntegrity,
     computeSbomSerialNumber as coreComputeSbomSerialNumber,
     createRegistryCompiler,
 } from '../src/index.js';
 import { runWatch } from '../src/runner/watch-runner.js';
-import type { RegistryReferenceItem } from './validate-utils.js';
 
 const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
 const isMain = !isVitestRuntime && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
@@ -226,17 +226,14 @@ export function buildRegistryManifest(
     };
 }
 
-export function assertRegistryDependencyGraph(items: RegistryReferenceItem[]): void {
-    const cycles = helperModules().validation.findRegistryDependencyCycles(items);
-    if (cycles.length > 0) {
-        throw new Error(cycles
-            .map(cycle => `Registry dependency cycle detected: ${cycle.join(' -> ')}`)
-            .join('\n'));
-    }
-}
+export { assertRegistryDependencyGraph } from '../src/compiler/dependency-graph.js';
 
-export function buildRegistrySbom(index: RegistryIndex, manifestIntegrity: string) {
-    return helperModules().registry.buildRegistrySbom(index, manifestIntegrity);
+export function buildRegistrySbom(
+    index: RegistryIndex,
+    manifestIntegrity: string,
+    options?: SbomGeneratorOptions
+) {
+    return helperModules().registry.buildRegistrySbom(index, manifestIntegrity, options);
 }
 
 export function computeSbomIntegrity(sbom: Parameters<typeof coreComputeSbomIntegrity>[0]) {

@@ -4,13 +4,11 @@ import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/ast'
 import { createModuleResolver, getModuleSpecifierPath } from 'brutx-shared-vue/module-resolver'
 import { toPosixPath } from 'brutx-shared-vue/path'
 import { projectPublicIndexExports } from '../../shared/src/ast/public-index-projection.js'
+import type { RegistryReferenceItem } from '../src/compiler/dependency-graph.js'
+
+export { findRegistryDependencyCycles, type RegistryReferenceItem } from '../src/compiler/dependency-graph.js'
 
 export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
-
-export interface RegistryReferenceItem {
-    name: string
-    registryDependencies: string[]
-}
 
 export interface UnknownRegistryReference {
     component: string
@@ -71,53 +69,6 @@ export function findUnknownRegistryReferences(items: RegistryReferenceItem[]): U
     }
 
     return unknown
-}
-
-export function findRegistryDependencyCycles(items: RegistryReferenceItem[]): string[][] {
-    const graph = new Map(items.map(item => [item.name, item.registryDependencies]))
-    const visited = new Set<string>()
-    const visiting = new Set<string>()
-    const stack: string[] = []
-    const cycles: string[][] = []
-    const cycleKeys = new Set<string>()
-
-    function visit(name: string): void {
-        if (visiting.has(name)) {
-            const start = stack.indexOf(name)
-            if (start === -1) return
-
-            const cycle = [...stack.slice(start), name]
-            const key = cycle.join(' -> ')
-            if (!cycleKeys.has(key)) {
-                cycles.push(cycle)
-                cycleKeys.add(key)
-            }
-            return
-        }
-
-        if (visited.has(name)) {
-            return
-        }
-
-        visiting.add(name)
-        stack.push(name)
-
-        for (const dependency of graph.get(name) ?? []) {
-            if (graph.has(dependency)) {
-                visit(dependency)
-            }
-        }
-
-        stack.pop()
-        visiting.delete(name)
-        visited.add(name)
-    }
-
-    for (const name of graph.keys()) {
-        visit(name)
-    }
-
-    return cycles
 }
 
 export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): string[] {

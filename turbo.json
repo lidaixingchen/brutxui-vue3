@@ -44,6 +44,7 @@
                 "brutx-ui-vue#generate"
             ],
             "env": [
+                "BRUTX_REGISTRY_BUILD_TIMESTAMP",
                 "BRUTX_REGISTRY_PRIVATE_KEY",
                 "BRUTX_REGISTRY_KEY_ID"
             ],

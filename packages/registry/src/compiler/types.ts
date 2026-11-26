@@ -107,6 +107,7 @@ export interface CompilerOptions {
     registryVersion?: string;
     releaseTag?: string;
     gitCommit?: string | null;
+    buildTimestamp?: string | null;
     publicProjection?: PublicComponentProjectionSet;
     publicProjectionDigest?: string;
     componentIndexBuilder?: ComponentIndexBuilder;

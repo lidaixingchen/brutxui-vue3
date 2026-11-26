@@ -32,7 +32,7 @@ export async function runWatch(options: RunnerOptions = {}): Promise<void> {
     await watcher.start({ buildInitially: true });
 }
 
-function runBuildInWorker(options: RunnerOptions): Promise<void> {
+export function runBuildInWorker(options: RunnerOptions): Promise<void> {
     return new Promise((resolve, reject) => {
         // 每次构建使用独立的模块缓存，读取共享源码及公开契约的当前内容。
         const worker = new Worker(new URL('./build-worker.ts', import.meta.url), {

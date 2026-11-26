@@ -19,6 +19,8 @@ import {
 import { isComponentSourceDirectory, isComponentSourceFile, relativeModulePath } from 'brutx-shared-vue/scan';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
+import { buildRegistrySbom, resolveRegistryBuildTimestamp } from '../emitters/sbom-generator.js';
+import { assertRegistryDependencyGraph } from './dependency-graph.js';
 import { rewriteImports } from './ast-rewriter.js';
 import { DependencyResolver, readRegistryText, type DependencyAnalysisSession } from './dependency-resolver.js';
 import { CACHE_VERSION, CacheManager, computeInputDigest } from './cache-manager.js';
@@ -29,8 +31,6 @@ import type {
     CompilerPaths,
     RegistryBuildManifest,
     RegistryBuildManifestOptions,
-    RegistrySbom,
-    SbomComponent,
     ComponentIndexBuilder,
     PublicComponentProjection,
     PublicComponentProjectionSet,
@@ -67,8 +67,6 @@ const DEFAULT_PATHS: CompilerPaths = {
 
 const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json';
 const REGISTRY_SCHEMA_VERSION = 1;
-const SBOM_SPEC_VERSION = '1.5';
-const SBOM_FORMAT = 'CycloneDX';
 
 export class RegistryCompiler {
     private fs: FileSystemAdapter;
@@ -82,6 +80,7 @@ export class RegistryCompiler {
     private registryVersion?: string;
     private releaseTag?: string;
     private gitCommit?: string | null;
+    private buildTimestamp?: string | null;
     private publicProjection?: PublicComponentProjectionSet;
     private publicProjectionDigest: string;
     private componentIndexBuilder?: ComponentIndexBuilder;
@@ -101,6 +100,7 @@ export class RegistryCompiler {
         this.registryVersion = options.registryVersion;
         this.releaseTag = options.releaseTag;
         this.gitCommit = options.gitCommit;
+        this.buildTimestamp = options.buildTimestamp;
         this.publicProjection = options.publicProjection;
         this.publicProjectionDigest = options.publicProjectionDigest
             ?? computeInputDigest(options.publicProjection ?? null);
@@ -535,9 +535,12 @@ export class RegistryCompiler {
             integrity: localeRes.item.integrity,
         });
 
+        assertRegistryDependencyGraph(indexItems);
+
         const resolvedVersion = await this.resolveVersion();
         const resolvedReleaseTag = this.resolveReleaseTag(resolvedVersion);
         const resolvedGitCommit = this.resolveGitCommit();
+        const buildTimestamp = resolveRegistryBuildTimestamp(this.buildTimestamp);
 
         // 3. 构建 RegistryIndex
         const index: RegistryIndex = {
@@ -554,12 +557,12 @@ export class RegistryCompiler {
             registryVersion: resolvedVersion,
             schemaVersion: index.schemaVersion,
             releaseTag: resolvedReleaseTag,
-            buildTimestamp: null,
+            buildTimestamp,
             gitCommit: resolvedGitCommit,
         });
 
         // 5. 构建 SBOM
-        const sbom = this.buildSbom(index, manifest.integrity);
+        const sbom = buildRegistrySbom(index, manifest.integrity, { timestamp: buildTimestamp });
 
         const totalDurationMs = Date.now() - totalStartTime;
 
@@ -643,74 +646,6 @@ export class RegistryCompiler {
             ...baseManifest,
             integrity,
             digest: integrity,
-        };
-    }
-
-    private buildSbom(index: RegistryIndex, manifestIntegrity: string): RegistrySbom {
-        const components: SbomComponent[] = [];
-        const seenNpmDeps = new Set<string>();
-
-        for (const item of index.items) {
-            components.push({
-                'bom-ref': `brutx:${item.name}`,
-                type: 'application',
-                name: item.name,
-                version: index.registryVersion,
-                description: item.description,
-                hashes: [
-                    { alg: 'SHA-256', content: item.integrity.replace(/^sha256-/, '') },
-                ],
-                dependencies: [
-                    ...item.dependencies.map(dep => `npm:${dep}`),
-                    ...item.registryDependencies.map(dep => `brutx:${dep}`),
-                ],
-            });
-
-            for (const dep of item.dependencies) {
-                if (!seenNpmDeps.has(dep)) {
-                    seenNpmDeps.add(dep);
-                }
-            }
-        }
-
-        for (const dep of [...seenNpmDeps].sort()) {
-            components.push({
-                'bom-ref': `npm:${dep}`,
-                type: 'library',
-                name: dep,
-            });
-        }
-
-        const sortedComponents = [...components].sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
-
-        const rawForHash = JSON.stringify({
-            bomFormat: SBOM_FORMAT,
-            specVersion: SBOM_SPEC_VERSION,
-            components: sortedComponents,
-        });
-        const integrity = `sha256-${crypto.createHash('sha256').update(rawForHash).digest('hex')}`;
-        const serialHash = crypto.createHash('sha256').update(`${manifestIntegrity}:${integrity}`).digest('hex');
-        const serialNumber = `urn:uuid:${serialHash.slice(0, 8)}-${serialHash.slice(8, 12)}-4${serialHash.slice(13, 16)}-a${serialHash.slice(17, 20)}-${serialHash.slice(20, 32)}`;
-
-        return {
-            $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
-            bomFormat: SBOM_FORMAT,
-            specVersion: SBOM_SPEC_VERSION,
-            version: 1,
-            serialNumber,
-            metadata: {
-                timestamp: null,
-                tools: [{ vendor: 'BrutxUI', name: 'brutx-registry-compiler', version: '0.1.0' }],
-                component: {
-                    'bom-ref': `brutx:${index.name}`,
-                    type: 'application',
-                    name: index.name,
-                    version: index.registryVersion,
-                },
-            },
-            components: sortedComponents,
-            integrity,
-            manifestIntegrity,
         };
     }
 }
