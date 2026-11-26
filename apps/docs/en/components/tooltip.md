@@ -134,7 +134,7 @@ This package’s `TooltipProvider` and `TooltipContent` are local wrappers; thei
 
 ### TooltipProvider
 
-Re-exported from reka-ui's `TooltipProvider`. Provides global configuration for all descendant tooltips.
+Provides shared configuration for descendant tooltips. Set `content` to share positioning options, for example `:content="{ sideOffset: 12, collisionPadding: 16 }"`.
 
 ### Tooltip
 
@@ -162,6 +162,8 @@ Trigger component that opens the tooltip on hover or focus.
 ### TooltipContent
 
 Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` by default. Its height adapts to the available viewport space on the current side of the trigger, with overflow scrolling inside the panel. Collision handling still adjusts the placement when space is limited, while short content keeps its natural height.
+
+`sideOffset` and `collisionPadding` use the panel’s own values first, then the nearest `TooltipProvider`’s `content` settings, then a default of `6` pixels. Zero is a valid value. When both the panel and the provider set `collisionPadding` as an object, the panel overrides the edges it specifies and inherits the remaining edges from the provider.
 
 ## Reka UI Primitive Events
 

@@ -199,7 +199,7 @@
             "literals": [],
             "references": []
           },
-          "description": "设置内容面板与触发器之间的距离，单位为像素。",
+          "description": "设置内容面板与触发器之间的距离。省略时沿用最近的 Provider 配置，回退值为 6 像素。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
@@ -209,15 +209,7 @@
           "nullable": false,
           "default": {
             "declaration": {
-              "kind": "expression",
-              "text": "floatingContentSideOffsets.tooltip",
-              "source": {
-                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "6"
+              "kind": "absent"
             }
           }
         },
@@ -257,7 +249,7 @@
             "literals": [],
             "references": []
           },
-          "description": "设置内容进行碰撞检测时与边界的留白；数字应用于各边，也可分别指定各方向的像素值。",
+          "description": "设置碰撞边界留白，支持统一像素值或按方向指定。省略时沿用最近的 Provider 配置，回退值为各边 6 像素。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
@@ -267,15 +259,7 @@
           "nullable": false,
           "default": {
             "declaration": {
-              "kind": "expression",
-              "text": "floatingContentSideOffsets.tooltip",
-              "source": {
-                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "6"
+              "kind": "absent"
             }
           }
         },

@@ -12,7 +12,7 @@ const forwardedProps = useForwardProps(props)
 </script>
 
 <template>
-    <TooltipProviderPrimitive v-bind="forwardedProps">
+    <TooltipProviderPrimitive v-bind="forwardedProps" :content="content">
         <slot />
     </TooltipProviderPrimitive>
 </template>

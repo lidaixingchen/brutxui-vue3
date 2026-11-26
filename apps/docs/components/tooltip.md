@@ -133,7 +133,7 @@ const isOpen = ref(false)
 
 ### TooltipProvider
 
-从 reka-ui 的 `TooltipProvider` 重新导出，为所有后代工具提示提供全局配置。
+为后代工具提示提供共享配置。可以通过 `content` 设置统一的定位选项，例如 `:content="{ sideOffset: 12, collisionPadding: 16 }"`。
 
 ### Tooltip
 
@@ -161,6 +161,8 @@ const isOpen = ref(false)
 ### TooltipContent
 
 工具提示内容面板，使用新粗野主义风格。默认通过 Portal 渲染到 `body`。内容高度会适配触发器当前一侧的可用视口空间，超出部分可在面板内滚动；空间不足时仍由碰撞处理调整显示方向，短内容保持自然高度。
+
+`sideOffset` 和 `collisionPadding` 优先使用面板自身的值，省略时使用最近的 `TooltipProvider` 的 `content` 配置，对应项也省略时默认为 `6` 像素。`0` 是有效值。当面板和 Provider 都使用对象设置 `collisionPadding` 时，面板指定的方向覆盖对应方向，其余方向沿用 Provider 的值。
 
 ## Reka UI 原语事件
 

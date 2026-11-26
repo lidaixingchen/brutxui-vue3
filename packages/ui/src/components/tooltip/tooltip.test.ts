@@ -55,6 +55,15 @@ describe('TooltipContent', () => {
         expect(wrapper.text()).toBe('Tooltip text')
     })
 
+    it('forwards the library positioning defaults without a provider context', () => {
+        const wrapper = mount(TooltipContent, {
+            global: { stubs: contentStubs },
+        })
+        const content = wrapper.get('[data-testid="tooltip-content"]')
+        expect(content.attributes('sideoffset')).toBe('6')
+        expect(content.attributes('collisionpadding')).toBe('6')
+    })
+
     it('has animation classes', () => {
         const wrapper = mount(TooltipContent, {
             global: { stubs: contentStubs },
